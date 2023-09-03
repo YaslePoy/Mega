@@ -4,6 +4,7 @@ using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using OpenTK.Windowing.Desktop;
+using Mega.Game;
 
 namespace Mega.Video
 {
@@ -18,6 +19,9 @@ namespace Mega.Video
     // as if the view itself was moved.
     public class Window : GameWindow
     {
+
+        public Vector3i newBlock = new Vector3i(3, 3, 3);
+        private World world;
         private float[] _vertices =
         {
             // Position         Texture coordinates
@@ -56,7 +60,6 @@ namespace Mega.Video
 
         private Vector2 _lastPos;
 
-        private double _time;
 
         public Window(GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings)
             : base(gameWindowSettings, nativeWindowSettings)
@@ -69,6 +72,10 @@ namespace Mega.Video
         protected override void OnLoad()
         {
             base.OnLoad();
+
+            VisualData.LoadVisualData();
+            world = new World(this);
+
 
             GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
@@ -98,25 +105,27 @@ namespace Mega.Video
             GL.VertexAttribPointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
 
             _texture = Texture.LoadFromFile("Resources/birch.png");
+
             _texture.Use(TextureUnit.Texture0);
-
-
 
             _shader.SetInt("texture0", 0);
 
             // We initialize the camera so that it is 3 units back from where the rectangle is.
             // We also give it the proper aspect ratio.
-            _camera = new Camera(Vector3.UnitZ * 3, Size.X / (float)Size.Y);
+            _camera = new Camera(new Vector3(0, 3, 0), Size.X / (float)Size.Y);
 
             // We make the mouse cursor invisible and captured so we can have proper FPS-camera movement.
             CursorState = CursorState.Grabbed;
+
+            world.SetBlock(Vector3i.One);
+
+
         }
 
         protected override void OnRenderFrame(FrameEventArgs e)
         {
             base.OnRenderFrame(e);
 
-            _time += 4.0 * e.Time;
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
@@ -133,21 +142,13 @@ namespace Mega.Video
             SwapBuffers();
         }
 
-        public void UpdateMesh()
+        public void UpdateMesh(float[] vertexes, uint[] path)
         {
 
-            ObjReader.ReadFile("Resources\\birch.obj", out
-                _indices, out _vertices);
+            _vertices = vertexes;
+            _indices = path;
             GL.BufferData(BufferTarget.ArrayBuffer, _vertices.Length * sizeof(float), _vertices, BufferUsageHint.DynamicDraw);
             GL.BufferData(BufferTarget.ElementArrayBuffer, _indices.Length * sizeof(uint), _indices, BufferUsageHint.DynamicDraw);
-
-            var vertexLocation = _shader.GetAttribLocation("aPosition");
-            GL.EnableVertexAttribArray(vertexLocation);
-            GL.VertexAttribPointer(vertexLocation, 3, VertexAttribPointerType.Float, false, 5 * sizeof(float), 0);
-
-            var texCoordLocation = _shader.GetAttribLocation("aTexCoord");
-            GL.EnableVertexAttribArray(texCoordLocation);
-            GL.VertexAttribPointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
 
 
         }
@@ -205,16 +206,49 @@ namespace Mega.Video
                 _camera.Position -= _camera.Up * cameraSpeed * (float)e.Time; // Down
 
             }
-            if (input.IsKeyPressed(Keys.U))
+            if (input.IsKeyReleased(Keys.KeyPad7))
             {
-                UpdateMesh();
+                newBlock += Vector3i.UnitY;
+                world.SetBlock(newBlock);
+            }
+            if (input.IsKeyReleased(Keys.KeyPad1))
+            {
+                newBlock -= Vector3i.UnitY;
+                world.SetBlock(newBlock);
+            }
+            if (input.IsKeyReleased(Keys.KeyPad8))
+            {
+                newBlock += Vector3i.UnitX;
+                world.SetBlock(newBlock);
+            }
+            if (input.IsKeyReleased(Keys.KeyPad2))
+            {
+                newBlock -= Vector3i.UnitX;
+                world.SetBlock(newBlock);
+            }
+            if (input.IsKeyReleased(Keys.KeyPad6))
+            {
+                newBlock += Vector3i.UnitZ;
+                world.SetBlock(newBlock);
+            }
+            if (input.IsKeyReleased(Keys.KeyPad4))
+            {
+                newBlock -= Vector3i.UnitZ;
+                world.SetBlock(newBlock);
             }
             // Get the mouse state
             var mouse = MouseState;
+            if (input.IsKeyReleased(Keys.I))
+            {
+                Console.WriteLine(
+                    $"Position: {_camera.Position}\n" +
+                    $"Surfaces: {world.Surface.Length}({world.MembersList.Count * 6})\n" +
+                    $"Blocks: {world.MembersList.Count}");
+            }
 
             if (_firstMove) // This bool variable is initially set to true.
             {
-                _lastPos = new Vector2(mouse.X, mouse.Y);
+                _lastPos = new Vector2(0, 0);
                 _firstMove = false;
             }
             else
@@ -228,6 +262,8 @@ namespace Mega.Video
                 _camera.Yaw += deltaX * sensitivity;
                 _camera.Pitch -= deltaY * sensitivity; // Reversed since y-coordinates range from bottom to top
             }
+            Title = _camera.Position.ToString();
+            
         }
 
         // In the mouse wheel function, we manage all the zooming of the camera.
