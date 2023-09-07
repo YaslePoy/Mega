@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Mega.Game
 {
-    internal class RenderSurface
+    public class RenderSurface
     {
         Vector3 move;
         (Vector3, Vector2)[] _vts;

@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace Mega.Game
 {
-    internal class World
+    public class World
     {
-        public static readonly Vector3i Size = new Vector3i(32, 32, 64);
+        public static readonly Vector3i Size = new Vector3i(32, 64, 32);
         Block[,,] worldData;
         public bool[,,] Border;
         public bool[,,] Members;
@@ -36,6 +36,23 @@ namespace Mega.Game
             MembersList = new List<Vector3i>();
             BorderMembersList = new List<Vector3i>();
         }
+
+        public static World GenerateFlat(int level, Window window)
+        {
+            World world = new World(window);
+            var blocks = new List<Block>();
+            for (int i = 0; i < 32; i++)
+            {
+                for (int j = 0; j < 32; j++)
+                {
+                    blocks.Add(new Block(new Vector3i(i, level, j), "birch"));
+                }
+            }
+
+            world.GenerateFromBlocks(blocks);
+            return world;
+        }
+
         public void SetBlock(Vector3i location)
         {
             var block = new Block(location, "birch");
@@ -57,14 +74,11 @@ namespace Mega.Game
             Border.Set(block.Position, false);
             BorderMembers.Set(block.Position, true);
             BorderMembersList.Add(block.Position);
-            var addingBorder = block.CurrentNeibs();
+            var addingBorder = block.LocalNeibs;
 
-            TrySetBorder(addingBorder[0]);
-            TrySetBorder(addingBorder[1]);
-            TrySetBorder(addingBorder[2]);
-            TrySetBorder(addingBorder[3]);
-            TrySetBorder(addingBorder[4]);
-            TrySetBorder(addingBorder[5]);
+            for (int i = 0; i < addingBorder.Length; i++)
+                TrySetBorder(addingBorder[i]);
+
 
         }
 
@@ -81,8 +95,11 @@ namespace Mega.Game
         public void RebuildMesh()
         {
             var sides = new List<RenderSurface>();
+            var test = new Vector3i(31, 1, 0);
             foreach (var borderBlock in BorderMembersList)
             {
+                if(borderBlock == test)
+                    Console.WriteLine("Test");
                 sides.AddRange(worldData.Get(borderBlock).GetDrawingMesh(this));
             }
             int offset = 0;
@@ -107,6 +124,34 @@ namespace Mega.Game
             Surface = sides.ToArray();
             RawOrder = order;
             RawVertexes = vertexArray;
+        }
+
+        public void GenerateFromBlocks(List<Block> blocks)
+        {
+            foreach (var block in blocks)
+            {
+                worldData.Set(block.Position, block);
+                Members.Set(block.Position, true);
+                MembersList.Add(block.Position);
+            }
+            foreach (var member in blocks)
+            {
+                var neibs = member.LocalNeibs;
+                foreach (var neighbour in neibs)
+                {
+                    if (!neighbour.IsInRange(0, 32))
+                        continue;
+                    if (!Members.Get(neighbour))
+                        Border.Set(neighbour, true);
+                    else
+                    if (!BorderMembers.Get(neighbour))
+                    {
+                        BorderMembers.Set(neighbour, true);
+                        BorderMembersList.Add(neighbour);
+                    }
+                }
+            }
+            RebuildMesh();
         }
 
         public Block Get(Vector3i pos)

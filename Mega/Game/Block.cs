@@ -12,9 +12,14 @@ namespace Mega.Game
     {
         Air, Wood
     }
-    internal  class Block
+    public class Block
     {
-        public static readonly Vector3i[] Neibs = { 
+        private readonly Vector3i _noNeib = -Vector3i.One;
+        Vector3i[] localNeibs;
+        Vector3i posibleNeibs;
+        public Vector3i[] LocalNeibs => localNeibs == null ? GenerateNeis() : localNeibs;
+       
+        public static readonly Vector3i[] Neibs = {
             Vector3i.UnitX, Vector3i.UnitY, Vector3i.UnitZ,
             -Vector3i.UnitX, -Vector3i.UnitY, -Vector3i.UnitZ
         };
@@ -58,17 +63,33 @@ namespace Mega.Game
             totalSurface[5] = new RenderSurface(MeshSides[5], VisualData.GetTextureCoords(ID, 5), Position);
         }
 
-        public Vector3i[] CurrentNeibs()
+        public Vector3i[] GenerateNeis()
         {
-            var pos = Position;
-            return Neibs.Select(i => i + pos).ToArray();
+            List<Vector3i> result = new List<Vector3i>();
+            var neib = Position + Neibs[0];
+
+            result.Add(neib);
+            neib = Position + Neibs[1];
+            result.Add(neib);
+            neib = Position + Neibs[2];
+            result.Add(neib);
+            neib = Position + Neibs[3];
+            result.Add(neib);
+            neib = Position + Neibs[4];
+            result.Add(neib);
+            neib = Position + Neibs[5];
+            result.Add(neib);
+
+            return result.ToArray();
         }
         public List<RenderSurface> GetDrawingMesh(World world)
         {
-            var localBorder = CurrentNeibs();
+            var localBorder = LocalNeibs;
             List<RenderSurface> surfaces = new List<RenderSurface>();
-            for (int i = 0; i < 6; i++)
+            for (int i = 0; i < localBorder.Count(); i++)
             {
+                    if (!localBorder[i].IsInRange(0, 32))
+                        continue;
                 if (world.Members.Get(localBorder[i]))
                     continue;
                 surfaces.Add(totalSurface[i]);

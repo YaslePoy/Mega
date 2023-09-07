@@ -74,9 +74,23 @@ namespace Mega.Video
             base.OnLoad();
 
             VisualData.LoadVisualData();
-            world = new World(this);
 
+            GLInit();
+            
 
+            // We initialize the camera so that it is 3 units back from where the rectangle is.
+            // We also give it the proper aspect ratio.
+            _camera = new Camera(new Vector3(0, 3, 0), Size.X / (float)Size.Y);
+
+            // We make the mouse cursor invisible and captured so we can have proper FPS-camera movement.
+            CursorState = CursorState.Grabbed;
+
+            world = World.GenerateFlat(1, this);
+
+        }
+
+        void GLInit()
+        {
             GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
             GL.Enable(EnableCap.DepthTest);
@@ -109,17 +123,6 @@ namespace Mega.Video
             _texture.Use(TextureUnit.Texture0);
 
             _shader.SetInt("texture0", 0);
-
-            // We initialize the camera so that it is 3 units back from where the rectangle is.
-            // We also give it the proper aspect ratio.
-            _camera = new Camera(new Vector3(0, 3, 0), Size.X / (float)Size.Y);
-
-            // We make the mouse cursor invisible and captured so we can have proper FPS-camera movement.
-            CursorState = CursorState.Grabbed;
-
-            world.SetBlock(Vector3i.One);
-
-
         }
 
         protected override void OnRenderFrame(FrameEventArgs e)
@@ -168,7 +171,7 @@ namespace Mega.Video
                 Close();
             }
 
-            const float cameraSpeed = 1.5f;
+            const float cameraSpeed = 5f;
             const float sensitivity = 0.2f;
 
             if (input.IsKeyDown(Keys.W))
@@ -236,6 +239,10 @@ namespace Mega.Video
                 newBlock -= Vector3i.UnitZ;
                 world.SetBlock(newBlock);
             }
+            if (input.IsKeyReleased(Keys.R))
+            {
+                _camera.Position = new Vector3(MathF.Round(_camera.Position.X), MathF.Round(_camera.Position.Y), MathF.Round(_camera.Position.Z));
+            }
             // Get the mouse state
             var mouse = MouseState;
             if (input.IsKeyReleased(Keys.I))
@@ -248,7 +255,7 @@ namespace Mega.Video
 
             if (_firstMove) // This bool variable is initially set to true.
             {
-                _lastPos = new Vector2(0, 0);
+                _lastPos = new Vector2(0.5f, 0);
                 _firstMove = false;
             }
             else
@@ -262,7 +269,7 @@ namespace Mega.Video
                 _camera.Yaw += deltaX * sensitivity;
                 _camera.Pitch -= deltaY * sensitivity; // Reversed since y-coordinates range from bottom to top
             }
-            Title = _camera.Position.ToString();
+            Title = _camera.Position.ToString() + " " +  (1 / e.Time).ToString();
             
         }
 
