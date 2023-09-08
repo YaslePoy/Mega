@@ -11,6 +11,7 @@ namespace Mega.Game
 {
     public class World
     {
+        public Player player;
         public static readonly Vector3i Size = new Vector3i(32, 64, 32);
         Block[,,] worldData;
         public bool[,,] Border;
@@ -55,10 +56,9 @@ namespace Mega.Game
 
         public void SetBlock(Vector3i location)
         {
-            var block = new Block(location, "birch");
             if (Members.Get(location))
                 return;
-
+            var block = new Block(location, "birch");
             worldData.Set(location, block);
 
             add(block);
@@ -95,11 +95,8 @@ namespace Mega.Game
         public void RebuildMesh()
         {
             var sides = new List<RenderSurface>();
-            var test = new Vector3i(31, 1, 0);
             foreach (var borderBlock in BorderMembersList)
             {
-                if(borderBlock == test)
-                    Console.WriteLine("Test");
                 sides.AddRange(worldData.Get(borderBlock).GetDrawingMesh(this));
             }
             int offset = 0;
@@ -157,6 +154,23 @@ namespace Mega.Game
         public Block Get(Vector3i pos)
         {
             return worldData.Get(pos);
+        }
+
+        public void OnRender()
+        {
+            if (player == null) return;
+            var viewDir = player.View;
+            Ray viewRay = new Ray(player.Position, viewDir);
+            foreach (var block in viewRay.GetCrossBlocks(5))
+            {
+                if (!block.block.IsInRange(0, 32) || !Members.Get(block.block))
+                    continue;
+                if (player.SelectedBlock != block.block)
+                    Console.WriteLine($"New selected block: {block.block}");
+                player.SelectedBlock = block.block;
+                player.Cursor = block.block - block.side;
+                break;
+            }
         }
     }
 }

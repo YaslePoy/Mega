@@ -8,13 +8,23 @@ using System.Threading.Tasks;
 
 namespace Mega.Game
 {
-    internal class Player
+    public class Player
     {
-        public Vector3 Position;
+        World world;
+        public Vector3i SelectedBlock;
+        public Vector3i Cursor;
+        public Vector3 Position => Cam.Position;
+        public Vector3 View => Cam.Front;
         public Camera Cam;
-        public Player(Camera camera)
+        public Player(Camera camera, World world)
         {
             Cam = camera;
+            this.world = world;
+        }
+
+        public void PlaceBlock()
+        {
+            world.SetBlock(Cursor);
         }
     }
 }

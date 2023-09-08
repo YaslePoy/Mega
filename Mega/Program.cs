@@ -11,13 +11,14 @@ namespace Mega
         {
             var nativeWindowSettings = new NativeWindowSettings()
             {
-                Size = new Vector2i(1600, 900),
-                Title = "LearnOpenTK - Camera",
+                Size = new Vector2i(1280, 720),
+                Title = "Mega Game",
                 // This is needed to run on macos
                 Flags = ContextFlags.ForwardCompatible,
+                
             };
 
-            using (var window = new Window(new GameWindowSettings() { UpdateFrequency = 50 }, nativeWindowSettings) { })
+            using (var window = new Window(new GameWindowSettings()/* { UpdateFrequency = 50 }*/, nativeWindowSettings) { })
             {
                 window.Run();
             }

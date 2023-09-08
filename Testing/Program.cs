@@ -8,11 +8,11 @@ namespace Testing
         static void Main(string[] args)
         {
             VisualData.LoadVisualData();
-            World w = new World(null);
-            w.SetBlock(Vector3i.One);
-            w.SetBlock(new Vector3i(1, 1, 2));
-            w.SetBlock(new Vector3i(1, 2, 2));
-
+            Ray r = new Ray(Vector3.Zero, new Vector3(20, 6, 0));
+            foreach (var item in r.GetCrossBlocks(21f))
+            {
+                Console.WriteLine($"Block: {item.block}; Side: {item.side}");
+            }
         }
     }
 }

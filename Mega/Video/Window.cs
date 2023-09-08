@@ -19,7 +19,7 @@ namespace Mega.Video
     // as if the view itself was moved.
     public class Window : GameWindow
     {
-
+        Player pl;
         public Vector3i newBlock = new Vector3i(3, 3, 3);
         private World world;
         private float[] _vertices =
@@ -76,7 +76,7 @@ namespace Mega.Video
             VisualData.LoadVisualData();
 
             GLInit();
-            
+
 
             // We initialize the camera so that it is 3 units back from where the rectangle is.
             // We also give it the proper aspect ratio.
@@ -87,6 +87,8 @@ namespace Mega.Video
 
             world = World.GenerateFlat(1, this);
 
+            pl = new Player(_camera, world);
+            world.player = pl;
         }
 
         void GLInit()
@@ -128,7 +130,7 @@ namespace Mega.Video
         protected override void OnRenderFrame(FrameEventArgs e)
         {
             base.OnRenderFrame(e);
-
+            world.OnRender();
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
@@ -243,8 +245,7 @@ namespace Mega.Video
             {
                 _camera.Position = new Vector3(MathF.Round(_camera.Position.X), MathF.Round(_camera.Position.Y), MathF.Round(_camera.Position.Z));
             }
-            // Get the mouse state
-            var mouse = MouseState;
+
             if (input.IsKeyReleased(Keys.I))
             {
                 Console.WriteLine(
@@ -252,7 +253,12 @@ namespace Mega.Video
                     $"Surfaces: {world.Surface.Length}({world.MembersList.Count * 6})\n" +
                     $"Blocks: {world.MembersList.Count}");
             }
-
+            // Get the mouse state
+            var mouse = MouseState;
+            if(mouse.IsButtonPressed(MouseButton.Left))
+            {
+                pl.PlaceBlock();
+            }
             if (_firstMove) // This bool variable is initially set to true.
             {
                 _lastPos = new Vector2(0.5f, 0);
@@ -269,8 +275,8 @@ namespace Mega.Video
                 _camera.Yaw += deltaX * sensitivity;
                 _camera.Pitch -= deltaY * sensitivity; // Reversed since y-coordinates range from bottom to top
             }
-            Title = _camera.Position.ToString() + " " +  (1 / e.Time).ToString();
-            
+            Title = _camera.Position.ToString() + " " + (1 / e.Time).ToString();
+
         }
 
         // In the mouse wheel function, we manage all the zooming of the camera.
