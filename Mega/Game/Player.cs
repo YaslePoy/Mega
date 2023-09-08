@@ -24,7 +24,12 @@ namespace Mega.Game
 
         public void PlaceBlock()
         {
-            world.SetBlock(Cursor);
+            try
+            {
+                world.SetBlock(Cursor);
+
+            }
+            catch { }
         }
     }
 }
