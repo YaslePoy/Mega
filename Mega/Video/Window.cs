@@ -93,11 +93,11 @@ namespace Mega.Video
 
             _vertexBufferObject = GL.GenBuffer();
             GL.BindBuffer(BufferTarget.ArrayBuffer, _vertexBufferObject);
-            GL.BufferData(BufferTarget.ArrayBuffer, _vertices.Length * sizeof(float), _vertices, BufferUsageHint.DynamicDraw);
+            //GL.BufferData(BufferTarget.ArrayBuffer, _vertices.Length * sizeof(float), _vertices, BufferUsageHint.DynamicDraw);
 
             _elementBufferObject = GL.GenBuffer();
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, _elementBufferObject);
-            GL.BufferData(BufferTarget.ElementArrayBuffer, _indices.Length * sizeof(uint), _indices, BufferUsageHint.DynamicDraw);
+            //GL.BufferData(BufferTarget.ElementArrayBuffer, inds.Count * sizeof(uint), inds.ToArray(), BufferUsageHint.DynamicDraw);
 
 
             _shader = new Shader("Shaders/shader.vert", "Shaders/shader.frag");
@@ -110,12 +110,6 @@ namespace Mega.Video
             var texCoordLocation = _shader.GetAttribLocation("aTexCoord");
             GL.EnableVertexAttribArray(texCoordLocation);
             GL.VertexAttribPointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
-
-            _texture = Texture.LoadFromFile("Resources/0.png");
-
-            _texture.Use(TextureUnit.Texture0);
-
-            _shader.SetInt("texture0", 0);
         }
 
         protected override void OnRenderFrame(FrameEventArgs e)
@@ -131,21 +125,26 @@ namespace Mega.Video
 
             _shader.SetMatrix4("view", _camera.GetViewMatrix());
             _shader.SetMatrix4("projection", _camera.GetProjectionMatrix());
-
-            GL.DrawElements(PrimitiveType.Triangles, _indices.Length, DrawElementsType.UnsignedInt, 0);
+            int offset = 0;
+            foreach (var tex in _indices)
+            {
+                setTexture(TextureHelper.TotalUVMaps[tex.Key].tex);
+                var currentDrawArray = tex.Value;
+                GL.DrawElements(PrimitiveType.Triangles, currentDrawArray.Count, DrawElementsType.UnsignedInt, offset);
+                offset += currentDrawArray.Count;
+            }
 
             SwapBuffers();
         }
 
-        public void UpdateMesh(float[] vertexes, Dictionary<int,  List<uint>> path)
+        public void UpdateMesh(float[] vertexes, Dictionary<int, List<uint>> path)
         {
 
             _vertices = vertexes;
             _indices = path;
             GL.BufferData(BufferTarget.ArrayBuffer, _vertices.Length * sizeof(float), _vertices, BufferUsageHint.DynamicDraw);
-            GL.BufferData(BufferTarget.ElementArrayBuffer, _indices.Length * sizeof(uint), _indices, BufferUsageHint.DynamicDraw);
-
-
+            var inds = _indices.Values.ToList().SumList();
+            GL.BufferData(BufferTarget.ElementArrayBuffer, inds.Count * sizeof(uint), inds.ToArray(), BufferUsageHint.DynamicDraw);
         }
         protected override void OnUpdateFrame(FrameEventArgs e)
         {
@@ -201,41 +200,11 @@ namespace Mega.Video
                 _camera.Position -= _camera.Up * cameraSpeed * (float)e.Time; // Down
 
             }
-            if (input.IsKeyReleased(Keys.KeyPad7))
-            {
-                newBlock += Vector3i.UnitY;
-                world.SetBlock(newBlock);
-            }
-            if (input.IsKeyReleased(Keys.KeyPad1))
-            {
-                newBlock -= Vector3i.UnitY;
-                world.SetBlock(newBlock);
-            }
-            if (input.IsKeyReleased(Keys.KeyPad8))
-            {
-                newBlock += Vector3i.UnitX;
-                world.SetBlock(newBlock);
-            }
-            if (input.IsKeyReleased(Keys.KeyPad2))
-            {
-                newBlock -= Vector3i.UnitX;
-                world.SetBlock(newBlock);
-            }
-            if (input.IsKeyReleased(Keys.KeyPad6))
-            {
-                newBlock += Vector3i.UnitZ;
-                world.SetBlock(newBlock);
-            }
-            if (input.IsKeyReleased(Keys.KeyPad4))
-            {
-                newBlock -= Vector3i.UnitZ;
-                world.SetBlock(newBlock);
-            }
+
             if (input.IsKeyReleased(Keys.R))
             {
                 _camera.Position = new Vector3(MathF.Round(_camera.Position.X), MathF.Round(_camera.Position.Y), MathF.Round(_camera.Position.Z));
             }
-
             if (input.IsKeyReleased(Keys.I))
             {
                 Console.WriteLine(
@@ -245,7 +214,7 @@ namespace Mega.Video
             }
             // Get the mouse state
             var mouse = MouseState;
-            if(mouse.IsButtonPressed(MouseButton.Left))
+            if (mouse.IsButtonPressed(MouseButton.Left))
             {
                 pl.PlaceBlock();
             }
@@ -285,6 +254,11 @@ namespace Mega.Video
             GL.Viewport(0, 0, Size.X, Size.Y);
             // We need to update the aspect ratio once the window has been resized.
             _camera.AspectRatio = Size.X / (float)Size.Y;
+        }
+        void setTexture(Texture tx)
+        {
+            tx.Use(TextureUnit.Texture0);
+            _shader.SetInt("texture0", 0);
         }
     }
 }

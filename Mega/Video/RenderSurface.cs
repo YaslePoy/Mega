@@ -34,6 +34,7 @@ namespace Mega.Video
                 t.Add((vertices[i], texture[i]));
             }
             _vts = t.ToArray();
+            TextureID = tx;
         }
 
         public float[] GetRaw()

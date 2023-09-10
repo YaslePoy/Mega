@@ -26,7 +26,7 @@ namespace Mega.Game
         {
             try
             {
-                world.SetBlock(Cursor);
+                world.SetBlock(Cursor, 1);
 
             }
             catch { }

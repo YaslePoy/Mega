@@ -46,7 +46,7 @@ namespace Mega.Game
             {
                 for (int j = 0; j < 32; j++)
                 {
-                    blocks.Add(new Block(new Vector3i(i, level, j), 1));
+                    blocks.Add(new Block(new Vector3i(i, level, j), 0));
                 }
             }
 
@@ -54,11 +54,11 @@ namespace Mega.Game
             return world;
         }
 
-        public void SetBlock(Vector3i location)
+        public void SetBlock(Vector3i location, int blockId)
         {
             if (Members.Get(location))
                 return;
-            var block = new Block(location, 0);
+            var block = new Block(location, blockId);
             worldData.Set(location, block);
 
             add(block);

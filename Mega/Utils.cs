@@ -15,6 +15,13 @@ namespace Mega
         public static bool IsLessThan(this Vector3i vec, int n) => vec.X < n && vec.Y < n && vec.Z < n;
         public static bool IsInRange(this Vector3i vec, int s, int e) => vec.X >= s && vec.X < e && vec.Y >= s && vec.Y < e && vec.Z >= s && vec.Z < e;
         public static Vector3i Round(this Vector3 vec) => new Vector3i((int)vec.X, (int)vec.Y, (int)vec.Z);
+        public static List<T> SumList<T>(this List<List<T>> lists)
+        {
+            var result = new List<T>();
+            foreach (var list in lists)
+                result.AddRange(list);
+            return result;
+        }
 
     }
 }
