@@ -37,6 +37,7 @@ namespace Mega.Video
         private Shader _shader;
 
         private Texture _texture;
+        int total;
 
 
         // The view and projection matrices have been removed as we don't need them here anymore.
@@ -134,6 +135,7 @@ namespace Mega.Video
                 offset += currentDrawArray.Count;
             }
 
+
             SwapBuffers();
         }
 
@@ -144,6 +146,7 @@ namespace Mega.Video
             _indices = path;
             GL.BufferData(BufferTarget.ArrayBuffer, _vertices.Length * sizeof(float), _vertices, BufferUsageHint.DynamicDraw);
             var inds = _indices.Values.ToList().SumList();
+            total = inds.Count;
             GL.BufferData(BufferTarget.ElementArrayBuffer, inds.Count * sizeof(uint), inds.ToArray(), BufferUsageHint.DynamicDraw);
         }
         protected override void OnUpdateFrame(FrameEventArgs e)
