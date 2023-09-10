@@ -46,7 +46,7 @@ namespace Mega.Game
             {
                 for (int j = 0; j < 32; j++)
                 {
-                    blocks.Add(new Block(new Vector3i(i, level, j), "birch"));
+                    blocks.Add(new Block(new Vector3i(i, level, j), 1));
                 }
             }
 
@@ -58,7 +58,7 @@ namespace Mega.Game
         {
             if (Members.Get(location))
                 return;
-            var block = new Block(location, "birch");
+            var block = new Block(location, 0);
             worldData.Set(location, block);
 
             add(block);
@@ -99,25 +99,27 @@ namespace Mega.Game
             {
                 sides.AddRange(worldData.Get(borderBlock).GetDrawingMesh(this));
             }
-            int offset = 0;
             uint indOffset = 0;
             var vertexArray = new float[sides.Count * 20];
             var order = new uint[sides.Count * 6];
+            Dictionary<int, List<uint>> orders = new Dictionary<int, List<uint>>();
             for (int i = 0; i < sides.Count; i++)
             {
-                var v = sides[i].GetRaw();
+                var side = sides[i];
+                var v = side.GetRaw();
                 v.CopyTo(vertexArray, 20 * i);
-                order[offset + 0] = 0 + indOffset;
-                order[offset + 1] = 1 + indOffset;
-                order[offset + 2] = 3 + indOffset;
-                order[offset + 3] = 1 + indOffset;
-                order[offset + 4] = 2 + indOffset;
-                order[offset + 5] = 3 + indOffset;
+                if(!orders.ContainsKey(side.TextureID))
+                    orders.Add(side.TextureID, new List<uint>());
+                orders[side.TextureID].Add(0 + indOffset);
+                orders[side.TextureID].Add(1 + indOffset);
+                orders[side.TextureID].Add(3 + indOffset);
+                orders[side.TextureID].Add(1 + indOffset);
+                orders[side.TextureID].Add(2 + indOffset);
+                orders[side.TextureID].Add(3 + indOffset);
 
-                offset += 6;
                 indOffset += 4;
             }
-            view?.UpdateMesh(vertexArray, order);
+            view?.UpdateMesh(vertexArray, orders);
             Surface = sides.ToArray();
             RawOrder = order;
             RawVertexes = vertexArray;

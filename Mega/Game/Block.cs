@@ -33,7 +33,7 @@ namespace Mega.Game
             new[] { new (0, 0, 0), new (1, 0, 0), new (1, 1, 0), new Vector3(0, 1, 0) }
         };
 
-        public string ID;
+        public int ID;
         public Vector3i Position;
         public BlockType Type;
 
@@ -44,7 +44,7 @@ namespace Mega.Game
             totalSurface = new RenderSurface[0];
         }
 
-        public Block(Vector3i pos, string id)
+        public Block(Vector3i pos, int id)
         {
             Type = BlockType.Wood;
             Position = pos;
@@ -56,12 +56,12 @@ namespace Mega.Game
         void GenerateSurface()
         {
             totalSurface = new RenderSurface[6];
-            totalSurface[0] = new RenderSurface(MeshSides[0], TextureHelper.GetTextureCoords(ID, 0), Position);
-            totalSurface[1] = new RenderSurface(MeshSides[1], TextureHelper.GetTextureCoords(ID, 1), Position);
-            totalSurface[2] = new RenderSurface(MeshSides[2], TextureHelper.GetTextureCoords(ID, 2), Position);
-            totalSurface[3] = new RenderSurface(MeshSides[3], TextureHelper.GetTextureCoords(ID, 3), Position);
-            totalSurface[4] = new RenderSurface(MeshSides[4], TextureHelper.GetTextureCoords(ID, 4), Position);
-            totalSurface[5] = new RenderSurface(MeshSides[5], TextureHelper.GetTextureCoords(ID, 5), Position);
+            totalSurface[0] = new RenderSurface(MeshSides[0], TextureHelper.GetTextureCoords(ID, 0), Position, ID);
+            totalSurface[1] = new RenderSurface(MeshSides[1], TextureHelper.GetTextureCoords(ID, 1), Position, ID);
+            totalSurface[2] = new RenderSurface(MeshSides[2], TextureHelper.GetTextureCoords(ID, 2), Position, ID);
+            totalSurface[3] = new RenderSurface(MeshSides[3], TextureHelper.GetTextureCoords(ID, 3), Position, ID);
+            totalSurface[4] = new RenderSurface(MeshSides[4], TextureHelper.GetTextureCoords(ID, 4), Position, ID);
+            totalSurface[5] = new RenderSurface(MeshSides[5], TextureHelper.GetTextureCoords(ID, 5), Position, ID);
         }
 
         public Vector3i[] GenerateNeis()

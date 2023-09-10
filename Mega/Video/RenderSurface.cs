@@ -11,7 +11,7 @@ namespace Mega.Video
     {
         Vector3 move;
         (Vector3, Vector2)[] _vts;
-
+        public int TextureID;
 
         public RenderSurface((Vector3, Vector2)[] vertexes, Vector3 move)
         {
@@ -25,7 +25,7 @@ namespace Mega.Video
 
         }
 
-        public RenderSurface(Vector3[] vertices, Vector2[] texture, Vector3 move)
+        public RenderSurface(Vector3[] vertices, Vector2[] texture, Vector3 move, int tx)
         {
             this.move = move;
             var t = new List<(Vector3, Vector2)>();

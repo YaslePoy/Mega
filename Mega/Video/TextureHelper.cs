@@ -48,27 +48,11 @@ namespace Mega.Video
             }
         }
 
-        public static Vector2[] GetTextureCoords(string id, int side)
+        public static Vector2[] GetTextureCoords(int id, int side)
         {
-            if (id == "birch")
-            {
-                switch (side)
-                {
-                    case 1:
-                    case 4:
-                        return TextureCoordiantes[0][0];
-                    case 0:
-                    case 2:
-                    case 3:
-                    case 5:
-                        return TextureCoordiantes[0][1];
-
-
-                }
-            }
-            if (id == "select")
-                return TextureCoordiantes[1][0];
-            return null;
+            var map = TotalUVMaps[id];
+            var pts = map.uv.GetSide(side);
+            return pts;
         }
     }
     public class UVMap

@@ -24,20 +24,9 @@ namespace Mega.Video
         Player pl;
         public Vector3i newBlock = new Vector3i(3, 3, 3);
         private World world;
-        private float[] _vertices =
-        {
-            // Position         Texture coordinates
-             0.5f,  0.5f, 0.0f, 1.0f, 1.0f, // top right
-             0.5f, -0.5f, 0.0f, 1.0f, 0.0f, // bottom right
-            -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, // bottom left
-            -0.5f,  0.5f, 0.0f, 0.0f, 1.0f  // top left
-        };
+        private float[] _vertices;
 
-        private uint[] _indices =
-        {
-            0, 1, 3,
-            1, 2, 3
-        };
+        private Dictionary<int, List<uint>> _indices;
 
         private int _elementBufferObject;
 
@@ -122,7 +111,7 @@ namespace Mega.Video
             GL.EnableVertexAttribArray(texCoordLocation);
             GL.VertexAttribPointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
 
-            _texture = Texture.LoadFromFile("Resources/birch.png");
+            _texture = Texture.LoadFromFile("Resources/0.png");
 
             _texture.Use(TextureUnit.Texture0);
 
@@ -148,7 +137,7 @@ namespace Mega.Video
             SwapBuffers();
         }
 
-        public void UpdateMesh(float[] vertexes, uint[] path)
+        public void UpdateMesh(float[] vertexes, Dictionary<int,  List<uint>> path)
         {
 
             _vertices = vertexes;
