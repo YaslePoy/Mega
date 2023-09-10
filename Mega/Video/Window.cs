@@ -5,6 +5,7 @@ using OpenTK.Windowing.Common;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using OpenTK.Windowing.Desktop;
 using Mega.Game;
+using System.Diagnostics;
 
 namespace Mega.Video
 {
@@ -19,6 +20,7 @@ namespace Mega.Video
     // as if the view itself was moved.
     public class Window : GameWindow
     {
+        Stopwatch sw;
         Player pl;
         public Vector3i newBlock = new Vector3i(3, 3, 3);
         private World world;
@@ -72,11 +74,11 @@ namespace Mega.Video
         protected override void OnLoad()
         {
             base.OnLoad();
-
-            VisualData.LoadVisualData();
+            TextureHelper.LoadUV();
 
             GLInit();
 
+            sw = new Stopwatch();
 
             // We initialize the camera so that it is 3 units back from where the rectangle is.
             // We also give it the proper aspect ratio.
@@ -131,13 +133,12 @@ namespace Mega.Video
         {
             base.OnRenderFrame(e);
             world.OnRender();
-
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
             GL.BindVertexArray(_vertexArrayObject);
 
-            _texture.Use(TextureUnit.Texture0);
-            _shader.Use();
+            //_texture.Use(TextureUnit.Texture0);
+            //_shader.Use();
 
             _shader.SetMatrix4("view", _camera.GetViewMatrix());
             _shader.SetMatrix4("projection", _camera.GetProjectionMatrix());

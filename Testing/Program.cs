@@ -1,4 +1,5 @@
 ﻿using Mega.Game;
+using Mega.Video;
 using OpenTK.Mathematics;
 
 namespace Testing
@@ -7,7 +8,7 @@ namespace Testing
     {
         static void Main(string[] args)
         {
-            VisualData.LoadVisualData();
+            TextureHelper.LoadUV();
             Ray r = new Ray(Vector3.Zero, new Vector3(20, 6, 0));
             foreach (var item in r.GetCrossBlocks(21f))
             {

@@ -1,4 +1,5 @@
-﻿using OpenTK.Mathematics;
+﻿using Mega.Video;
+using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -55,12 +56,12 @@ namespace Mega.Game
         void GenerateSurface()
         {
             totalSurface = new RenderSurface[6];
-            totalSurface[0] = new RenderSurface(MeshSides[0], VisualData.GetTextureCoords(ID, 0), Position);
-            totalSurface[1] = new RenderSurface(MeshSides[1], VisualData.GetTextureCoords(ID, 1), Position);
-            totalSurface[2] = new RenderSurface(MeshSides[2], VisualData.GetTextureCoords(ID, 2), Position);
-            totalSurface[3] = new RenderSurface(MeshSides[3], VisualData.GetTextureCoords(ID, 3), Position);
-            totalSurface[4] = new RenderSurface(MeshSides[4], VisualData.GetTextureCoords(ID, 4), Position);
-            totalSurface[5] = new RenderSurface(MeshSides[5], VisualData.GetTextureCoords(ID, 5), Position);
+            totalSurface[0] = new RenderSurface(MeshSides[0], TextureHelper.GetTextureCoords(ID, 0), Position);
+            totalSurface[1] = new RenderSurface(MeshSides[1], TextureHelper.GetTextureCoords(ID, 1), Position);
+            totalSurface[2] = new RenderSurface(MeshSides[2], TextureHelper.GetTextureCoords(ID, 2), Position);
+            totalSurface[3] = new RenderSurface(MeshSides[3], TextureHelper.GetTextureCoords(ID, 3), Position);
+            totalSurface[4] = new RenderSurface(MeshSides[4], TextureHelper.GetTextureCoords(ID, 4), Position);
+            totalSurface[5] = new RenderSurface(MeshSides[5], TextureHelper.GetTextureCoords(ID, 5), Position);
         }
 
         public Vector3i[] GenerateNeis()

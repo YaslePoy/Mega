@@ -53,7 +53,7 @@ namespace Mega.Game
                     var newBlock = startBlock + nib;
                     var vec = newBlock + adding - Position; 
                     vec.Normalize();
-                    lengths.Add(((Vector3i point, float dot, Vector3i add))(newBlock, Vector3.Dot(vec, Direction), nib));
+                    lengths.Add((newBlock, Vector3.Dot(vec, Direction), nib));
                 }
                 var max = lengths.MaxBy(i => i.dot);
                 yield return (max.point, max.add);

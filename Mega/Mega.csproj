@@ -13,16 +13,22 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Resources\awesomeface.png">
+    <None Update="Resources\0.uv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\birch.obj">
+    <None Update="Resources\1.uv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\birch.png">
+    <None Update="Resources\base_vert_hor.uv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\container.png">
+    <None Update="Resources\1.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\0.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\base_all.uv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Shaders\shader.frag">

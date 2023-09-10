@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Mega.Game
+namespace Mega.Video
 {
     public class RenderSurface
     {
@@ -42,7 +42,7 @@ namespace Mega.Game
             int offset = 0;
             for (int i = 0; i < _vts.Length; i++)
             {
-                
+
                 ret[offset + 0] = _vts[i].Item1.X + move.X;
                 ret[offset + 1] = _vts[i].Item1.Y + move.Y;
                 ret[offset + 2] = _vts[i].Item1.Z + move.Z;
