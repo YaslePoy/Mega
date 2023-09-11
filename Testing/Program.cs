@@ -9,11 +9,8 @@ namespace Testing
         static void Main(string[] args)
         {
             TextureHelper.LoadUV();
-            Ray r = new Ray(Vector3.Zero, new Vector3(20, 6, 0));
-            foreach (var item in r.GetCrossBlocks(21f))
-            {
-                Console.WriteLine($"Block: {item.block}; Side: {item.side}");
-            }
+            var w = World.GenerateFlat(1, null);
+            w.SetBlock(Vector3i.One * 2, 0);
         }
     }
 }

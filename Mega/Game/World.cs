@@ -42,9 +42,9 @@ namespace Mega.Game
         {
             World world = new World(window);
             var blocks = new List<Block>();
-            for (int i = 0; i < 32; i++)
+            for (int i = 0; i < Size.X; i++)
             {
-                for (int j = 0; j < 32; j++)
+                for (int j = 0; j < Size.Z; j++)
                 {
                     blocks.Add(new Block(new Vector3i(i, level, j), 0));
                 }
@@ -99,18 +99,20 @@ namespace Mega.Game
             {
                 sides.AddRange(worldData.Get(borderBlock).GetDrawingMesh(this));
             }
+            Block cursorBolck = new Block();
             uint indOffset = 0;
             var vertexArray = new float[sides.Count * 20];
-            var order = new uint[sides.Count * 6];
             Dictionary<int, List<uint>> orders = new Dictionary<int, List<uint>>();
             for (int i = 0; i < sides.Count; i++)
             {
                 var side = sides[i];
+
                 var v = side.GetRaw();
                 v.CopyTo(vertexArray, 20 * i);
+                
                 if(!orders.ContainsKey(side.TextureID))
                     orders.Add(side.TextureID, new List<uint>());
-                orders[side.TextureID].Add(0 + indOffset);
+                orders[side.TextureID].Add(indOffset);
                 orders[side.TextureID].Add(1 + indOffset);
                 orders[side.TextureID].Add(3 + indOffset);
                 orders[side.TextureID].Add(1 + indOffset);
@@ -121,7 +123,6 @@ namespace Mega.Game
             }
             view?.UpdateMesh(vertexArray, orders);
             Surface = sides.ToArray();
-            RawOrder = order;
             RawVertexes = vertexArray;
         }
 
@@ -138,7 +139,7 @@ namespace Mega.Game
                 var neibs = member.LocalNeibs;
                 foreach (var neighbour in neibs)
                 {
-                    if (!neighbour.IsInRange(0, 32))
+                    if (!neighbour.IsInRange(0, Size.X))
                         continue;
                     if (!Members.Get(neighbour))
                         Border.Set(neighbour, true);
@@ -165,10 +166,9 @@ namespace Mega.Game
             Ray viewRay = new Ray(player.Position, viewDir);
             foreach (var block in viewRay.GetCrossBlocks(5))
             {
-                if (!block.block.IsInRange(0, 32) || !Members.Get(block.block))
+                if (!block.block.IsInRange(0, Size.X) || !Members.Get(block.block))
                     continue;
                 if (player.SelectedBlock != block.block)
-                    Console.WriteLine($"New selected block: {block.block}");
                 player.SelectedBlock = block.block;
                 player.Cursor = block.block - block.side;
                 break;

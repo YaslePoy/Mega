@@ -9,6 +9,7 @@ namespace Mega.Video
 {
     public class RenderSurface
     {
+        float[] raw;
         Vector3 move;
         (Vector3, Vector2)[] _vts;
         public int TextureID;
@@ -39,6 +40,7 @@ namespace Mega.Video
 
         public float[] GetRaw()
         {
+
             var ret = new float[_vts.Length * 5];
             int offset = 0;
             for (int i = 0; i < _vts.Length; i++)

@@ -2,6 +2,7 @@
 using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -89,7 +90,7 @@ namespace Mega.Game
             List<RenderSurface> surfaces = new List<RenderSurface>();
             for (int i = 0; i < localBorder.Count(); i++)
             {
-                    if (!localBorder[i].IsInRange(0, 32))
+                    if (!localBorder[i].IsInRange(0, World.Size.X))
                         continue;
                 if (world.Members.Get(localBorder[i]))
                     continue;

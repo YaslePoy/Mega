@@ -6,6 +6,7 @@ using OpenTK.Windowing.GraphicsLibraryFramework;
 using OpenTK.Windowing.Desktop;
 using Mega.Game;
 using System.Diagnostics;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Mega.Video
 {
@@ -20,9 +21,8 @@ namespace Mega.Video
     // as if the view itself was moved.
     public class Window : GameWindow
     {
-        Stopwatch sw;
+        public static Stopwatch sw;
         Player pl;
-        public Vector3i newBlock = new Vector3i(3, 3, 3);
         private World world;
         private float[] _vertices;
 
@@ -72,7 +72,7 @@ namespace Mega.Video
 
             // We initialize the camera so that it is 3 units back from where the rectangle is.
             // We also give it the proper aspect ratio.
-            _camera = new Camera(new Vector3(0, 3, 0), Size.X / (float)Size.Y);
+            _camera = new Camera(new Vector3(3, 3, 3), Size.X / (float)Size.Y);
 
             // We make the mouse cursor invisible and captured so we can have proper FPS-camera movement.
             CursorState = CursorState.Grabbed;
@@ -111,6 +111,7 @@ namespace Mega.Video
             var texCoordLocation = _shader.GetAttribLocation("aTexCoord");
             GL.EnableVertexAttribArray(texCoordLocation);
             GL.VertexAttribPointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
+            sw = new Stopwatch();
         }
 
         protected override void OnRenderFrame(FrameEventArgs e)
@@ -121,9 +122,6 @@ namespace Mega.Video
 
             GL.BindVertexArray(_vertexArrayObject);
 
-            //_texture.Use(TextureUnit.Texture0);
-            //_shader.Use();
-
             _shader.SetMatrix4("view", _camera.GetViewMatrix());
             _shader.SetMatrix4("projection", _camera.GetProjectionMatrix());
             int offset = 0;
@@ -131,7 +129,8 @@ namespace Mega.Video
             {
                 setTexture(TextureHelper.TotalUVMaps[tex.Key].tex);
                 var currentDrawArray = tex.Value;
-                GL.DrawElements(PrimitiveType.Triangles, currentDrawArray.Count, DrawElementsType.UnsignedInt, offset);
+                GL.DrawElements(PrimitiveType.Triangles, currentDrawArray.Count(), DrawElementsType.UnsignedInt, offset * sizeof(uint));
+
                 offset += currentDrawArray.Count;
             }
 
@@ -207,13 +206,6 @@ namespace Mega.Video
             if (input.IsKeyReleased(Keys.R))
             {
                 _camera.Position = new Vector3(MathF.Round(_camera.Position.X), MathF.Round(_camera.Position.Y), MathF.Round(_camera.Position.Z));
-            }
-            if (input.IsKeyReleased(Keys.I))
-            {
-                Console.WriteLine(
-                    $"Position: {_camera.Position}\n" +
-                    $"Surfaces: {world.Surface.Length}({world.MembersList.Count * 6})\n" +
-                    $"Blocks: {world.MembersList.Count}");
             }
             // Get the mouse state
             var mouse = MouseState;

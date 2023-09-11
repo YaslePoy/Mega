@@ -26,8 +26,10 @@ namespace Mega.Game
         {
             try
             {
+                Window.sw.Restart();
                 world.SetBlock(Cursor, 1);
-
+                Window.sw.Stop();
+                Console.WriteLine("Change time: " + Window.sw.Elapsed.Microseconds);
             }
             catch { }
         }
