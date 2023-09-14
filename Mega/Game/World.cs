@@ -1,4 +1,5 @@
 ﻿using Mega.Video;
+using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
@@ -109,8 +110,8 @@ namespace Mega.Game
 
                 var v = side.GetRaw();
                 v.CopyTo(vertexArray, 20 * i);
-                
-                if(!orders.ContainsKey(side.TextureID))
+
+                if (!orders.ContainsKey(side.TextureID))
                     orders.Add(side.TextureID, new List<uint>());
                 orders[side.TextureID].Add(indOffset);
                 orders[side.TextureID].Add(1 + indOffset);
@@ -159,17 +160,89 @@ namespace Mega.Game
             return worldData.Get(pos);
         }
 
-        public void OnRender()
+        public void Update(double t)
+        {
+
+            UpdatePlayerPosition(t);
+            UpdateSelector();
+        }
+
+        void UpdatePlayerPosition(double t)
+        {
+            var localG = Utils.G * t;
+            var clearMove = player.Moving * (float)(t * Player.WalkSpeed);
+            var move2d = new Vector2();
+            move2d += player.Cam.Front.Xz * clearMove.X;
+            move2d += -player.Cam.Right.Xz * clearMove.Y;
+            var move = new Vector3(move2d.X, 0, move2d.Y);
+            var playerBlock = player.Position;
+            var startPlayerBlock = (Vector3i)playerBlock;
+            var nextPosition = player.Position + move;
+            var nextPlayerBlock = (Vector3i)nextPosition;
+            var floorBlock = nextPlayerBlock - Vector3i.UnitY;
+            if (floorBlock.IsInRange(0, Size.X) && !Members.Get(floorBlock))
+            {
+
+                player.VerticalSpeed += player.Jumping ? -10 : (float)localG;
+
+                nextPosition.Y -= player.VerticalSpeed * (float)t;
+            }
+            if (player.Jumping)
+            {
+                Console.WriteLine();
+            }
+            if (nextPlayerBlock.IsInRange(0, Size.X))
+            {
+                if (Members.Get(nextPlayerBlock))
+                {
+                    var delta = nextPlayerBlock - startPlayerBlock;
+                    //if (delta.X != 0)
+                    //{
+                    //    if (delta.X > 0)
+                    //        nextPosition.X = MathF.Floor(nextPosition.X);
+                    //    else
+                    //        nextPosition.X = MathF.Ceiling(nextPosition.X);
+                    //}
+                    //else
+                    //{
+                    //    if(move2d.X > 0)
+                    //        nextPosition.X = MathF.Ceiling(nextPosition.X);
+                    //    else if(move2d.X < 0)
+                    //        nextPosition.X = MathF.Floor(nextPosition.X);
+
+                    //}
+                    //if (delta.Z != 0)
+                    //{
+                    //    if (delta.Z > 0)
+                    //        nextPosition.Z = MathF.Floor(nextPosition.Z);
+                    //    else
+                    //        nextPosition.Z = MathF.Ceiling(nextPosition.Z);
+                    //}
+                    //else
+                    //{
+
+                    //}
+                    if (move2d.X != 0)
+                        nextPosition.X = MathF.Round(nextPosition.X);
+                    if (move2d.Y != 0)
+                        nextPosition.Z = MathF.Round(nextPosition.Z);
+                }
+            }
+            player.Position = nextPosition;
+
+        }
+        void UpdateSelector()
         {
             if (player == null) return;
             var viewDir = player.View;
             Ray viewRay = new Ray(player.Position, viewDir);
+
             foreach (var block in viewRay.GetCrossBlocks(5))
             {
                 if (!block.block.IsInRange(0, Size.X) || !Members.Get(block.block))
                     continue;
                 if (player.SelectedBlock != block.block)
-                player.SelectedBlock = block.block;
+                    player.SelectedBlock = block.block;
                 player.Cursor = block.block - block.side;
                 break;
             }

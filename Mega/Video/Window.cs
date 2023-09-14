@@ -6,7 +6,6 @@ using OpenTK.Windowing.GraphicsLibraryFramework;
 using OpenTK.Windowing.Desktop;
 using Mega.Game;
 using System.Diagnostics;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Mega.Video
 {
@@ -72,7 +71,7 @@ namespace Mega.Video
 
             // We initialize the camera so that it is 3 units back from where the rectangle is.
             // We also give it the proper aspect ratio.
-            _camera = new Camera(new Vector3(3, 3, 3), Size.X / (float)Size.Y);
+            _camera = new Camera(new Vector3(3, 10, 3), Size.X / (float)Size.Y);
 
             // We make the mouse cursor invisible and captured so we can have proper FPS-camera movement.
             CursorState = CursorState.Grabbed;
@@ -117,7 +116,7 @@ namespace Mega.Video
         protected override void OnRenderFrame(FrameEventArgs e)
         {
             base.OnRenderFrame(e);
-            world.OnRender();
+
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
             GL.BindVertexArray(_vertexArrayObject);
@@ -166,47 +165,42 @@ namespace Mega.Video
 
             const float cameraSpeed = 5f;
             const float sensitivity = 0.2f;
-
+            var moveVec = new Vector2();
             if (input.IsKeyDown(Keys.W))
             {
-                _camera.Position += _camera.Front * cameraSpeed * (float)e.Time; // Forward
+                //_camera.Position += _camera.Front * cameraSpeed * (float)e.Time; // Forward
+                moveVec.X = 1;
 
             }
-
             if (input.IsKeyDown(Keys.S))
             {
-                _camera.Position -= _camera.Front * cameraSpeed * (float)e.Time; // Backwards
+                //_camera.Position -= _camera.Front * cameraSpeed * (float)e.Time; // Backwards
+                moveVec.X = -1;
 
 
             }
             if (input.IsKeyDown(Keys.A))
             {
-                _camera.Position -= _camera.Right * cameraSpeed * (float)e.Time; // Left
+                //_camera.Position -= _camera.Right * cameraSpeed * (float)e.Time; // Left
 
-
+                moveVec.Y = 1;
             }
             if (input.IsKeyDown(Keys.D))
             {
-                _camera.Position += _camera.Right * cameraSpeed * (float)e.Time; // Right
-
-
-            }
-            if (input.IsKeyDown(Keys.Space))
-            {
-                _camera.Position += _camera.Up * cameraSpeed * (float)e.Time; // Up
-
+                //_camera.Position += _camera.Right * cameraSpeed * (float)e.Time; // Right
+                moveVec.Y = -1;
 
             }
             if (input.IsKeyDown(Keys.LeftShift))
             {
-                _camera.Position -= _camera.Up * cameraSpeed * (float)e.Time; // Down
+                //_camera.Position -= _camera.Up * cameraSpeed * (float)e.Time; // Down
 
             }
-
             if (input.IsKeyReleased(Keys.R))
             {
                 _camera.Position = new Vector3(MathF.Round(_camera.Position.X), MathF.Round(_camera.Position.Y), MathF.Round(_camera.Position.Z));
             }
+            pl.Jumping = input.IsKeyDown(Keys.Space);
             // Get the mouse state
             var mouse = MouseState;
             if (mouse.IsButtonPressed(MouseButton.Left))
@@ -229,6 +223,8 @@ namespace Mega.Video
                 _camera.Yaw += deltaX * sensitivity;
                 _camera.Pitch -= deltaY * sensitivity; // Reversed since y-coordinates range from bottom to top
             }
+            pl.Moving = moveVec;
+            world.Update(e.Time);
             Title = _camera.Position.ToString() + " " + (1 / e.Time).ToString();
 
         }
