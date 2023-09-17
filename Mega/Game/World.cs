@@ -140,7 +140,7 @@ namespace Mega.Game
                 var neibs = member.LocalNeibs;
                 foreach (var neighbour in neibs)
                 {
-                    if (!neighbour.IsInRange(0, Size.X))
+                    if (!IsSave(neighbour))
                         continue;
                     if (!Members.Get(neighbour))
                         Border.Set(neighbour, true);
@@ -172,74 +172,78 @@ namespace Mega.Game
             var localG = Utils.G * t;
             var clearMove = player.Moving * (float)(t * Player.WalkSpeed);
             var move2d = new Vector2();
-            move2d += player.Cam.Front.Xz * clearMove.X;
+
+            var localFront = player.Cam.Front;
+            localFront.Y = 0;
+            localFront.Normalize();
+            move2d += localFront.Xz * clearMove.X;
             move2d += -player.Cam.Right.Xz * clearMove.Y;
             var move = new Vector3(move2d.X, 0, move2d.Y);
             var playerBlock = player.Position;
-            var startPlayerBlock = (Vector3i)playerBlock;
-            var nextPosition = player.Position + move;
-            var nextPlayerBlock = (Vector3i)nextPosition;
-            var floorBlock = nextPlayerBlock - Vector3i.UnitY;
-            if (floorBlock.IsInRange(0, Size.X) && !Members.Get(floorBlock))
-            {
-
-                player.VerticalSpeed += player.Jumping ? -10 : (float)localG;
-
-                nextPosition.Y -= player.VerticalSpeed * (float)t;
-            }
+            //var startPlayerBlock = (Vector3i)playerBlock;
+            //var nextPosition = player.Position + move;
+            //var nextPlayerBlock = (Vector3i)nextPosition;
             if (player.Jumping)
-            {
                 Console.WriteLine();
-            }
-            if (nextPlayerBlock.IsInRange(0, Size.X))
+            if (IsSave(player.Position) && !Members.Get((Vector3i)(player.Position)))
             {
-                if (Members.Get(nextPlayerBlock))
+
+                player.VerticalSpeed += (float)localG;
+
+            }
+            else
+            {
+                player.VerticalSpeed = player.Jumping ? -6 : 0;
+                move.Y =   MathF.Round(player.Position.Y) - player.Position.Y;
+            }
+            move.Y -= player.VerticalSpeed * (float)t;
+            var nextPosition = player.Position + move;
+
+            if (IsSave(player.Position))
+            {
+                var plBlock = (Vector3i)player.Position;
+                if (Members.Get((Vector3i)(nextPosition)))
                 {
-                    var delta = nextPlayerBlock - startPlayerBlock;
-                    //if (delta.X != 0)
-                    //{
-                    //    if (delta.X > 0)
-                    //        nextPosition.X = MathF.Floor(nextPosition.X);
-                    //    else
-                    //        nextPosition.X = MathF.Ceiling(nextPosition.X);
-                    //}
-                    //else
-                    //{
-                    //    if(move2d.X > 0)
-                    //        nextPosition.X = MathF.Ceiling(nextPosition.X);
-                    //    else if(move2d.X < 0)
-                    //        nextPosition.X = MathF.Floor(nextPosition.X);
-
-                    //}
-                    //if (delta.Z != 0)
-                    //{
-                    //    if (delta.Z > 0)
-                    //        nextPosition.Z = MathF.Floor(nextPosition.Z);
-                    //    else
-                    //        nextPosition.Z = MathF.Ceiling(nextPosition.Z);
-                    //}
-                    //else
-                    //{
-
-                    //}
-                    if (move2d.X != 0)
-                        nextPosition.X = MathF.Round(nextPosition.X);
-                    if (move2d.Y != 0)
-                        nextPosition.Z = MathF.Round(nextPosition.Z);
+                    var sign = MathF.Sign(move.X);
+                    float newX;
+                    if (sign > 0)
+                    {
+                        newX = playerBlock.X - float.Epsilon;
+                    }
+                    else
+                    {
+                        newX = playerBlock.X + float.Epsilon;
+                    }
+                    move.X = move.X - (nextPosition.X - newX);
+                }
+                if (Members.Get((Vector3i)(nextPosition)))
+                {
+                    var sign = MathF.Sign(move.Z);
+                    float newZ;
+                    if (sign > 0)
+                    {
+                        newZ = playerBlock.Z - float.Epsilon;
+                    }
+                    else
+                    {
+                        newZ = playerBlock.Z + float.Epsilon;
+                    }
+                    move.Z = move.Z - (nextPosition.Z - newZ);
                 }
             }
-            player.Position = nextPosition;
 
+            player.Position += move;
+            player.UpdateCamPosition();
         }
         void UpdateSelector()
         {
             if (player == null) return;
             var viewDir = player.View;
-            Ray viewRay = new Ray(player.Position, viewDir);
+            Ray viewRay = new Ray(player.ViewPoint, viewDir);
 
             foreach (var block in viewRay.GetCrossBlocks(5))
             {
-                if (!block.block.IsInRange(0, Size.X) || !Members.Get(block.block))
+                if (!IsSave(block.block) || !Members.Get(block.block))
                     continue;
                 if (player.SelectedBlock != block.block)
                     player.SelectedBlock = block.block;
@@ -247,5 +251,7 @@ namespace Mega.Game
                 break;
             }
         }
+
+        bool IsSave(Vector3 pos) => ((Vector3i)(pos)).IsInRange(0, Size.X);
     }
 }

@@ -18,7 +18,7 @@ namespace Mega
                 
             };
 
-            using (var window = new Window(new GameWindowSettings() /*{ UpdateFrequency = 100 }*/, nativeWindowSettings) { })
+            using (var window = new Window(new GameWindowSettings() { UpdateFrequency = 100 }, nativeWindowSettings) { })
             {
                 window.Run();
             }

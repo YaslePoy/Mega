@@ -23,6 +23,6 @@ namespace Mega
             return result;
         }
 
-        public const float G = 10f;
+        public const float G = 20f;
     }
 }
