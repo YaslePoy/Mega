@@ -22,7 +22,7 @@ namespace Mega.Video
     {
         public static Stopwatch sw;
         Player pl;
-        private World world;
+        private Chunk world;
         private float[] _vertices;
 
         private Dictionary<int, List<uint>> _indices;
@@ -76,7 +76,7 @@ namespace Mega.Video
             // We make the mouse cursor invisible and captured so we can have proper FPS-camera movement.
             CursorState = CursorState.Grabbed;
 
-            world = World.GenerateFlat(1, this);
+            world = Chunk.GenerateFlat(1, this);
 
             pl = new Player(_camera, world);
             world.player = pl;
@@ -225,7 +225,7 @@ namespace Mega.Video
             }
             pl.Moving = moveVec;
             world.Update(e.Time);
-            Title = _camera.Position.ToString() + " " + (1 / e.Time).ToString();
+            Title = pl.Position.ToString() + " " + (1 / e.Time).ToString();
 
         }
 

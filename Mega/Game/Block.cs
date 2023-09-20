@@ -84,13 +84,13 @@ namespace Mega.Game
 
             return result.ToArray();
         }
-        public List<RenderSurface> GetDrawingMesh(World world)
+        public List<RenderSurface> GetDrawingMesh(Chunk world)
         {
             var localBorder = LocalNeibs;
             List<RenderSurface> surfaces = new List<RenderSurface>();
             for (int i = 0; i < localBorder.Count(); i++)
             {
-                    if (!localBorder[i].IsInRange(0, World.Size.X))
+                    if (!localBorder[i].IsInRange(0, Chunk.Size.X))
                         continue;
                 if (world.Members.Get(localBorder[i]))
                     continue;

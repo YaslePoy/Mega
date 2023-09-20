@@ -12,8 +12,8 @@ namespace Mega.Game
     {
         public const float Growth = 1.75f;
         readonly Vector3 growthAdd = new Vector3(0, Growth, 0);
-        public const float WalkSpeed = 1.5f;
-        World world;
+        public const float WalkSpeed = 6f;
+        Chunk world;
         public Vector3i SelectedBlock;
         public Vector3i Cursor;
         public Camera Cam;
@@ -27,7 +27,7 @@ namespace Mega.Game
         {
             Cam.Position = Position + growthAdd;
         }
-        public Player(Camera camera, World world)
+        public Player(Camera camera, Chunk world)
         {
             Cam = camera;
             this.world = world;

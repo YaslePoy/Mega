@@ -9,7 +9,7 @@ namespace Testing
         static void Main(string[] args)
         {
             TextureHelper.LoadUV();
-            var w = World.GenerateFlat(1, null);
+            var w = Chunk.GenerateFlat(1, null);
             w.SetBlock(Vector3i.One * 2, 0);
         }
     }
