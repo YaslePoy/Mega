@@ -1,4 +1,5 @@
-﻿using OpenTK.Mathematics;
+﻿using Mega.Game;
+using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,5 +25,6 @@ namespace Mega
         }
 
         public const float G = 20f;
+        public static (Vector2i chunk, Vector3i block) ToWorldPath(this Vector3i vec) => (new Vector2i(vec.X / Chunk.Size.X - vec.X > 0 ? 0  : 1, vec.Z / Chunk.Size.Z - vec.Z > 0 ? 0 : 1), new Vector3i(vec.X % Chunk.Size.X, vec.Y, vec.Z % Chunk.Size.Z));
     }
 }

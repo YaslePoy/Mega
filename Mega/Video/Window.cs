@@ -22,7 +22,7 @@ namespace Mega.Video
     {
         public static Stopwatch sw;
         Player pl;
-        private Chunk world;
+        private World world;
         private float[] _vertices;
 
         private Dictionary<int, List<uint>> _indices;
@@ -55,9 +55,6 @@ namespace Mega.Video
         public Window(GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings)
             : base(gameWindowSettings, nativeWindowSettings)
         {
-            //ObjReader.ReadFile("Resources\\birch.obj", out
-            //    _indices, out _vertices);
-
         }
 
         protected override void OnLoad()
@@ -76,10 +73,14 @@ namespace Mega.Video
             // We make the mouse cursor invisible and captured so we can have proper FPS-camera movement.
             CursorState = CursorState.Grabbed;
 
-            world = Chunk.GenerateFlat(1, this);
+            var chunk = Chunk.Flat(1, new Vector2i(0, 0));
+            pl = new Player(_camera, chunk);
+            chunk.player = pl;
+            world = new World(pl, this, 1);
+            chunk.World = world;
 
-            pl = new Player(_camera, world);
-            world.player = pl;
+            world.SetChunk(chunk, 0);
+            world.UpdateView();
         }
 
         void GLInit()
