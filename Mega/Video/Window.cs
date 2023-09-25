@@ -75,12 +75,16 @@ namespace Mega.Video
 
             var chunk = Chunk.Flat(1, new Vector2i(0, 0));
             pl = new Player(_camera, chunk);
+            var nChnk = Chunk.Flat(1, new Vector2i(1, 0));
             chunk.player = pl;
             world = new World(pl, this, 1);
             chunk.World = world;
-
+            nChnk.World = world;
             world.SetChunk(chunk, 0);
-            world.UpdateView();
+            world.SetChunk(nChnk, 1);
+            world.DrawArea.UpdateBorder();
+            world.DrawArea.UpdateRenderSurface();
+            world.RefreshView();
         }
 
         void GLInit()

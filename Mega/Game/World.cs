@@ -23,10 +23,9 @@ namespace Mega.Game
         }
         public void SetChunk(Chunk chunk, int index)
         {
-            chunk.RebuildMesh();
             DrawArea.Chunks[index] = chunk;
         }
-        public void UpdateView()
+        public void RefreshView()
         {
             var sides = new List<RenderSurface>();
             foreach (var chunk in DrawArea.Chunks)
@@ -59,11 +58,9 @@ namespace Mega.Game
         }
         public void Update(double time)
         {
-
             UpdatePlayerPosition(time);
             UpdateSelector();
         }
-
         void UpdatePlayerPosition(double t)
         {
             var localG = Utils.G * t;
@@ -129,6 +126,7 @@ namespace Mega.Game
         }
         void UpdateSelector()
         {
+            return;
             if (Player == null) return;
             var viewDir = Player.View;
             Ray viewRay = new Ray(Player.ViewPoint, viewDir);

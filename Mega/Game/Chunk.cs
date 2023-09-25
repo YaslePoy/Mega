@@ -13,7 +13,7 @@ namespace Mega.Game
     public class Chunk
     {
         public Player player;
-        public static readonly Vector3i Size = new Vector3i(32, 64, 32);
+        public static readonly Vector3i Size = new Vector3i(32, 1024, 32);
         public Block[,,] data;
         public bool[,,] Border;
         public bool[,,] Members;
@@ -34,6 +34,7 @@ namespace Mega.Game
             BorderMembers = new bool[Size.X, Size.Y, Size.Z];
             MembersList = new List<Vector3i>();
             BorderMembersList = new List<Vector3i>();
+            
         }
 
         public Chunk(Vector2i location) : this()
@@ -43,17 +44,16 @@ namespace Mega.Game
         public static Chunk Flat(int level, Vector2i location)
         {
             Chunk result = new Chunk(location);
-            var chunkMove = location * Size.X;
-            var chunkEnd = location * (Size.X + 1);
+            var chunkMove = location * Size.Xz;
+            var chunkEnd = (location + Vector2i.One) * Size.Xz;
             var blocks = new List<Block>();
-            for (int i = chunkMove.X; i < chunkEnd.X + Size.X; i++)
+            for (int i = chunkMove.X; i < chunkEnd.X; i++)
             {
-                for (int j = chunkMove.Y; j < chunkEnd.Y + Size.Z; j++)
+                for (int j = chunkMove.Y; j < chunkEnd.Y; j++)
                 {
                     blocks.Add(new Block(new Vector3i(i, level, j), 0));
                 }
             }
-
             result.GenerateFromBlocks(blocks);
             return result;
         }
@@ -64,28 +64,21 @@ namespace Mega.Game
                 return;
             var block = new Block(location, blockId);
             data.Set(location, block);
-
-            add(block);
-            RebuildMesh();
-            World?.UpdateView();
         }
-
-
         void add(Block block)
         {
 
-            MembersList.Add(block.Position);
+            MembersList.Add(block.Position.InChunk());
             Members.Set(block.Position, true);
 
             Border.Set(block.Position, false);
             BorderMembers.Set(block.Position, true);
-            BorderMembersList.Add(block.Position);
-            var addingBorder = block.LocalNeibs;
+            BorderMembersList.Add(block.Position.InChunk());
+            var addingBorder = block.Adjacent;
 
             for (int i = 0; i < addingBorder.Length; i++)
                 TrySetBorder(addingBorder[i]);
         }
-
         void TrySetBorder(Vector3i location)
         {
             if (Members.Get(location))
@@ -93,7 +86,7 @@ namespace Mega.Game
             Border.Set(location, true);
             if (BorderMembers.Get(location))
             {
-                BorderMembersList.Remove(location);
+                BorderMembersList.Remove(location.InChunk());
             }
         }
         public void RebuildMesh()
@@ -105,42 +98,28 @@ namespace Mega.Game
             }
             Surface = sides.ToArray();
         }
-
         public void GenerateFromBlocks(List<Block> blocks)
         {
             foreach (var block in blocks)
             {
-                data.Set(block.Position, block);
-                Members.Set(block.Position, true);
-                MembersList.Add(block.Position);
+                data.Set(block.Position.InChunk(), block);
+                Members.Set(block.Position.InChunk(), true);
+                MembersList.Add(block.Position.InChunk());
             }
-            foreach (var member in blocks)
-            {
-                var neibs = member.LocalNeibs;
-                foreach (var neighbour in neibs)
-                {
-                    if (!IsSave(neighbour))
-                        continue;
-                    if (!Members.Get(neighbour))
-                        Border.Set(neighbour, true);
-                    else
-                    if (!BorderMembers.Get(neighbour))
-                    {
-                        BorderMembers.Set(neighbour, true);
-                        BorderMembersList.Add(neighbour);
-                    }
-                }
-            }
-            RebuildMesh();
+            //RebuildMesh();
         }
-
         public Block Get(Vector3i pos)
         {
             return data.Get(pos);
         }
-
-        
-
         bool IsSave(Vector3 pos) => ((Vector3i)(pos)).IsInRange(0, Size.X);
+
+        public void ClearInternalData()
+        {
+            Border = new bool[Size.X, Size.Y, Size.Z];
+            Members = new bool[Size.X, Size.Y, Size.Z];
+            BorderMembers = new bool[Size.X, Size.Y, Size.Z];
+            BorderMembersList.Clear();
+        }
     }
 }

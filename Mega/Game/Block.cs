@@ -9,17 +9,12 @@ using System.Threading.Tasks;
 
 namespace Mega.Game
 {
-
-    public enum BlockType
-    {
-        Air, Wood
-    }
     public class Block
     {
         private readonly Vector3i _noNeib = -Vector3i.One;
         Vector3i[] localNeibs;
         Vector3i posibleNeibs;
-        public Vector3i[] LocalNeibs => localNeibs == null ? GenerateNeis() : localNeibs;
+        public Vector3i[] Adjacent => localNeibs == null ? GenerateNeis() : localNeibs;
        
         public static readonly Vector3i[] Neibs = {
             Vector3i.UnitX, Vector3i.UnitY, Vector3i.UnitZ,
@@ -36,18 +31,15 @@ namespace Mega.Game
 
         public int ID;
         public Vector3i Position;
-        public BlockType Type;
 
         RenderSurface[] totalSurface;
         public Block()
         {
-            Type = BlockType.Air;
             totalSurface = new RenderSurface[0];
         }
 
         public Block(Vector3i pos, int id)
         {
-            Type = BlockType.Wood;
             Position = pos;
             ID = id;
 
@@ -86,21 +78,22 @@ namespace Mega.Game
         }
         public List<RenderSurface> GetDrawingMesh(Chunk world)
         {
-            var localBorder = LocalNeibs;
-            List<RenderSurface> surfaces = new List<RenderSurface>();
-            for (int i = 0; i < localBorder.Count(); i++)
-            {
-                    if (!localBorder[i].IsInRange(0, Chunk.Size.X))
-                        continue;
-                if (world.Members.Get(localBorder[i]))
-                    continue;
-                surfaces.Add(totalSurface[i]);
-            }
-            return surfaces;
+            //var localBorder = Adjacent;
+            //List<RenderSurface> surfaces = new List<RenderSurface>();
+            //for (int i = 0; i < localBorder.Count(); i++)
+            //{
+            //        if (!localBorder[i].IsInRange(0, Chunk.Size.X))
+            //            continue;
+            //    if (world.Members.Get(localBorder[i]))
+            //        continue;
+            //    surfaces.Add(totalSurface[i]);
+            //}
+
+            return totalSurface.ToList();
         }
         public override string ToString()
         {
-            return Type.ToString() + $"[{Position.X} {Position.Y} {Position.Z}]";
+            return $"[{Position.X} {Position.Y} {Position.Z}]";
         }
     }
 }
