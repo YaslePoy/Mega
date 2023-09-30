@@ -12,23 +12,24 @@ namespace Mega.Game
     {
         public Player Player;
         Window view;
-        public UnitedChunk DrawArea;
+        public UnitedChunk Area;
         //Chunk[] chunks;
         public readonly int RenderDistance;
         public World(Player player, Window view, int renderDistance)
         {
             Player = player;
             this.view = view;
-            DrawArea = new UnitedChunk((renderDistance * renderDistance + renderDistance) * 4 + 1);
+            Area = new UnitedChunk((renderDistance * renderDistance + renderDistance) * 4 + 1);
         }
         public void SetChunk(Chunk chunk, int index)
         {
-            DrawArea.Chunks[index] = chunk;
+            chunk.Root = Area;
+            Area.Chunks[index] = chunk;
         }
         public void RefreshView()
         {
             var sides = new List<RenderSurface>();
-            foreach (var chunk in DrawArea.Chunks)
+            foreach (var chunk in Area.Chunks)
             {
                 if (chunk is null) continue;
                 sides.AddRange(chunk.Surface);
@@ -63,7 +64,10 @@ namespace Mega.Game
         }
         void UpdatePlayerPosition(double t)
         {
+            if(Player.Jumping)
+                Console.WriteLine("test");
             var localG = Utils.G * t;
+
             var clearMove = Player.Moving * (float)(t * Player.WalkSpeed);
             var move2d = new Vector2();
 
@@ -72,74 +76,66 @@ namespace Mega.Game
             localFront.Normalize();
             move2d += localFront.Xz * clearMove.X;
             move2d += -Player.Cam.Right.Xz * clearMove.Y;
-            var move = new Vector3(move2d.X, 0, move2d.Y);
-            var playerBlock = Player.Position;
-            //var startPlayerBlock = (Vector3i)playerBlock;
-            //var nextPosition = player.Position + move;
-            //var nextPlayerBlock = (Vector3i)nextPosition;
-            if (Player.Jumping)
-                Console.WriteLine();
-            if (!DrawArea.GetMember((Vector3i)(Player.Position)))
-            {
-
-                Player.VerticalSpeed += (float)localG;
-
-            }
-            else
-            {
-                Player.VerticalSpeed = Player.Jumping ? -7 : 0;
-                move.Y = MathF.Round(Player.Position.Y) - Player.Position.Y;
-            }
-            move.Y -= Player.VerticalSpeed * (float)t;
+            var move = new Vector3(move2d.X, -(float)(localG * t), move2d.Y);
+            var playerPosition = Player.Position;
+            var playerBlock = (Vector3i)playerPosition;
             var nextPosition = Player.Position + move;
-            var plBlock = (Vector3i)Player.Position;
-            if (DrawArea.GetMember((Vector3i)(nextPosition)))
+
+            var nearBlocks = GetHorisontalBlocks(playerBlock);
+            nearBlocks.AddRange(GetHorisontalBlocks(playerBlock + Vector3i.UnitY));
+            if (Area.GetMember(playerBlock - Vector3i.UnitY))
+                nearBlocks.Add(Area.GetBlock(playerBlock - Vector3i.UnitY));
+            if (Area.GetMember(playerBlock + Vector3i.UnitY * 2))
+                nearBlocks.Add(Area.GetBlock(playerBlock + 2 * Vector3i.UnitY));
+            var collideList = nearBlocks.Select(i => i.GetCollider());
+
+            foreach (var collide in collideList)
             {
-                var sign = MathF.Sign(move.X);
-                float newX;
-                if (sign > 0)
-                {
-                    newX = playerBlock.X - float.Epsilon;
-                }
-                else
-                {
-                    newX = playerBlock.X + float.Epsilon;
-                }
-                move.X = move.X - (nextPosition.X - newX);
+                if (!collide.IsContains(nextPosition))
+                    continue;
+                collide.MoveToPossible(ref nextPosition, playerPosition);
             }
-            if (DrawArea.GetMember((Vector3i)(nextPosition)))
-            {
-                var sign = MathF.Sign(move.Z);
-                float newZ;
-                if (sign > 0)
-                {
-                    newZ = playerBlock.Z - float.Epsilon;
-                }
-                else
-                {
-                    newZ = playerBlock.Z + float.Epsilon;
-                }
-                move.Z = move.Z - (nextPosition.Z - newZ);
-            }
-            Player.Position += move;
+
+            Player.Position = nextPosition;
             Player.UpdateCamPosition();
+        }
+        public List<Block> GetHorisontalBlocks(Vector3i center)
+        {
+            var result = new List<Block>
+            {
+                Area.GetBlock(center),
+                Area.GetBlock(center + Vector3i.UnitX),
+                Area.GetBlock(center + Vector3i.UnitZ),
+                Area.GetBlock(center - Vector3i.UnitX),
+                Area.GetBlock(center - Vector3i.UnitZ),
+                Area.GetBlock(center + Vector3i.One),
+                Area.GetBlock(center + Vector3i.UnitZ - Vector3i.UnitX),
+                Area.GetBlock(center - Vector3i.One),
+                Area.GetBlock(center - Vector3i.UnitZ + Vector3i.UnitX)
+            };
+            result.RemoveAll(i => i is null);
+            return result;
         }
         void UpdateSelector()
         {
-            return;
             if (Player == null) return;
             var viewDir = Player.View;
             Ray viewRay = new Ray(Player.ViewPoint, viewDir);
 
             foreach (var block in viewRay.GetCrossBlocks(5))
             {
-                if (!DrawArea.GetMember(block.block))
+                if (!Area.GetMember(block.block))
                     continue;
                 if (Player.SelectedBlock != block.block)
                     Player.SelectedBlock = block.block;
                 Player.Cursor = block.block - block.side;
                 break;
             }
+        }
+
+        public void SetBlock(Block block)
+        {
+            Area.SetBlock(block);
         }
     }
 }

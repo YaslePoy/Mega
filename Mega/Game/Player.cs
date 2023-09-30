@@ -13,7 +13,7 @@ namespace Mega.Game
         public const float Growth = 1.75f;
         readonly Vector3 growthAdd = new Vector3(0, Growth, 0);
         public const float WalkSpeed = 6f;
-        Chunk world;
+        World world;
         public Vector3i SelectedBlock;
         public Vector3i Cursor;
         public Camera Cam;
@@ -27,7 +27,7 @@ namespace Mega.Game
         {
             Cam.Position = Position + growthAdd;
         }
-        public Player(Camera camera, Chunk world)
+        public Player(Camera camera, World world)
         {
             Cam = camera;
             this.world = world;
@@ -38,7 +38,8 @@ namespace Mega.Game
             try
             {
                 Window.sw.Restart();
-                world.SetBlock(Cursor, 1);
+                var newBlock = new Block(Cursor, 1);
+                world.SetBlock(newBlock);
                 Window.sw.Stop();
                 Console.WriteLine("Change time: " + Window.sw.Elapsed.Microseconds);
             }

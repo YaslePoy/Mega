@@ -21,15 +21,17 @@ namespace Mega.Game
         public Block GetBlock(Vector3i position)
         {
             var path = position.ToWorldPath();
-            var chunk = Chunks.FirstOrDefault(i => i.Location == path.chunk);
+            if (!path.block.IsInChunk())
+                return null;
+            var chunk = Chunks.Where(i => i is not null).FirstOrDefault(i => i.Location == path.chunk);
             if (chunk == null)
                 return null;
             return chunk.data.Get(path.block);
         }
 
-        public void SetBlock(Vector3i position, Block block)
+        public void SetBlock(Block block)
         {
-            var path = position.ToWorldPath();
+            var path = block.Position.ToWorldPath();
             var chunk = Chunks.FirstOrDefault(i => i.Location == path.chunk);
             if (chunk == null)
                 return;
@@ -43,6 +45,8 @@ namespace Mega.Game
         public bool GetBorder(Vector3i position)
         {
             var path = position.ToWorldPath();
+            if (!path.block.IsInChunk())
+                return false;
             var chunk = Chunks.FirstOrDefault(i => i.Location == path.chunk);
             if (chunk == null)
                 return false;
@@ -59,6 +63,8 @@ namespace Mega.Game
         public bool GetMember(Vector3i position)
         {
             var path = position.ToWorldPath();
+            if (!path.block.IsInChunk())
+                return false;
             var chunk = Chunks.Where(i => i is not null).FirstOrDefault(i => i.Location == path.chunk);
             if (chunk == null)
                 return false;
@@ -74,7 +80,9 @@ namespace Mega.Game
         }
         public bool GetBorderMember(Vector3i position)
         {
-            var path = position.ToWorldPath();
+            var path = position.ToWorldPath(); 
+            if (!path.block.IsInChunk())
+                return false;
             var chunk = Chunks.FirstOrDefault(i => i.Location == path.chunk);
             if (chunk == null)
                 return false;

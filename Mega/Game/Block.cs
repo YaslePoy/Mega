@@ -11,11 +11,9 @@ namespace Mega.Game
 {
     public class Block
     {
-        private readonly Vector3i _noNeib = -Vector3i.One;
         Vector3i[] localNeibs;
-        Vector3i posibleNeibs;
         public Vector3i[] Adjacent => localNeibs == null ? GenerateNeis() : localNeibs;
-       
+       CubicCollider collider;
         public static readonly Vector3i[] Neibs = {
             Vector3i.UnitX, Vector3i.UnitY, Vector3i.UnitZ,
             -Vector3i.UnitX, -Vector3i.UnitY, -Vector3i.UnitZ
@@ -28,8 +26,8 @@ namespace Mega.Game
             new[] { new (0, 0, 0), new (1, 0, 0), new (1, 0, 1), new Vector3(0, 0, 1) },
             new[] { new (0, 0, 0), new (1, 0, 0), new (1, 1, 0), new Vector3(0, 1, 0) }
         };
-
-        public int ID;
+        public virtual string ID => "";
+        public int IDCode;
         public Vector3i Position;
 
         RenderSurface[] totalSurface;
@@ -41,7 +39,7 @@ namespace Mega.Game
         public Block(Vector3i pos, int id)
         {
             Position = pos;
-            ID = id;
+            IDCode = id;
 
             GenerateSurface();
         }
@@ -49,12 +47,12 @@ namespace Mega.Game
         void GenerateSurface()
         {
             totalSurface = new RenderSurface[6];
-            totalSurface[0] = new RenderSurface(MeshSides[0], TextureHelper.GetTextureCoords(ID, 0), Position, ID);
-            totalSurface[1] = new RenderSurface(MeshSides[1], TextureHelper.GetTextureCoords(ID, 1), Position, ID);
-            totalSurface[2] = new RenderSurface(MeshSides[2], TextureHelper.GetTextureCoords(ID, 2), Position, ID);
-            totalSurface[3] = new RenderSurface(MeshSides[3], TextureHelper.GetTextureCoords(ID, 3), Position, ID);
-            totalSurface[4] = new RenderSurface(MeshSides[4], TextureHelper.GetTextureCoords(ID, 4), Position, ID);
-            totalSurface[5] = new RenderSurface(MeshSides[5], TextureHelper.GetTextureCoords(ID, 5), Position, ID);
+            totalSurface[0] = new RenderSurface(MeshSides[0], TextureHelper.GetTextureCoords(IDCode, 0), Position, IDCode);
+            totalSurface[1] = new RenderSurface(MeshSides[1], TextureHelper.GetTextureCoords(IDCode, 1), Position, IDCode);
+            totalSurface[2] = new RenderSurface(MeshSides[2], TextureHelper.GetTextureCoords(IDCode, 2), Position, IDCode);
+            totalSurface[3] = new RenderSurface(MeshSides[3], TextureHelper.GetTextureCoords(IDCode, 3), Position, IDCode);
+            totalSurface[4] = new RenderSurface(MeshSides[4], TextureHelper.GetTextureCoords(IDCode, 4), Position, IDCode);
+            totalSurface[5] = new RenderSurface(MeshSides[5], TextureHelper.GetTextureCoords(IDCode, 5), Position, IDCode);
         }
 
         public Vector3i[] GenerateNeis()
@@ -76,20 +74,25 @@ namespace Mega.Game
 
             return result.ToArray();
         }
-        public List<RenderSurface> GetDrawingMesh(Chunk world)
+        public List<RenderSurface> GetDrawingMesh(UnitedChunk area)
         {
-            //var localBorder = Adjacent;
-            //List<RenderSurface> surfaces = new List<RenderSurface>();
-            //for (int i = 0; i < localBorder.Count(); i++)
-            //{
-            //        if (!localBorder[i].IsInRange(0, Chunk.Size.X))
-            //            continue;
-            //    if (world.Members.Get(localBorder[i]))
-            //        continue;
-            //    surfaces.Add(totalSurface[i]);
-            //}
-
-            return totalSurface.ToList();
+            var localBorder = Adjacent;
+            List<RenderSurface> surfaces = new List<RenderSurface>();
+            var coliders = new bool[6];
+            for (int i = 0; i < localBorder.Count(); i++)
+            {
+                var m = area.GetMember(localBorder[i]);
+                if (m)
+                    continue;
+                coliders[i] = !m;
+                surfaces.Add(totalSurface[i]);
+            }
+            collider = new CubicCollider(Position, coliders);
+            return surfaces;
+        }
+        public Collider GetCollider()
+        {
+            return collider;
         }
         public override string ToString()
         {

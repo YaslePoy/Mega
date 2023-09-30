@@ -35,9 +35,6 @@ namespace Mega.Video
 
         private Shader _shader;
 
-        private Texture _texture;
-        int total;
-
 
         // The view and projection matrices have been removed as we don't need them here anymore.
         // They can now be found in the new camera class.
@@ -68,7 +65,7 @@ namespace Mega.Video
 
             // We initialize the camera so that it is 3 units back from where the rectangle is.
             // We also give it the proper aspect ratio.
-            _camera = new Camera(new Vector3(3, 10, 3), Size.X / (float)Size.Y);
+            _camera = new Camera(new Vector3(2.5f, 4, 2.5f), Size.X / (float)Size.Y);
 
             // We make the mouse cursor invisible and captured so we can have proper FPS-camera movement.
             CursorState = CursorState.Grabbed;
@@ -78,12 +75,10 @@ namespace Mega.Video
             var nChnk = Chunk.Flat(1, new Vector2i(1, 0));
             chunk.player = pl;
             world = new World(pl, this, 1);
-            chunk.World = world;
-            nChnk.World = world;
             world.SetChunk(chunk, 0);
             world.SetChunk(nChnk, 1);
-            world.DrawArea.UpdateBorder();
-            world.DrawArea.UpdateRenderSurface();
+            world.Area.UpdateBorder();
+            world.Area.UpdateRenderSurface();
             world.RefreshView();
         }
 
@@ -121,7 +116,7 @@ namespace Mega.Video
         protected override void OnRenderFrame(FrameEventArgs e)
         {
             base.OnRenderFrame(e);
-
+            
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
             GL.BindVertexArray(_vertexArrayObject);
@@ -138,6 +133,7 @@ namespace Mega.Video
                 offset += currentDrawArray.Count;
             }
 
+            Title = pl.Position.ToString() + " " + (1 / e.Time).ToString();
 
             SwapBuffers();
         }
@@ -149,7 +145,6 @@ namespace Mega.Video
             _indices = path;
             GL.BufferData(BufferTarget.ArrayBuffer, _vertices.Length * sizeof(float), _vertices, BufferUsageHint.DynamicDraw);
             var inds = _indices.Values.ToList().SumList();
-            total = inds.Count;
             GL.BufferData(BufferTarget.ElementArrayBuffer, inds.Count * sizeof(uint), inds.ToArray(), BufferUsageHint.DynamicDraw);
         }
         protected override void OnUpdateFrame(FrameEventArgs e)
@@ -230,7 +225,6 @@ namespace Mega.Video
             }
             pl.Moving = moveVec;
             world.Update(e.Time);
-            Title = pl.Position.ToString() + " " + (1 / e.Time).ToString();
 
         }
 

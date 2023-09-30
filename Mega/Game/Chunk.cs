@@ -21,7 +21,7 @@ namespace Mega.Game
         public List<Vector3i> MembersList;
         public List<Vector3i> BorderMembersList;
         public readonly Vector2i Location;
-        public World World;
+        public UnitedChunk Root;
 
 
         public RenderSurface[] Surface;
@@ -94,7 +94,7 @@ namespace Mega.Game
             var sides = new List<RenderSurface>();
             foreach (var borderBlock in BorderMembersList)
             {
-                sides.AddRange(data.Get(borderBlock).GetDrawingMesh(this));
+                sides.AddRange(data.Get(borderBlock).GetDrawingMesh(Root));
             }
             Surface = sides.ToArray();
         }

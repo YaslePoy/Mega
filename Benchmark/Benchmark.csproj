@@ -13,8 +13,11 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>    
   <ItemGroup>
-    <PackageReference Include="BenchmarkDotNet" Version="0.13.1" />
-    <PackageReference Include="BenchmarkDotNet.Diagnostics.Windows" Version="0.13.1" />
-    <PackageReference Include="OpenTK" Version="4.8.0" />
+    <PackageReference Include="OpenTK" Version="4.8.1" />
+  </ItemGroup>    
+  <ItemGroup>
+    <Reference Include="EasyBenchmark">
+      <HintPath>..\..\EasyBenchmark\EasyBenchmark\bin\Release\net7.0\publish\EasyBenchmark.dll</HintPath>
+    </Reference>
   </ItemGroup>  
 </Project>
