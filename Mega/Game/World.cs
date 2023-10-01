@@ -152,7 +152,12 @@ namespace Mega.Game
         {
             Area.SetBlock(block);
             Area.UpdateBorder();
+
+            Window.sw.Restart();
+
             Area.UpdateRenderSurface();
+            Window.sw.Stop();
+            var t = Window.sw.Elapsed;
             RefreshView();
         }
     }

@@ -33,7 +33,7 @@ namespace Mega.Game
             BorderMembers = new bool[Size.X, Size.Y, Size.Z];
             MembersList = new List<Vector3i>();
             BorderMembersList = new List<Vector3i>();
-            
+
         }
 
         public Chunk(Vector2i location) : this()
@@ -91,10 +91,20 @@ namespace Mega.Game
         public void RebuildMesh()
         {
             var sides = new List<RenderSurface>();
-            foreach (var borderBlock in BorderMembersList)
+            object l = false;
+            Parallel.ForEach(BorderMembersList, i =>
             {
-                sides.AddRange(data.Get(borderBlock).GetDrawingMesh(Root));
-            }
+                var s = data.Get(i).GetDrawingMesh(Root);
+                lock (l)
+                {
+                    sides.AddRange(s);
+
+                }
+            });
+            //foreach (var borderBlock in BorderMembersList)
+            //{
+            //    sides.AddRange(data.Get(borderBlock).GetDrawingMesh(Root));
+            //}
             Surface = sides.ToArray();
         }
         public void GenerateFromBlocks(List<Block> blocks)
