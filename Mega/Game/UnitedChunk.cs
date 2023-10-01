@@ -36,6 +36,9 @@ namespace Mega.Game
             if (chunk == null)
                 return;
             chunk.data.Set(path.block, block);
+            chunk.Members.Set(path.block, true);
+            chunk.MembersList.Add(path.block);
+             
         }
         public Chunk GetChunkByLocation(Vector2i location)
         {

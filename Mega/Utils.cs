@@ -40,5 +40,7 @@ namespace Mega
                                                                 position.Y >= 0 && position.Y < Chunk.Size.Y &&
                                                                 position.Z >= 0 && position.Z < Chunk.Size.Z;
         public static Sys.Vector3 ToSys(this Vector3 otk) => new Sys.Vector3(otk.X, otk.Y, otk.Z);
+
+        public static float Sum(this Vector3 vector) => vector.X + vector.Y + vector.Z;
     }
 }

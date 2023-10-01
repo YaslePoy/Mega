@@ -17,6 +17,8 @@ namespace Mega.Game
         }
         public CubicCollider(Vector3 position, bool[] verify)
         {
+            if (position == Vector3.One)
+                Console.WriteLine();
             Position = position;
             var limits = Block.MeshSides;
             var normals = Block.Neibs;
@@ -25,31 +27,36 @@ namespace Mega.Game
             for (int i = 0; i < 6; i++)
             {
                 if (verify[i])
-                    planes[j++] = new LimitedPlane(normals[i], limits[i].Select(i => i * position).ToArray());
+                    planes[j++] = new LimitedPlane(normals[i], limits[i].Select(i => i + position).ToArray());
             }
         }
-        public override bool IsContains(Vector3 point)
+        public override VolumeMembership GetMembership(Vector3 point)
         {
-            return point.IsInRange(Position, Position + Vector3.One);
+            if(point.IsInRange(Position, Position + Vector3.One))
+            {
+                if (point.X == MathF.Truncate(point.X) || point.Y == MathF.Truncate(point.Y) || point.Z == MathF.Truncate(point.Z))
+                    return VolumeMembership.Border;
+                return VolumeMembership.Into;
+            }
+            return VolumeMembership.Out;
         }
 
-        public override bool MoveToPossible(ref Vector3 nextPt, Vector3 startPt)
+        public override bool MoveToPossible(Vector3 startPt, Vector3 move, out Vector3 nextPosition)
         {
-            var delta = nextPt - startPt;
-            var checkCol = planes.Where(i => Vector3.Dot(i.Normal, delta) > 0).ToArray();
-            var deltaLen = delta.LengthSquared;
+            var checkCol = planes.Where(i => -Vector3.Dot(i.Normal, move) > 0).ToArray();
+            nextPosition = startPt;
             foreach (var col in checkCol)
             {
-                var mul = col.Normal * delta;
-                var t = -(mul.X + mul.Y + mul.Z + col.plane.D);
-                var projection = (col.Normal * t + nextPt).Round(2);
-                if (IsContains(projection) && MathF.Round(deltaLen, 2) == MathF.Round((projection - nextPt).LengthSquared + (projection - startPt).LengthSquared))
-                {
-                    nextPt = projection;
-                    return true;
-                }
+                var t = -((Vector3.Dot(col.Normal, startPt) - col.plane.D) / Vector3.Dot(col.Normal, move));
+                if (t < 0 || t > 1)
+                    continue;
+                if (t != 0)
+                    nextPosition = startPt + move * t;
+                return true;
             }
             return false;
         }
     }
+
+
 }

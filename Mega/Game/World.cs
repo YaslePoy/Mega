@@ -10,16 +10,18 @@ namespace Mega.Game
 {
     public class World
     {
+        public const double G = 15d;
+        Window _view;
+
         public Player Player;
-        Window view;
         public UnitedChunk Area;
-        //Chunk[] chunks;
         public readonly int RenderDistance;
         public World(Player player, Window view, int renderDistance)
         {
             Player = player;
-            this.view = view;
+            this._view = view;
             Area = new UnitedChunk((renderDistance * renderDistance + renderDistance) * 4 + 1);
+            player.world = this;
         }
         public void SetChunk(Chunk chunk, int index)
         {
@@ -55,7 +57,7 @@ namespace Mega.Game
 
                 indOffset += 4;
             }
-            view?.UpdateMesh(vertexArray, orders);
+            _view?.UpdateMesh(vertexArray, orders);
         }
         public void Update(double time)
         {
@@ -64,10 +66,9 @@ namespace Mega.Game
         }
         void UpdatePlayerPosition(double t)
         {
-            if(Player.Jumping)
+            if (Player.Jumping)
                 Console.WriteLine("test");
-            var localG = Utils.G * t;
-
+            var localG = G * t;
             var clearMove = Player.Moving * (float)(t * Player.WalkSpeed);
             var move2d = new Vector2();
 
@@ -76,27 +77,45 @@ namespace Mega.Game
             localFront.Normalize();
             move2d += localFront.Xz * clearMove.X;
             move2d += -Player.Cam.Right.Xz * clearMove.Y;
-            var move = new Vector3(move2d.X, -(float)(localG * t), move2d.Y);
+
             var playerPosition = Player.Position;
+
+
+
+            var move = new Vector3(move2d.X, 0, move2d.Y);
             var playerBlock = (Vector3i)playerPosition;
-            var nextPosition = Player.Position + move;
 
             var nearBlocks = GetHorisontalBlocks(playerBlock);
             nearBlocks.AddRange(GetHorisontalBlocks(playerBlock + Vector3i.UnitY));
             if (Area.GetMember(playerBlock - Vector3i.UnitY))
+            {
                 nearBlocks.Add(Area.GetBlock(playerBlock - Vector3i.UnitY));
+                if (nearBlocks.Last().GetCollider().GetMembership(playerPosition) != Collider.VolumeMembership.Border)
+                    move.Y = -(float)(localG * t) + Player.VerticalSpeed;
+                else if (Player.Jumping)
+                {
+                    move.Y = (float)(7 * t);
+                }
+            }
+            else
+                move.Y = -(float)(localG * t) + Player.VerticalSpeed;
+
             if (Area.GetMember(playerBlock + Vector3i.UnitY * 2))
                 nearBlocks.Add(Area.GetBlock(playerBlock + 2 * Vector3i.UnitY));
-            var collideList = nearBlocks.Select(i => i.GetCollider());
-
+            var collideList = nearBlocks.Select(i => i.GetCollider()).ToList();
+            Vector3 nextPosition = new Vector3();
+            bool changed = false;
             foreach (var collide in collideList)
             {
-                if (!collide.IsContains(nextPosition))
-                    continue;
-                collide.MoveToPossible(ref nextPosition, playerPosition);
+                if (collide.MoveToPossible(playerPosition, move, out nextPosition))
+                {
+                    changed = true; break;
+                }
             }
-
+            if (!changed)
+                nextPosition = playerPosition + move;
             Player.Position = nextPosition;
+            Player.VerticalSpeed = nextPosition.Y - playerPosition.Y;
             Player.UpdateCamPosition();
         }
         public List<Block> GetHorisontalBlocks(Vector3i center)
@@ -108,10 +127,6 @@ namespace Mega.Game
                 Area.GetBlock(center + Vector3i.UnitZ),
                 Area.GetBlock(center - Vector3i.UnitX),
                 Area.GetBlock(center - Vector3i.UnitZ),
-                Area.GetBlock(center + Vector3i.One),
-                Area.GetBlock(center + Vector3i.UnitZ - Vector3i.UnitX),
-                Area.GetBlock(center - Vector3i.One),
-                Area.GetBlock(center - Vector3i.UnitZ + Vector3i.UnitX)
             };
             result.RemoveAll(i => i is null);
             return result;
@@ -136,6 +151,9 @@ namespace Mega.Game
         public void SetBlock(Block block)
         {
             Area.SetBlock(block);
+            Area.UpdateBorder();
+            Area.UpdateRenderSurface();
+            RefreshView();
         }
     }
 }

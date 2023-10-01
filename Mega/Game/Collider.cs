@@ -9,7 +9,11 @@ namespace Mega.Game
 {
     public abstract class Collider
     {
-        public abstract bool IsContains(Vector3 point);
-        public abstract bool MoveToPossible(ref Vector3 nextPt, Vector3 startPt);
+        public abstract VolumeMembership GetMembership(Vector3 point);
+        public abstract bool MoveToPossible(Vector3 startPosition, Vector3 moveVector, out Vector3 nextPosition);
+        public enum VolumeMembership
+        {
+            Out, Border, Into
+        }
     }
 }

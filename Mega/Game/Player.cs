@@ -13,7 +13,7 @@ namespace Mega.Game
         public const float Growth = 1.75f;
         readonly Vector3 growthAdd = new Vector3(0, Growth, 0);
         public const float WalkSpeed = 6f;
-        World world;
+        public World world;
         public Vector3i SelectedBlock;
         public Vector3i Cursor;
         public Camera Cam;
@@ -21,16 +21,16 @@ namespace Mega.Game
         public float VerticalSpeed;
         public bool Jumping;
         public Vector3 Position;
+
         public Vector3 View => Cam.Front;
         public Vector3 ViewPoint => Position + growthAdd;
         public void UpdateCamPosition()
         {
             Cam.Position = Position + growthAdd;
         }
-        public Player(Camera camera, World world)
+        public Player(Camera camera)
         {
             Cam = camera;
-            this.world = world;
             Position = camera.Position;
         }
         public void PlaceBlock()

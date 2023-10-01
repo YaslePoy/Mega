@@ -23,7 +23,6 @@ namespace Mega.Game
         public readonly Vector2i Location;
         public UnitedChunk Root;
 
-
         public RenderSurface[] Surface;
         public Chunk()
         {

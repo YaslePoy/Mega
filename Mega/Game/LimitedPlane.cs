@@ -15,8 +15,8 @@ namespace Mega.Game
         public Sys.Plane plane;
         public LimitedPlane(Vector3 normal, Vector3[] limits)
         {
-            var fp = limits[0] * normal;
-            plane = new Sys.Plane(normal.ToSys(), fp.X + fp.Y + fp.Z);
+            plane = new Sys.Plane(normal.ToSys(),
+                Vector3.Dot(normal, limits[0]));
             Normal = normal;
             Limits = limits;
         }
