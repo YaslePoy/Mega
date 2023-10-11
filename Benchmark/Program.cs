@@ -1,10 +1,14 @@
+﻿using EasyBenchmark;
 
 namespace Benchmark
 {
-    public class Program
+    internal class Program
     {
-        public static void Main(string[] args)
+        static void Main(string[] args)
         {
+            Runner<Test> runner = new Runner<Test>();
+            runner.RunBenchmark();
+            Console.ReadLine();
         }
     }
 }
