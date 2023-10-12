@@ -9,11 +9,19 @@ namespace Mega.Game
 {
     public class CubicCollider : Collider
     {
-        LimitedPlane[] planes;
-        public readonly Vector3 Position;
+        public static readonly LimitedPlane[] OneCube = new LimitedPlane[]{
+            new LimitedPlane(Vector3.UnitX, Block.MeshSides[0], OrderMode.Circle),
+            new LimitedPlane(Vector3.UnitY, Block.MeshSides[1], OrderMode.Circle),
+            new LimitedPlane(Vector3.UnitZ, Block.MeshSides[2], OrderMode.Circle),
+            new LimitedPlane(-Vector3.UnitX, Block.MeshSides[3], OrderMode.Circle),
+            new LimitedPlane(-Vector3.UnitY, Block.MeshSides[4], OrderMode.Circle),
+            new LimitedPlane(-Vector3.UnitZ, Block.MeshSides[5], OrderMode.Circle),
+        };
+        public Vector3 Position;
 
         public CubicCollider(Vector3 position) : this(position, new bool[] { true, true, true, true, true, true })
         {
+
         }
         public CubicCollider(Vector3 position, bool[] verify)
         {
@@ -22,39 +30,16 @@ namespace Mega.Game
             Position = position;
             var limits = Block.MeshSides;
             var normals = Block.Neibs;
-            planes = new LimitedPlane[verify.Count(i => i)];
+            sides = new LimitedPlane[verify.Count(i => i)];
             int j = 0;
             for (int i = 0; i < 6; i++)
             {
                 if (verify[i])
-                    planes[j++] = new LimitedPlane(normals[i], limits[i].Select(i => i + position).ToArray());
+                    sides[j++] = OneCube[i] + position;
             }
-        }
-        public override VolumeMembership GetMembership(Vector3 point)
-        {
-            if(point.IsInRange(Position, Position + Vector3.One))
-            {
-                if (point.X == MathF.Truncate(point.X) || point.Y == MathF.Truncate(point.Y) || point.Z == MathF.Truncate(point.Z))
-                    return VolumeMembership.Border;
-                return VolumeMembership.Into;
-            }
-            return VolumeMembership.Out;
-        }
-
-        public override bool MoveToPossible(Vector3 startPt, Vector3 move, out Vector3 nextPosition)
-        {
-            var checkCol = planes.Where(i => -Vector3.Dot(i.Normal, move) > 0).ToArray();
-            nextPosition = startPt;
-            foreach (var col in checkCol)
-            {
-                var t = -((Vector3.Dot(col.Normal, startPt) - col.plane.D) / Vector3.Dot(col.Normal, move));
-                if (t < 0 || t > 1)
-                    continue;
-                if (t != 0)
-                    nextPosition = startPt + move * t;
-                return true;
-            }
-            return false;
+            var vts = new List<Vector3>();
+            sides.ToList().ForEach(side => vts.AddRange(side.Limits));
+            Vertexes = vts.Distinct().ToArray();
         }
     }
 

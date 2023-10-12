@@ -1,4 +1,5 @@
-﻿using Mega.Game;
+﻿using Mega;
+using Mega.Game;
 using Mega.Video;
 using OpenTK.Mathematics;
 using System.Collections;
@@ -9,14 +10,10 @@ namespace Testing
     {
         static void Main(string[] args)
         {
-            //TextureHelper.LoadUV();
-            //var w = Chunk.Flat(1, null);
-            //w.SetBlock(Vector3i.One * 2, 0);
-            BitArray ba = new BitArray(new int[] {5});
-            foreach (bool i in ba)
-            {
-                Console.WriteLine(i);
-            }
+            var n = new Vector3(1, 0, 3);
+            var vec = new Vector3(-1, 4, 2);
+            var newVec = GeometricEngine.VectorToPlaneProjection(n, vec, true);
+            Console.WriteLine(newVec);
         }
     }
 }

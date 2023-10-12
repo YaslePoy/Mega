@@ -12,6 +12,8 @@ namespace Mega.Video
     {
         public readonly int Handle;
 
+        byte[] data;
+        public ImageResult image;
         public static Texture LoadFromFile(string path)
         {
             // Generate handle
@@ -26,12 +28,12 @@ namespace Mega.Video
             // OpenGL has it's texture origin in the lower left corner instead of the top left corner,
             // so we tell StbImageSharp to flip the image when loading.
             StbImage.stbi_set_flip_vertically_on_load(1);
-
             // Here we open a stream to the file and pass it to StbImageSharp to load.
+            ImageResult i = null;
             using (Stream stream = File.OpenRead(path))
             {
                 ImageResult image = ImageResult.FromStream(stream, ColorComponents.RedGreenBlueAlpha);
-
+                i = image;
                 // Now that our pixels are prepared, it's time to generate a texture. We do this with GL.TexImage2D.
                 // Arguments:
                 //   The type of texture we're generating. There are various different types of textures, but the only one we need right now is Texture2D.
@@ -70,7 +72,7 @@ namespace Mega.Video
             // Here is an example of mips in action https://en.wikipedia.org/wiki/File:Mipmap_Aliasing_Comparison.png
             GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
 
-            return new Texture(handle);
+            return new Texture(handle) { image = i };
         }
 
         public Texture(int glHandle)
@@ -86,6 +88,17 @@ namespace Mega.Video
         {
             GL.ActiveTexture(unit);
             GL.BindTexture(TextureTarget.Texture2D, Handle);
+        }
+        public void Update()
+        {
+            Use(TextureUnit.Texture0);
+            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, image.Width, image.Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, image.Data);
+            //GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
+            //GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
+            //GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
+            //GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
+            //GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
+
         }
     }
 }

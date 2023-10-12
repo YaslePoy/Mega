@@ -2,6 +2,7 @@
 using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -44,6 +45,10 @@ namespace Mega.Game
                 Console.WriteLine("Change time: " + Window.sw.Elapsed.Microseconds);
             }
             catch { }
+        }
+        public RotatableCollider GetCollider()
+        {
+            return null;
         }
     }
 }

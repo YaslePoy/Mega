@@ -40,7 +40,8 @@ namespace Mega.Video
 
         public float[] GetRaw()
         {
-
+            if(raw != null) 
+                return raw;
             var ret = new float[_vts.Length * 5];
             int offset = 0;
             for (int i = 0; i < _vts.Length; i++)
@@ -53,7 +54,8 @@ namespace Mega.Video
                 ret[offset + 4] = _vts[i].Item2.Y;
                 offset += 5;
             }
-            return ret;
+            raw = ret;
+            return raw;
         }
     }
 }

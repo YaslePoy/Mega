@@ -20,6 +20,7 @@ namespace Mega.Video
     // as if the view itself was moved.
     public class Window : GameWindow
     {
+        public Shader edgeShader;
         public static Stopwatch sw;
         Player pl;
         private World world;
@@ -102,7 +103,8 @@ namespace Mega.Video
 
             _shader = new Shader("Shaders/shader.vert", "Shaders/shader.frag");
             _shader.Use();
-
+            //edgeShader = new Shader("Shaders/shader.vert", "Shaders/edge.frag");
+            //edgeShader.Use();
             var vertexLocation = _shader.GetAttribLocation("aPosition");
             GL.EnableVertexAttribArray(vertexLocation);
             GL.VertexAttribPointer(vertexLocation, 3, VertexAttribPointerType.Float, false, 5 * sizeof(float), 0);
@@ -124,6 +126,7 @@ namespace Mega.Video
             _shader.SetMatrix4("view", _camera.GetViewMatrix());
             _shader.SetMatrix4("projection", _camera.GetProjectionMatrix());
             int offset = 0;
+            //_shader.Use();
             foreach (var tex in _indices)
             {
                 setTexture(TextureHelper.TotalUVMaps[tex.Key].tex);
@@ -132,7 +135,6 @@ namespace Mega.Video
 
                 offset += currentDrawArray.Count;
             }
-
             Title = pl.Position.ToString() + " " + (Math.Round(1 / e.Time, 1)).ToString();
 
             SwapBuffers();

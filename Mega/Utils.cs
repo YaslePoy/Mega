@@ -42,5 +42,6 @@ namespace Mega
         public static Sys.Vector3 ToSys(this Vector3 otk) => new Sys.Vector3(otk.X, otk.Y, otk.Z);
 
         public static float Sum(this Vector3 vector) => vector.X + vector.Y + vector.Z;
+        public static float Sum(this Vector4 vector) => vector.X + vector.Y + vector.Z + vector.W;
     }
 }

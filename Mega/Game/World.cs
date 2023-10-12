@@ -10,7 +10,7 @@ namespace Mega.Game
 {
     public class World
     {
-        public const double G = 15d;
+        public const double G = 10d;
         Window _view;
 
         public Player Player;
@@ -26,12 +26,12 @@ namespace Mega.Game
         public void SetChunk(Chunk chunk, int index)
         {
             chunk.Root = Area;
-            Area.Chunks[index] = chunk;
+            Area.AddChunk(chunk);
         }
         public void RefreshView()
         {
             var sides = new List<RenderSurface>();
-            foreach (var chunk in Area.Chunks)
+            foreach (var chunk in Area.Chunks.Values)
             {
                 if (chunk is null) continue;
                 sides.AddRange(chunk.Surface);
@@ -90,12 +90,12 @@ namespace Mega.Game
             if (Area.GetMember(playerBlock - Vector3i.UnitY))
             {
                 nearBlocks.Add(Area.GetBlock(playerBlock - Vector3i.UnitY));
-                if (nearBlocks.Last().GetCollider().GetMembership(playerPosition) != Collider.VolumeMembership.Border)
-                    move.Y = -(float)(localG * t) + Player.VerticalSpeed;
-                else if (Player.Jumping)
-                {
-                    move.Y = (float)(7 * t);
-                }
+                //if (nearBlocks.Last().GetCollider().GetMembership(playerPosition) != Collider.VolumeMembership.Border)
+                //    move.Y = -(float)(localG * t) + Player.VerticalSpeed;
+                //else if (Player.Jumping)
+                //{
+                //    move.Y = (float)(7 * t);
+                //}
             }
             else
                 move.Y = -(float)(localG * t) + Player.VerticalSpeed;
@@ -107,10 +107,10 @@ namespace Mega.Game
             bool changed = false;
             foreach (var collide in collideList)
             {
-                if (collide.MoveToPossible(playerPosition, move, out nextPosition))
-                {
-                    changed = true; break;
-                }
+                //if (collide.MoveToPossible(playerPosition, move, out nextPosition))
+                //{
+                //    changed = true; break;
+                //}
             }
             if (!changed)
                 nextPosition = playerPosition + move;

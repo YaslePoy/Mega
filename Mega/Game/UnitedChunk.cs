@@ -10,20 +10,24 @@ namespace Mega.Game
 {
     public class UnitedChunk
     {
-        public Chunk[] Chunks;
+        public Dictionary<Vector2i, Chunk> Chunks;
         public List<Vector3i> MembersList;
         public List<Vector3i> BorderMembersList;
         RenderSurface[] TotalSurface;
         public UnitedChunk(int chunks)
         {
-            Chunks = new Chunk[chunks];
+            Chunks = new ();
+        }
+        public void AddChunk(Chunk chunk)
+        {
+            Chunks.Add(chunk.Location, chunk);
         }
         public Block GetBlock(Vector3i position)
         {
             var path = position.ToWorldPath();
             if (!path.block.IsInChunk())
                 return null;
-            var chunk = Chunks.Where(i => i is not null).FirstOrDefault(i => i.Location == path.chunk);
+            var chunk = GetChunkByLocation(path.chunk);
             if (chunk == null)
                 return null;
             return chunk.data.Get(path.block);
@@ -32,7 +36,7 @@ namespace Mega.Game
         public void SetBlock(Block block)
         {
             var path = block.Position.ToWorldPath();
-            var chunk = Chunks.FirstOrDefault(i => i.Location == path.chunk);
+            var chunk = GetChunkByLocation(path.chunk);
             if (chunk == null)
                 return;
             chunk.data.Set(path.block, block);
@@ -42,15 +46,16 @@ namespace Mega.Game
         }
         public Chunk GetChunkByLocation(Vector2i location)
         {
-            var nn = Chunks.Where(i => i != null);
-            return nn.FirstOrDefault(i => i.Location == location);
+            Chunk cn = null;
+            Chunks.TryGetValue(location, out cn);
+            return cn;
         }
         public bool GetBorder(Vector3i position)
         {
             var path = position.ToWorldPath();
             if (!path.block.IsInChunk())
                 return false;
-            var chunk = Chunks.FirstOrDefault(i => i.Location == path.chunk);
+            var chunk = GetChunkByLocation(path.chunk);
             if (chunk == null)
                 return false;
             return chunk.Border.Get(path.block);
@@ -58,7 +63,7 @@ namespace Mega.Game
         public void SetBorder(Vector3i position, bool value)
         {
             var path = position.ToWorldPath();
-            var chunk = Chunks.FirstOrDefault(i => i.Location == path.chunk);
+            var chunk = GetChunkByLocation(path.chunk);
             if (chunk == null)
                 return;
             chunk.Border.Set(path.block, value);
@@ -68,7 +73,7 @@ namespace Mega.Game
             var path = position.ToWorldPath();
             if (!path.block.IsInChunk())
                 return false;
-            var chunk = Chunks.Where(i => i is not null).FirstOrDefault(i => i.Location == path.chunk);
+            var chunk = GetChunkByLocation(path.chunk);
             if (chunk == null)
                 return false;
             return chunk.Members.Get(path.block);
@@ -76,7 +81,7 @@ namespace Mega.Game
         public void SetMember(Vector3i position, bool value)
         {
             var path = position.ToWorldPath();
-            var chunk = Chunks.FirstOrDefault(i => i.Location == path.chunk);
+            var chunk = GetChunkByLocation(path.chunk);
             if (chunk == null)
                 return;
             chunk.Members.Set(path.block, value);
@@ -86,7 +91,7 @@ namespace Mega.Game
             var path = position.ToWorldPath(); 
             if (!path.block.IsInChunk())
                 return false;
-            var chunk = Chunks.FirstOrDefault(i => i.Location == path.chunk);
+            var chunk = GetChunkByLocation(path.chunk);
             if (chunk == null)
                 return false;
             return chunk.BorderMembers.Get(path.block);
@@ -94,26 +99,26 @@ namespace Mega.Game
         public void SetBorderMember(Vector3i position, bool value)
         {
             var path = position.ToWorldPath();
-            var chunk = Chunks.FirstOrDefault(i => i.Location == path.chunk);
+            var chunk = GetChunkByLocation(path.chunk);
             if (chunk == null)
                 return;
             chunk.BorderMembers.Set(path.block, value);
         }
-        public void UpdateMemberList()
-        {
-            MembersList = Chunks.Where(i => i != null).Select(i => i.MembersList).ToList().SumList();
-        }
-        public void UpdateBorderMembersList()
-        {
-            BorderMembersList = Chunks.Where(i => i != null).Select(i => i.BorderMembersList).ToList().SumList();
-        }
+        //public void UpdateMemberList()
+        //{
+        //    MembersList = Chunks.Where(i => i != null).Select(i => i.MembersList).ToList().SumList();
+        //}
+        //public void UpdateBorderMembersList()
+        //{
+        //    BorderMembersList = Chunks.Where(i => i != null).Select(i => i.BorderMembersList).ToList().SumList();
+        //}
         public void ClearMesh()
         {
             MembersList.Clear();
             BorderMembersList.Clear();
             foreach (var cn in Chunks)
             {
-                cn.ClearInternalData();
+                cn.Value.ClearInternalData();
             }
         }
         void VerifyBlock(Vector3i border, Vector3i block, Chunk host)
@@ -128,7 +133,7 @@ namespace Mega.Game
         }
         public void UpdateBorder()
         {
-            foreach (var cn in Chunks)
+            foreach (var cn in Chunks.Values)
             {
                 if (cn == null)
                     continue;
@@ -168,7 +173,7 @@ namespace Mega.Game
         }
         public void UpdateRenderSurface()
         {
-            var nn = Chunks.Where(i => i != null).ToList();
+            var nn = Chunks.Values.ToList();
             nn.ForEach(i => i.RebuildMesh());
 
             TotalSurface = nn.Select(i => i.Surface).ToList().SumList().ToArray();
