@@ -120,6 +120,7 @@ namespace Mega.Generation
             if (iteration == 0)
                 Start();
             var backup = new T[cells.GetLength(0), cells.GetLength(1)];
+
             for (int x = 0; x < cells.GetLength(0); x++)
             {
                 for (int y = 0; y < cells.GetLength(1); y++)

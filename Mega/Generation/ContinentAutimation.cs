@@ -3,6 +3,7 @@ using StbImageSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -10,6 +11,7 @@ namespace Mega.Generation
 {
     public class ContinentAutimation : CelluralAutomaton<Area>
     {
+        public int ratio;
         public ContinentAutimation(int size) : base(size)
         {
         }
@@ -44,25 +46,27 @@ namespace Mega.Generation
                 return Get(x, y);
             //if (around.Count() >= 7 && iteration > 5)
             //    return around[0];
-            if (rand.NextDouble() > 0.9 * around[0].K)
+            if (RandomNumberGenerator.GetInt32(0,100) > ratio * around[0].K)
                 return around[0];
             return Get(x, y);
         }
         public void BuildContinentsPoints(int n)
         {
-            for (int i = 0; i < n; i++)
-            {
-                while (true)
-                {
-                    var ptX = rand.Next(0, cells.GetLength(0));
-                    var ptY = rand.Next(0, cells.GetLength(1));
-                    if (GetAdjacentCircle(ptX, ptY).Count() > 0)
-                        continue;
-                    var gen = new Area {K = rand.NextDouble(), ID = i, Color = new Vector4((float)(rand.NextDouble() * byte.MaxValue), (float)(rand.NextDouble() * byte.MaxValue), (float)(rand.NextDouble() * byte.MaxValue), 255) };
-                    Set(ptX, ptY, gen);
-                    break;
-                }
-            }
+            //for (int i = 0; i < n; i++)
+            //{
+            //    while (true)
+            //    {
+            //        var ptX = rand.Next(0, cells.GetLength(0));
+            //        var ptY = rand.Next(0, cells.GetLength(1));
+            //        if (GetAdjacentCircle(ptX, ptY).Count() > 0)
+            //            continue;
+            //        var gen = new Area {K = rand.NextDouble(), ID = i, Color = new Vector4((float)(rand.NextDouble() * byte.MaxValue), (float)(rand.NextDouble() * byte.MaxValue), (float)(rand.NextDouble() * byte.MaxValue), 255) };
+            //        Set(ptX, ptY, gen);
+            //        break;
+            //    }
+            //}
+            var gen = new Area { K = rand.NextDouble(), ID = 0, Color = new Vector4((float)(rand.NextDouble() * byte.MaxValue), (float)(rand.NextDouble() * byte.MaxValue), (float)(rand.NextDouble() * byte.MaxValue), 255) };
+             Set(cells.GetLength(0) / 2, cells.GetLength(1) / 2, gen);
         }
         public override byte[] GetPixel(Area cell)
         {

@@ -3,6 +3,7 @@ using StbImageSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -63,7 +64,7 @@ namespace Mega.Generation
             var adj = GetAdjacentCircle(x, y);
             if (!adj.Any(i => i.ID >= maxContID))
                 return currCell;
-            if (rand.NextDouble() > 0.7)
+            if (RandomNumberGenerator.GetInt32(0, 10) > 7)
             {
                 filled++;
                 return adj.FirstOrDefault(i => i.ID > maxContID);
