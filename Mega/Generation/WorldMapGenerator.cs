@@ -27,13 +27,13 @@ namespace Mega.Generation
                 land = Automaton.NotFreeCount();
             }
             //Automaton.ratio = 50;
-            Automaton.Scale2x();
             for (int i = 0; i < 4; i++)
             {
-                if (i != 3) Automaton.Scale2x();
+                Automaton.Scale2x();
                 Automaton.Next();
                 Automaton.Next();
                 Automaton.Next();
+                Automaton.ratio -= 10;
             }
 
             var stoves = new StoveAutimation(Automaton.cells);
