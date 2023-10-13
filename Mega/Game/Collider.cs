@@ -47,7 +47,7 @@ namespace Mega.Game
                     {
 
                         var xyz = GeometricEngine.PlaneAndLine(plane, ray, out bufT);
-                        if (bufT < 0 || bufT > 1 || bufT < maxT)
+                        if (bufT < 0 || bufT > 1 || bufT >= maxT)
                             continue;
                         if (!plane.IsContains(xyz))
                             continue;
@@ -77,6 +77,8 @@ namespace Mega.Game
                     }
                 }
             }
+            
+            
             Direct();
             verifyPlanes = sides.Where(i => Vector3.Dot(i.plane.Normal, move) > 0).ToArray();
             obstacle.move = -move;

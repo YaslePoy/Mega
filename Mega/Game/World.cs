@@ -66,12 +66,13 @@ namespace Mega.Game
         }
         void UpdatePlayerPosition(double t)
         {
-            if (Player.Jumping)
+            if (Player.Jumping) // debug trap
                 Console.WriteLine("test");
+
+            //calculating movement in x-z plane
             var localG = G * t;
             var clearMove = Player.Moving * (float)(t * Player.WalkSpeed);
             var move2d = new Vector2();
-
             var localFront = Player.Cam.Front;
             localFront.Y = 0;
             localFront.Normalize();
@@ -80,42 +81,36 @@ namespace Mega.Game
 
             var playerPosition = Player.Position;
 
+            //creating global player's move
+            var move = new Vector3(move2d.X, -(float)(localG + Player.VerticalSpeed * t), move2d.Y);
 
-
-            var move = new Vector3(move2d.X, 0, move2d.Y);
+            //reading adjistment colliders
             var playerBlock = (Vector3i)playerPosition;
-
             var nearBlocks = GetHorisontalBlocks(playerBlock);
-            nearBlocks.AddRange(GetHorisontalBlocks(playerBlock + Vector3i.UnitY));
             if (Area.GetMember(playerBlock - Vector3i.UnitY))
-            {
                 nearBlocks.Add(Area.GetBlock(playerBlock - Vector3i.UnitY));
-                //if (nearBlocks.Last().GetCollider().GetMembership(playerPosition) != Collider.VolumeMembership.Border)
-                //    move.Y = -(float)(localG * t) + Player.VerticalSpeed;
-                //else if (Player.Jumping)
-                //{
-                //    move.Y = (float)(7 * t);
-                //}
-            }
-            else
-                move.Y = -(float)(localG * t) + Player.VerticalSpeed;
-
+            nearBlocks.AddRange(GetHorisontalBlocks(playerBlock + Vector3i.UnitY));
             if (Area.GetMember(playerBlock + Vector3i.UnitY * 2))
                 nearBlocks.Add(Area.GetBlock(playerBlock + 2 * Vector3i.UnitY));
-            var collideList = nearBlocks.Select(i => i.GetCollider()).ToList();
-            Vector3 nextPosition = new Vector3();
-            bool changed = false;
-            foreach (var collide in collideList)
-            {
-                //if (collide.MoveToPossible(playerPosition, move, out nextPosition))
-                //{
-                //    changed = true; break;
-                //}
-            }
-            if (!changed)
-                nextPosition = playerPosition + move;
-            Player.Position = nextPosition;
-            Player.VerticalSpeed = nextPosition.Y - playerPosition.Y;
+            var colliderList = nearBlocks.Select(i => i.GetCollider()).ToList();
+            Vector3 resultalMove = Vector3.Zero;
+            var playerCollider = Player.GetCollider();
+
+            //colliding
+            if (colliderList.Count != 0)
+                do
+                {
+                    foreach (var collider in colliderList)
+                    {
+                        playerCollider.move = move;
+                        playerCollider.Collide(collider, out move, out resultalMove);
+                        Player.MoveTo(move);
+                        move = resultalMove;
+                    }
+                } while (resultalMove != Vector3.Zero);
+            else
+                Player.MoveTo(move);
+            Player.VerticalSpeed = playerPosition.Y - Player.Position.Y;
             Player.UpdateCamPosition();
         }
         public List<Block> GetHorisontalBlocks(Vector3i center)

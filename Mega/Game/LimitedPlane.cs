@@ -39,12 +39,19 @@ namespace Mega.Game
         public static LimitedPlane operator +(LimitedPlane x, Vector3 move)
         {
             x.Limits = x.Limits.Select(i => i + move).ToArray();
+            x.UpdateDRatio();
+
             return x;
         }
         public static LimitedPlane operator *(LimitedPlane x, Vector3 mul)
         {
             x.Limits = x.Limits.Select(i => i * mul).ToArray();
+            x.UpdateDRatio();
             return x;
+        }
+        public void UpdateDRatio()
+        {
+            plane.D = -Vector3.Dot(plane.Normal, Limits[0]);
         }
         public bool IsContains(Vector3 point)
         {

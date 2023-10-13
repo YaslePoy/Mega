@@ -7,11 +7,21 @@ using System.Threading.Tasks;
 
 namespace Mega.Game
 {
-    internal class RectangularCollider : Collider
+    public class RectangularCollider : Collider
     {
         public Vector3 size;
-        public Vector3 position;
+        Vector3 position;
+        public Vector3 Position
+        {
+            get => position;
+            set
+            {
+                position = value;
+                UpdateDynamicMesh();
+            }
+        }
         public Vector3[] originalVerteces;
+        public LimitedPlane[] originalPlanes;
         public RectangularCollider(Vector3 position) : this(position, Vector3.One)
         {
         }
@@ -27,15 +37,19 @@ namespace Mega.Game
         }
         void GenerateSides(Vector3 move)
         {
-            var localMove = move - new Vector3(0.5f, 0.5f, 0.5f);
-            var startup = CubicCollider.OneCube;
-            startup = startup.Select(i => i + localMove).ToArray();
-            startup = startup.Select(i => i * size).ToArray();
+            var localMove = (move  + Vector3.One) / -2;
+            sides = CubicCollider.OneCube.Select(i => i + localMove).ToArray();
+            sides = sides.Select(i => i * size).ToArray();
             GenerateVertexes();
             originalVerteces = Vertexes;
+            originalPlanes = sides;
             Vertexes = Vertexes.Select(i => i + position).ToArray();
-            GenerateVertexes();
+            sides = sides.Select(i => i + position).ToArray();
         }
-
+        void UpdateDynamicMesh()
+        {
+            Vertexes = originalVerteces.Select(i => i + position).ToArray();
+            sides = originalPlanes.Select(i => i + position).ToArray();
+        }
     }
 }

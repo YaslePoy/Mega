@@ -22,7 +22,7 @@ namespace Mega.Game
         public float VerticalSpeed;
         public bool Jumping;
         public Vector3 Position;
-
+        RectangularCollider Collider;
         public Vector3 View => Cam.Front;
         public Vector3 ViewPoint => Position + growthAdd;
         public void UpdateCamPosition()
@@ -33,6 +33,8 @@ namespace Mega.Game
         {
             Cam = camera;
             Position = camera.Position;
+            Collider = new RectangularCollider(Position, new Vector3(0.5f, 1.75f, 0.5f), -Vector3.UnitY);
+
         }
         public void PlaceBlock()
         {
@@ -46,9 +48,21 @@ namespace Mega.Game
             }
             catch { }
         }
-        public RotatableCollider GetCollider()
+        public RectangularCollider GetCollider()
         {
-            return null;
+            if (Collider.Position == Position)
+                return Collider;
+            else
+            {
+                Collider.Position = Position;
+                return Collider;
+            }
+        }
+
+        public void MoveTo(Vector3 move)
+        {
+            Position += move;
+
         }
     }
 }
