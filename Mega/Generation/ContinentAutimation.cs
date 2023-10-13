@@ -29,6 +29,7 @@ namespace Mega.Generation
         public override void Start()
         {
             base.Start();
+            BuildContinentsPoints(1);
         }
 
         public override Area Propogate(int x, int y)
@@ -38,7 +39,7 @@ namespace Mega.Generation
                 return Get(x, y);
             if (around.Any(i => i != around.First()))
                 return Get(x, y);
-
+            
             if (around.Count() == 1 && iteration > 1)
                 return Get(x, y);
             //if (around.Count() >= 7 && iteration > 5)
@@ -78,6 +79,14 @@ namespace Mega.Generation
         public Vector4 Color;
         public static bool operator ==(Area c1, Area c2) => c1.ID == c2.ID;
         public static bool operator !=(Area c1, Area c2) => c1.ID != c2.ID;
-
+        public override bool Equals(object? obj)
+        {
+            if(obj == null || obj is not Area) return false;
+            return this == (Area)obj;
+        }
+        public override string ToString()
+        {
+            return ID.ToString();
+        }
     }
 }

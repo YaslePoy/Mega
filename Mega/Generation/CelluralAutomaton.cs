@@ -2,25 +2,35 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Mega.Generation
 {
     public class CelluralAutomaton<T>
     {
         protected int iteration;
+        public RandomNumberGenerator rng;
         protected Random rand;
         public T[,] cells;
+        public bool changed;
         public CelluralAutomaton(int size) : this(size, size)
         {
         }
         public CelluralAutomaton(int sizeX, int sizeY) : this(new T[sizeX, sizeY])
         {
+            rand = new Random();
+            rng = RandomNumberGenerator.Create();
+
         }
         public CelluralAutomaton(T[,] data)
         {
             cells = data;
+            rand = new Random();
+            rng = RandomNumberGenerator.Create();
+
         }
         public CelluralAutomaton(CelluralAutomaton<T> startup) { cells = startup.cells; }
 
@@ -34,40 +44,37 @@ namespace Mega.Generation
         {
             rand = new Random(seed);
         }
-        public static T GetIn(int x, int y, T[,] array)
-        {
-            int realX, realY;
-            if (x < 0)
-                realX = array.GetLength(0) + x;
-            else
-                realX = x % array.GetLength(0);
-            if (y < 0)
-                realY = array.GetLength(1) + y;
-            else
-                realY = y % array.GetLength(1);
-            return array[realX, realY];
-        }
-        public static void SetIn(int x, int y, T[,] array, T value)
-        {
-            int realX, realY;
-            if (x < 0)
-                realX = array.GetLength(0) + x;
-            else
-                realX = x % array.GetLength(0);
-            if (y < 0)
-                realY = array.GetLength(1) + y;
-            else
-                realY = y % array.GetLength(1);
-             array[realX, realY] = value;
-        }
         protected virtual T Get(int x, int y)
         {
-            return GetIn(x, y, cells);
+            int realX, realY;
+            if (x < 0)
+                realX = cells.GetLength(0) + x;
+            else
+                realX = x % cells.GetLength(0);
+            if (y < 0)
+                realY = cells.GetLength(1) + y;
+            else
+                realY = y % cells.GetLength(1);
+            return cells[realX, realY];
         }
 
         protected virtual void Set(int x, int y, T value)
         {
-            SetIn(x, y, cells, value);
+            int realX, realY;
+            if (x < 0)
+                realX = cells.GetLength(0) + x;
+            else
+                realX = x % cells.GetLength(0);
+            if (y < 0)
+                realY = cells.GetLength(1) + y;
+            else
+                realY = y % cells.GetLength(1);
+            if (value != null || cells[realX, realY] != null)
+                if (value != null && !value.Equals(cells[realX, realY]))
+                    changed = true;
+                else if (!cells[realX, realY].Equals(value))
+                    changed = true;
+            cells[realX, realY] = value;
         }
 
         public virtual T[] GetAdjacentCrist(int x, int y)
@@ -102,21 +109,9 @@ namespace Mega.Generation
         {
             return Get(x, y);
         }
-        [ScriptAction("N")]
         public virtual void Next()
         {
-            //if (iteration == 0)
-            //    Start();
-            //var backup = new T[cells.GetLength(0), cells.GetLength(1)];
-            //for (int x = 0; x < cells.GetLength(0); x++)
-            //{
-            //    for (int y = 0; y < cells.GetLength(1); y++)
-            //    {
-            //        backup[x, y] = Propogate(x, y);
-            //    }
-            //}
-            //cells = backup;
-            //iteration++;
+            changed = false;
             NextSpecial(Propogate);
         }
 
@@ -129,7 +124,8 @@ namespace Mega.Generation
             {
                 for (int y = 0; y < cells.GetLength(1); y++)
                 {
-                    backup[x, y] = method(x, y);
+                    var nextVal = method(x, y);
+                    backup[x, y] = nextVal;
                 }
             }
             cells = backup;
@@ -157,7 +153,7 @@ namespace Mega.Generation
 
         public virtual void Scale2x()
         {
-            var next =  new T[cells.GetLength(0) * 2, cells.GetLength(1) * 2];
+            var next = new T[cells.GetLength(0) * 2, cells.GetLength(1) * 2];
             for (int i = 0; i < next.GetLength(0); i++)
             {
                 for (int j = 0; j < next.GetLength(1); j++)
@@ -168,5 +164,7 @@ namespace Mega.Generation
             cells = next;
             Console.WriteLine($"Scaled to {next.GetLength(0)}x{next.GetLength(1)}");
         }
+        public virtual int NotFreeCount() => cells.Cast<T>().Count(i => i is not null);
+
     }
 }

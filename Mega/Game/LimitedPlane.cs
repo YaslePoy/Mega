@@ -41,6 +41,11 @@ namespace Mega.Game
             x.Limits = x.Limits.Select(i => i + move).ToArray();
             return x;
         }
+        public static LimitedPlane operator *(LimitedPlane x, Vector3 mul)
+        {
+            x.Limits = x.Limits.Select(i => i * mul).ToArray();
+            return x;
+        }
         public bool IsContains(Vector3 point)
         {
             var prePts = new Vector3[Limits.Length + 1];

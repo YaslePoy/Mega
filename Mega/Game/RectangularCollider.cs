@@ -11,8 +11,7 @@ namespace Mega.Game
     {
         public Vector3 size;
         public Vector3 position;
-        public Vector3[,,] originalVerteces;
-        public Vector3[,,] movedVerteces;
+        public Vector3[] originalVerteces;
         public RectangularCollider(Vector3 position) : this(position, Vector3.One)
         {
         }
@@ -28,29 +27,14 @@ namespace Mega.Game
         }
         void GenerateSides(Vector3 move)
         {
-            originalVerteces = new Vector3[2, 2, 2];
-            var half = size / 2;
-            var add = half * move;
-            int x = 0;
-            var vtsList = new List<Vector3>();
-            for (int i = -1; i < 2; i += 2)
-            {
-                int y = 0;
-                for (int j = -1; j < 2; j += 2)
-                {
-                    int z = 0;
-                    for (int k = -1; k < 2; k += 2)
-                    {
-                        var pt = half * new Vector3(i, j, k) + add;
-                        originalVerteces[x, y, z] = pt;
-                        pt += move;
-
-                        z++;
-                    }
-                    y++;
-                }
-                x++;
-            }
+            var localMove = move - new Vector3(0.5f, 0.5f, 0.5f);
+            var startup = CubicCollider.OneCube;
+            startup = startup.Select(i => i + localMove).ToArray();
+            startup = startup.Select(i => i * size).ToArray();
+            GenerateVertexes();
+            originalVerteces = Vertexes;
+            Vertexes = Vertexes.Select(i => i + position).ToArray();
+            GenerateVertexes();
         }
 
     }

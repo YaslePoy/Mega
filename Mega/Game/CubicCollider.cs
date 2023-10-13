@@ -37,9 +37,7 @@ namespace Mega.Game
                 if (verify[i])
                     sides[j++] = OneCube[i] + position;
             }
-            var vts = new List<Vector3>();
-            sides.ToList().ForEach(side => vts.AddRange(side.Limits));
-            Vertexes = vts.Distinct().ToArray();
+            GenerateVertexes();
         }
     }
 

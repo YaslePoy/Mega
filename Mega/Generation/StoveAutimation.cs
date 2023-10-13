@@ -12,7 +12,7 @@ namespace Mega.Generation
     {
         Dictionary<Area, int> areas;
         int maxContID;
-
+        public int filled, total;
         public StoveAutimation(Area[,] data) : base(data)
         {
             SetRandom(0);
@@ -26,12 +26,13 @@ namespace Mega.Generation
             areas = new Dictionary<Area, int>();
             foreach (Area continentCell in cells)
             {
-                if(continentCell is null) continue;
+                if (continentCell is null) continue;
                 areas.TryAdd(continentCell, 0);
                 areas[continentCell] += 1;
             }
+            total = areas.Sum(i => i.Value);
             maxContID = areas.Count();
-            CreateStartupCells(10);
+            CreateStartupCells(5);
         }
         public void CreateStartupCells(int count)
         {
@@ -60,10 +61,13 @@ namespace Mega.Generation
             if (currCell.ID >= maxContID)
                 return currCell;
             var adj = GetAdjacentCircle(x, y);
-            if(!adj.Any(i => i.ID >= maxContID))
+            if (!adj.Any(i => i.ID >= maxContID))
                 return currCell;
             if (rand.NextDouble() > 0.7)
-                return adj.FirstOrDefault(i => i.ID >= maxContID);
+            {
+                filled++;
+                return adj.FirstOrDefault(i => i.ID > maxContID);
+            }
             return currCell;
         }
         public Area RoundBorder(int x, int y)
@@ -77,7 +81,7 @@ namespace Mega.Generation
             else
             {
                 var counts = new Dictionary<Area, int>(disincted.Select(i => new KeyValuePair<Area, int>(i, 0)));
-                foreach ( var i in adj )
+                foreach (var i in adj)
                     counts[i] += 1;
                 var cur = counts.MaxBy(i => i.Value).Key;
                 return cur;

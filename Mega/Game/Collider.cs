@@ -25,7 +25,12 @@ namespace Mega.Game
                     new[] { x.Position, x.EndPoint, x.Position + move, x.EndPoint + move });
             }).ToArray();
         }
-
+        public void GenerateVertexes()
+        {
+            var vts = new List<Vector3>();
+            sides.ToList().ForEach(side => vts.AddRange(side.Limits));
+            Vertexes = vts.Distinct().ToArray();
+        }
         bool PlaneLinesCollision(Collider obstacle, out Vector3 avalibleMove, out Vector3 residualMove)
         {
             avalibleMove = move; residualMove = Vector3.Zero;
