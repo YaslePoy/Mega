@@ -43,7 +43,6 @@ namespace Mega.Game
         }
         bool PlaneLinesCollision(Collider obstacle, out Vector3 avalibleMove, out Vector3 residualMove)
         {
-            Debug.Log($"Start collision session Collider : {obstacle.tag}", 2);
             avalibleMove = move; residualMove = Vector3.Zero;
             var verifyPlanes = obstacle.sides.Where(i => Vector3.Dot(i.plane.Normal, move) < 0).ToArray();
             var rays = GetMoveLines();
@@ -61,11 +60,8 @@ namespace Mega.Game
                         {
                             if (isColled && bufT == 0)
                                 break;
-                            int deb = 0;
-                            if (ray.Position.Y < 2)
-                                Debug.Log("Warning!!! not 2 !!!!!!!!!!!!!!!!!!!!!!!!!", 3);
+
                             var xyz = GeometricEngine.PlaneAndLine(plane, ray, out bufT);
-                            Console.WriteLine($"            {ray} collided with {plane} T is {bufT}");
                             if (bufT < 0 || bufT > 1 || bufT >= maxT)
                                 continue;
                             if (!plane.IsContains(xyz))
@@ -76,8 +72,7 @@ namespace Mega.Game
                             isColled = true;
                         }
                     }
-                else
-                    Debug.Log("No planes to collide", 3);
+
             }
             void Revercive()
             {
@@ -110,7 +105,6 @@ namespace Mega.Game
             //Revercive();
             if (!isColled)
                 return false;
-            Debug.Log($"Session finished. Final T is {maxT}", 2);
             avalibleMove = move * maxT;
             var remains = 1 - maxT;
             var moveRemains = move * remains;

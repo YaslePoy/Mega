@@ -6,6 +6,7 @@ using OpenTK.Windowing.GraphicsLibraryFramework;
 using OpenTK.Windowing.Desktop;
 using Mega.Game;
 using System.Diagnostics;
+using System.ComponentModel;
 
 namespace Mega.Video
 {
@@ -81,6 +82,7 @@ namespace Mega.Video
             world.Area.UpdateBorder();
             world.Area.UpdateRenderSurface();
             world.RefreshView();
+            world.Start(50);
         }
 
         void GLInit()
@@ -112,6 +114,7 @@ namespace Mega.Video
             var texCoordLocation = _shader.GetAttribLocation("aTexCoord");
             GL.EnableVertexAttribArray(texCoordLocation);
             GL.VertexAttribPointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
+
             sw = new Stopwatch();
         }
 
@@ -226,7 +229,6 @@ namespace Mega.Video
                 _camera.Pitch -= deltaY * sensitivity; // Reversed since y-coordinates range from bottom to top
             }
             pl.Moving = moveVec;
-            world.Update(e.Time);
 
         }
 
@@ -251,6 +253,11 @@ namespace Mega.Video
         {
             tx.Use(TextureUnit.Texture0);
             _shader.SetInt("texture0", 0);
+        }
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            base.OnClosing(e);
+            world.Stop();
         }
     }
 }

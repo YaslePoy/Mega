@@ -18,7 +18,7 @@ namespace Mega
                 Flags = ContextFlags.ForwardCompatible,
 
             };
-            using (var window = new Window(new GameWindowSettings() { UpdateFrequency = 20 }, nativeWindowSettings) { })
+            using (var window = new Window(new GameWindowSettings() /*{ UpdateFrequency = 100 }*/, nativeWindowSettings) { })
             {
                 //Task.Run(() => { Thread.Sleep(10000); window.Close(); });
 

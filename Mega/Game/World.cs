@@ -2,6 +2,7 @@
 using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,12 +12,16 @@ namespace Mega.Game
 {
     public class World
     {
+        DateTime startTime;
+        bool isRuninig;
+        Thread updateThread;
         public const double G = 10d;
         Window _view;
-
+        int i;
         public Player Player;
         public UnitedChunk Area;
         public readonly int RenderDistance;
+        int updateRate;
         public World(Player player, Window view, int renderDistance)
         {
             Player = player;
@@ -28,6 +33,39 @@ namespace Mega.Game
         {
             chunk.Root = Area;
             Area.AddChunk(chunk);
+        }
+
+        public void Start(int updateRate)
+        {
+            if (isRuninig)
+                return;
+            isRuninig = true;
+            this.updateRate = updateRate;
+            updateThread = new Thread(() =>
+            {
+                Stopwatch timer = new Stopwatch();
+                var updateTime = 1f / updateRate;
+                var totalUpdateTime = TimeSpan.FromSeconds(updateTime);
+                DateTime next = DateTime.Now + totalUpdateTime;
+                while (true)
+                {
+                    if (!isRuninig)
+                        return;
+                    while (next > DateTime.Now) ;
+                    next += totalUpdateTime;
+                    Update(updateTime);
+
+
+                }
+            })
+            {
+                Name = "World run"
+            };
+            updateThread.Start();
+        }
+        public void Stop()
+        {
+            isRuninig = false;
         }
         public void RefreshView()
         {
@@ -60,20 +98,23 @@ namespace Mega.Game
             }
             _view?.UpdateMesh(vertexArray, orders);
         }
-        public void Update(double time)
-        {
-            UpdatePlayerPosition(time);
-            UpdateSelector();
-        }
-        void UpdatePlayerPosition(double t)
+        public void Update(float time)
         {
 
-            Console.WriteLine("+++Movement Update");
+            UpdatePlayerPosition(time);
+            //UpdateSelector();
+        }
+        void UpdatePlayerPosition(float t)
+        {
+            if (startTime == DateTime.MinValue)
+                startTime = DateTime.Now;
+            Console.WriteLine($"{(DateTime.Now - startTime).TotalMilliseconds} {Player.Position.Y}");
             if (Player.Jumping) // debug trap
                 Console.WriteLine("test");
 
             //calculating movement in x-z plane
             var localG = G * t;
+            Player.VerticalSpeed -= (float)localG;
             var clearMove = Player.Moving * (float)(t * Player.WalkSpeed);
             var move2d = new Vector2();
             var localFront = Player.Cam.Front;
@@ -85,8 +126,7 @@ namespace Mega.Game
             var playerPosition = Player.Position;
 
             //creating global player's move
-            var move = new Vector3(move2d.X, -(float)(localG + Player.VerticalSpeed * t), move2d.Y);
-
+            var move = new Vector3(move2d.X, (float)(Player.VerticalSpeed * t), move2d.Y);
             //reading adjistment colliders
             var playerBlock = (Vector3i)playerPosition;
 
@@ -103,20 +143,21 @@ namespace Mega.Game
             if (colliderList.Count != 0)
                 do
                 {
-                        playerCollider.move = move;
-                        playerCollider.Collide(united, out move, out resultalMove);
-                        Console.WriteLine($"    Colider {united.tag} result: moved to {move} resultal {resultalMove}");
-                        Player.MoveTo(move);
-                        move = resultalMove;
-                    
+                    playerCollider.move = move;
+                    playerCollider.Collide(united, out move, out resultalMove);
+                    Player.MoveTo(move);
+                    move = resultalMove;
+
                 } while (resultalMove != Vector3.Zero);
             else
+            {
                 Player.MoveTo(move);
-            Player.VerticalSpeed = playerPosition.Y - Player.Position.Y;
+            }
+            Player.VerticalSpeed = (Player.Position.Y - playerPosition.Y) / t;
             Player.UpdateCamPosition();
             var delta = playerPosition - Player.Position;
-            Console.WriteLine($"###Per frame delta : {delta}");
-            Console.WriteLine($"  Final player position {Player.Position}" );
+
+
         }
         public List<Block> GetHorisontalBlocks(Vector3i center)
         {

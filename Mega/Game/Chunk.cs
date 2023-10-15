@@ -50,7 +50,7 @@ namespace Mega.Game
             {
                 for (int j = chunkMove.Y; j < chunkEnd.Y; j++)
                 {
-                    blocks.Add(new Block(new Vector3i(i, level, j), 0));
+                    blocks.Add(new Block(new Vector3i(i, level, j), 1));
                 }
             }
             result.GenerateFromBlocks(blocks);

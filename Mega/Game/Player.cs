@@ -23,6 +23,8 @@ namespace Mega.Game
         public bool Jumping;
         public Vector3 Position;
         RectangularCollider Collider;
+
+        public Vector3 LastUpdateMove;
         public Vector3 View => Cam.Front;
         public Vector3 ViewPoint => Position + growthAdd;
         public void UpdateCamPosition()
