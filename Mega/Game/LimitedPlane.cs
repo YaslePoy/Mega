@@ -82,5 +82,9 @@ namespace Mega.Game
             float c = (pts[3].X - pts[0].X) * (pts[1].Y - pts[3].Y) - (pts[1].X - pts[3].X) * (pts[3].Y - pts[0].Y);
             return (a >= 0 && b >= 0 && c >= 0) || (a <= 0 && b <= 0 && c <= 0);
         }
+        public override string ToString()
+        {
+            return plane.ToString();
+        }
     }
 }

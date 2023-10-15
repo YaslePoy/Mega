@@ -38,6 +38,7 @@ namespace Mega.Game
                     sides[j++] = OneCube[i] + position;
             }
             GenerateVertexes();
+            tag = position.ToString();
         }
     }
 

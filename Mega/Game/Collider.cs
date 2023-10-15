@@ -1,4 +1,5 @@
 ﻿using OpenTK.Mathematics;
+using Mega;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,12 +8,21 @@ using System.Threading.Tasks;
 
 namespace Mega.Game
 {
-    public abstract class Collider
+    public class Collider
     {
         public LimitedPlane[] sides;
         public Vector3[] Vertexes;
         public Line[] Edges;
         public Vector3 move;
+        public object tag;
+        public static Collider CreateUnitedCollider(List<Collider> colliders)
+        {
+            var collider = new Collider();
+            collider.Vertexes = colliders.Select(i => i.Vertexes).SumList().ToArray();
+            collider.sides = colliders.Select(i => i.sides).SumList().ToArray();
+            collider.tag = string.Join("\n", colliders.Select(i => i.tag));
+            return collider;
+        }
         public Line[] GetMoveLines()
         {
             return Vertexes.AsParallel().Select(x => new Line(x, move, 1)).ToArray();
@@ -33,6 +43,7 @@ namespace Mega.Game
         }
         bool PlaneLinesCollision(Collider obstacle, out Vector3 avalibleMove, out Vector3 residualMove)
         {
+            Debug.Log($"Start collision session Collider : {obstacle.tag}", 2);
             avalibleMove = move; residualMove = Vector3.Zero;
             var verifyPlanes = obstacle.sides.Where(i => Vector3.Dot(i.plane.Normal, move) < 0).ToArray();
             var rays = GetMoveLines();
@@ -41,30 +52,43 @@ namespace Mega.Game
             bool isColled = false;
             void Direct()
             {
-                foreach (var ray in rays)
-                {
-                    foreach (var plane in verifyPlanes)
+                if (verifyPlanes.Count() != 0)
+                    foreach (var ray in rays)
                     {
-
-                        var xyz = GeometricEngine.PlaneAndLine(plane, ray, out bufT);
-                        if (bufT < 0 || bufT > 1 || bufT >= maxT)
-                            continue;
-                        if (!plane.IsContains(xyz))
-                            continue;
-                        maxT = bufT;
-                        collision = xyz;
-                        normal = plane.plane.Normal;
-                        isColled = true;
+                        if (isColled && bufT == 0)
+                            break;
+                        foreach (var plane in verifyPlanes)
+                        {
+                            if (isColled && bufT == 0)
+                                break;
+                            int deb = 0;
+                            if (ray.Position.Y < 2)
+                                Debug.Log("Warning!!! not 2 !!!!!!!!!!!!!!!!!!!!!!!!!", 3);
+                            var xyz = GeometricEngine.PlaneAndLine(plane, ray, out bufT);
+                            Console.WriteLine($"            {ray} collided with {plane} T is {bufT}");
+                            if (bufT < 0 || bufT > 1 || bufT >= maxT)
+                                continue;
+                            if (!plane.IsContains(xyz))
+                                continue;
+                            maxT = bufT;
+                            collision = xyz;
+                            normal = plane.plane.Normal;
+                            isColled = true;
+                        }
                     }
-                }
+                else
+                    Debug.Log("No planes to collide", 3);
             }
             void Revercive()
             {
                 foreach (var ray in rays)
                 {
+                    if (isColled && bufT == 0)
+                        break;
                     foreach (var plane in verifyPlanes)
                     {
-
+                        if (isColled && bufT == 0)
+                            break;
                         var xyz = GeometricEngine.PlaneAndLine(plane, ray, out bufT);
                         if (bufT < 0 || bufT > 1 || bufT < maxT)
                             continue;
@@ -77,15 +101,16 @@ namespace Mega.Game
                     }
                 }
             }
-            
-            
+
+
             Direct();
-            verifyPlanes = sides.Where(i => Vector3.Dot(i.plane.Normal, move) > 0).ToArray();
-            obstacle.move = -move;
-            rays = obstacle.GetMoveLines();
-            Revercive();
+            //verifyPlanes = sides.Where(i => Vector3.Dot(i.plane.Normal, move) > 0).ToArray();
+            //obstacle.move = -move;
+            //rays = obstacle.GetMoveLines();
+            //Revercive();
             if (!isColled)
                 return false;
+            Debug.Log($"Session finished. Final T is {maxT}", 2);
             avalibleMove = move * maxT;
             var remains = 1 - maxT;
             var moveRemains = move * remains;

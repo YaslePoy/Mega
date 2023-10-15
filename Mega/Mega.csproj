@@ -16,6 +16,9 @@
     <None Update="Resources\0.uv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Resources\0.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Resources\1.uv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -25,8 +28,8 @@
     <None Update="Resources\1.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\0.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <None Update="Resources\0x.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
     <None Update="Resources\base_all.uv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

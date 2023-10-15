@@ -77,6 +77,10 @@ namespace Mega
         {
             return Position + Direction * t;
         }
+        public override string ToString()
+        {
+            return $"{Position.Round(3)} -> {Direction.Round(3)}";
+        }
     }
     public struct Plane
     {
@@ -92,6 +96,10 @@ namespace Mega
         {
             Normal = normal;
             D = Vector3.Dot(-normal, pointIn);
+        }
+        public override string ToString()
+        {
+            return $"N: {Normal} D: {D}";
         }
     }
 }

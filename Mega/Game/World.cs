@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace Mega.Game
 {
@@ -66,6 +67,8 @@ namespace Mega.Game
         }
         void UpdatePlayerPosition(double t)
         {
+
+            Console.WriteLine("+++Movement Update");
             if (Player.Jumping) // debug trap
                 Console.WriteLine("test");
 
@@ -86,13 +89,13 @@ namespace Mega.Game
 
             //reading adjistment colliders
             var playerBlock = (Vector3i)playerPosition;
-            var nearBlocks = GetHorisontalBlocks(playerBlock);
-            if (Area.GetMember(playerBlock - Vector3i.UnitY))
-                nearBlocks.Add(Area.GetBlock(playerBlock - Vector3i.UnitY));
+
+            var nearBlocks = GetHorisontalBlocks(playerBlock - Vector3i.UnitY);
+            nearBlocks.AddRange(GetHorisontalBlocks(playerBlock));
             nearBlocks.AddRange(GetHorisontalBlocks(playerBlock + Vector3i.UnitY));
-            if (Area.GetMember(playerBlock + Vector3i.UnitY * 2))
-                nearBlocks.Add(Area.GetBlock(playerBlock + 2 * Vector3i.UnitY));
+            nearBlocks.AddRange(GetHorisontalBlocks(playerBlock + 2 * Vector3i.UnitY));
             var colliderList = nearBlocks.Select(i => i.GetCollider()).ToList();
+            var united = Collider.CreateUnitedCollider(colliderList);
             Vector3 resultalMove = Vector3.Zero;
             var playerCollider = Player.GetCollider();
 
@@ -100,21 +103,26 @@ namespace Mega.Game
             if (colliderList.Count != 0)
                 do
                 {
-                    foreach (var collider in colliderList)
-                    {
                         playerCollider.move = move;
-                        playerCollider.Collide(collider, out move, out resultalMove);
+                        playerCollider.Collide(united, out move, out resultalMove);
+                        Console.WriteLine($"    Colider {united.tag} result: moved to {move} resultal {resultalMove}");
                         Player.MoveTo(move);
                         move = resultalMove;
-                    }
+                    
                 } while (resultalMove != Vector3.Zero);
             else
                 Player.MoveTo(move);
             Player.VerticalSpeed = playerPosition.Y - Player.Position.Y;
             Player.UpdateCamPosition();
+            var delta = playerPosition - Player.Position;
+            Console.WriteLine($"###Per frame delta : {delta}");
+            Console.WriteLine($"  Final player position {Player.Position}" );
         }
         public List<Block> GetHorisontalBlocks(Vector3i center)
         {
+            var diagA = new Vector3i(1, 0, 1);
+
+            var diagB = new Vector3i(1, 0, -1);
             var result = new List<Block>
             {
                 Area.GetBlock(center),
@@ -122,6 +130,13 @@ namespace Mega.Game
                 Area.GetBlock(center + Vector3i.UnitZ),
                 Area.GetBlock(center - Vector3i.UnitX),
                 Area.GetBlock(center - Vector3i.UnitZ),
+                Area.GetBlock(center + diagA),
+                Area.GetBlock(center - diagA),
+                Area.GetBlock(center + diagB),
+
+                Area.GetBlock(center - diagB)
+
+
             };
             result.RemoveAll(i => i is null);
             return result;
