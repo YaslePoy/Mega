@@ -21,14 +21,20 @@ namespace Mega
 
         public static Vector3i Round(this Vector3 vec) => new Vector3i((int)vec.X, (int)vec.Y, (int)vec.Z);
         public static Vector3 Round(this Vector3 vec,  int digit = 0) => new Vector3(MathF.Round(vec.X, digit), MathF.Round(vec.Y, digit), MathF.Round(vec.Z, digit));
-        public static List<T> SumList<T>(this IEnumerable<IEnumerable<T>> lists)
-        {
-            var result = new List<T>();
-            foreach (var list in lists)
-                result.AddRange(list);
-            return result;
-        }
 
+        public static T[] SumList<T>(this IEnumerable<IEnumerable<T>> lists)
+        {
+            var len = lists.Sum(i => i.Count());
+            var temp = lists.ToArray();
+            var ret = new T[len];
+            int offset = 0;
+            for (int i = 0; i < lists.Count(); i++)
+            {
+                temp[i].ToArray().CopyTo(ret, offset);
+                offset += temp[i].Count();
+            }
+            return ret;
+        }
         public const float G = 30f;
         public static (Vector2i chunk, Vector3i block) ToWorldPath(this Vector3i vec)
         {

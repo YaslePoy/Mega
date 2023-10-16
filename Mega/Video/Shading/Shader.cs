@@ -4,11 +4,12 @@ using System.Text;
 using System.Collections.Generic;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
+using Mega.Game;
 
 namespace Mega.Video.Shading
 {
     // A simple class meant to help create shaders.
-    public class Shader
+    public abstract class Shader
     {
         public readonly int Handle;
 
@@ -185,5 +186,8 @@ namespace Mega.Video.Shading
             GL.UseProgram(Handle);
             GL.Uniform3(_uniformLocations[name], data);
         }
+
+        public abstract void Run(World world);
     }
+
 }

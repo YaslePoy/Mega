@@ -100,10 +100,10 @@ namespace Mega.Game
 
 
             Direct();
-            //verifyPlanes = sides.Where(i => Vector3.Dot(i.plane.Normal, move) > 0).ToArray();
-            //obstacle.move = -move;
-            //rays = obstacle.GetMoveLines();
-            //Revercive();
+            verifyPlanes = sides.Where(i => Vector3.Dot(i.plane.Normal, move) > 0).ToArray();
+            obstacle.move = -move;
+            rays = obstacle.GetMoveLines();
+            Revercive();
             if (!isColled)
                 return false;
             avalibleMove = move * maxT;

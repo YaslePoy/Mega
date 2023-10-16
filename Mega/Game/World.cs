@@ -1,17 +1,23 @@
 ﻿using Mega.Video;
 using OpenTK.Mathematics;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
 
 namespace Mega.Game
 {
     public class World
     {
+        private bool redrawing = true;
+
+        public bool Redrawing
+        {
+            get
+            {
+                if (redrawing)
+                    redrawing = false;
+                return redrawing;
+            }
+        }
+
         bool isRuninig;
         Thread updateThread;
         public const double G = 10d;
@@ -33,7 +39,6 @@ namespace Mega.Game
             chunk.Root = Area;
             Area.AddChunk(chunk);
         }
-
         public void Start(int updateRate)
         {
             if (isRuninig)
@@ -75,6 +80,8 @@ namespace Mega.Game
             uint indOffset = 0;
             var vertexArray = new float[sides.Count * 20];
             Dictionary<int, List<uint>> orders = new Dictionary<int, List<uint>>();
+            uint[] adding;
+
             for (int i = 0; i < sides.Count; i++)
             {
                 var side = sides[i];
@@ -84,22 +91,44 @@ namespace Mega.Game
 
                 if (!orders.ContainsKey(side.TextureID))
                     orders.Add(side.TextureID, new List<uint>());
-                orders[side.TextureID].Add(indOffset);
-                orders[side.TextureID].Add(1 + indOffset);
-                orders[side.TextureID].Add(3 + indOffset);
-                orders[side.TextureID].Add(1 + indOffset);
-                orders[side.TextureID].Add(2 + indOffset);
-                orders[side.TextureID].Add(3 + indOffset);
+                adding = new uint[] { indOffset, 1 + indOffset, 3 + indOffset, 1 + indOffset, 2 + indOffset, 3 + indOffset };
+                orders[side.TextureID].AddRange(adding);
 
                 indOffset += 4;
             }
             _view?.UpdateMesh(vertexArray, orders);
         }
+        public void GenerateMesh(out Dictionary<int,  List<uint>> indeces,out float[] verteces)
+        {
+            var sides = new List<RenderSurface>();
+            foreach (var chunk in Area.Chunks.Values)
+            {
+                if (chunk is null) continue;
+                sides.AddRange(chunk.Surface);
+            }
+            uint indOffset = 0;
+            verteces = new float[sides.Count * 20];
+            indeces = new Dictionary<int, List<uint>>();
+            uint[] adding;
+            for (int i = 0; i < sides.Count; i++)
+            {
+                var side = sides[i];
+
+                var v = side.GetRaw();
+                v.CopyTo(verteces, 20 * i);
+
+                if (!indeces.ContainsKey(side.TextureID))
+                    indeces.Add(side.TextureID, new List<uint>());
+                adding = new uint[] { indOffset, 1 + indOffset, 3 + indOffset, 1 + indOffset, 2 + indOffset, 3 + indOffset };
+                indeces[side.TextureID].AddRange(adding);
+                indOffset += 4;
+            }
+        }
         public void Update(float time)
         {
             UpdateSelector();
-
             UpdatePlayerPosition(time);
+
         }
         void UpdatePlayerPosition(float t)
         {
@@ -133,10 +162,6 @@ namespace Mega.Game
             {
                 vertical = Player.Jumping ? 5f * t : 0;
 
-            }
-            else
-            {
-                move2d /= 4;
             }
 
             //creating global player's move
@@ -210,13 +235,16 @@ namespace Mega.Game
                 break;
             }
         }
-
         public void SetBlock(Block block)
         {
             Area.SetBlock(block);
             Area.UpdateBorder();
-            Area.UpdateRenderSurface();
-            RefreshView();
+            Task.Run(() =>
+            {
+                Area.UpdateRenderSurface();
+                //RefreshView();
+                redrawing = true;
+            });
         }
     }
 }

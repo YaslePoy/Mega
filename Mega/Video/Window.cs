@@ -38,7 +38,7 @@ namespace Mega.Video
         private int _vertexArrayObject;
 
         private Shader _shader;
-
+        TextureDrawShader _meshRender;
 
         // The view and projection matrices have been removed as we don't need them here anymore.
         // They can now be found in the new camera class.
@@ -83,7 +83,7 @@ namespace Mega.Video
             world.Area.UpdateBorder();
             world.Area.UpdateRenderSurface();
             world.RefreshView();
-            world.Start(50);
+            world.Start(100);
         }
 
         void GLInit()
@@ -103,20 +103,19 @@ namespace Mega.Video
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, _elementBufferObject);
             //GL.BufferData(BufferTarget.ElementArrayBuffer, inds.Count * sizeof(uint), inds.ToArray(), BufferUsageHint.DynamicDraw);
 
-
-            _shader = new Shader("Shaders/shader.vert", "Shaders/shader.frag");
-            _shader.Use();
+            //_shader = new Shader("Shaders/shader.vert", "Shaders/shader.frag");
+            _meshRender = new TextureDrawShader();
+            _meshRender.Use();
             //edgeShader = new Shader("Shaders/shader.vert", "Shaders/edge.frag");
             //edgeShader.Use();
-            var vertexLocation = _shader.GetAttribLocation("aPosition");
+            var vertexLocation = _meshRender.GetAttribLocation("aPosition");
             GL.EnableVertexAttribArray(vertexLocation);
             GL.VertexAttribPointer(vertexLocation, 3, VertexAttribPointerType.Float, false, 5 * sizeof(float), 0);
 
-            var texCoordLocation = _shader.GetAttribLocation("aTexCoord");
+            var texCoordLocation = _meshRender.GetAttribLocation("aTexCoord");
             GL.EnableVertexAttribArray(texCoordLocation);
             GL.VertexAttribPointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
 
-            sw = new Stopwatch();
         }
 
         protected override void OnRenderFrame(FrameEventArgs e)
@@ -127,26 +126,25 @@ namespace Mega.Video
                 reload = false;
                 GL.BufferData(BufferTarget.ArrayBuffer, _vertices.Length * sizeof(float), _vertices, BufferUsageHint.DynamicDraw);
                 var inds = _indices.Values.ToList().SumList();
-                GL.BufferData(BufferTarget.ElementArrayBuffer, inds.Count * sizeof(uint), inds.ToArray(), BufferUsageHint.DynamicDraw);
+                GL.BufferData(BufferTarget.ElementArrayBuffer, inds.Count() * sizeof(uint), inds.ToArray(), BufferUsageHint.DynamicDraw);
             }
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
             GL.BindVertexArray(_vertexArrayObject);
 
-            _shader.SetMatrix4("view", _camera.GetViewMatrix());
-            _shader.SetMatrix4("projection", _camera.GetProjectionMatrix());
+            //_shader.SetMatrix4("view", _camera.GetViewMatrix());
+            //_shader.SetMatrix4("projection", _camera.GetProjectionMatrix());
+            _meshRender.Projection = _camera.GetProjectionMatrix();
+            _meshRender.View = _camera.GetViewMatrix();
             int offset = 0;
-            //_shader.Use();
             foreach (var tex in _indices)
             {
-                setTexture(TextureHelper.TotalUVMaps[tex.Key].tex);
+                _meshRender.RenderTexture = TextureHelper.TotalUVMaps[tex.Key].tex;
                 var currentDrawArray = tex.Value;
                 GL.DrawElements(PrimitiveType.Triangles, currentDrawArray.Count(), DrawElementsType.UnsignedInt, offset * sizeof(uint));
 
                 offset += currentDrawArray.Count;
             }
-            Title = pl.Position.ToString() + " " + (Math.Round(1 / e.Time, 1)).ToString();
-
             SwapBuffers();
         }
 
@@ -251,11 +249,6 @@ namespace Mega.Video
             GL.Viewport(0, 0, Size.X, Size.Y);
             // We need to update the aspect ratio once the window has been resized.
             _camera.AspectRatio = Size.X / (float)Size.Y;
-        }
-        void setTexture(Texture tx)
-        {
-            tx.Use(TextureUnit.Texture0);
-            _shader.SetInt("texture0", 0);
         }
         protected override void OnClosing(CancelEventArgs e)
         {
