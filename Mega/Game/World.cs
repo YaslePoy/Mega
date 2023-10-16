@@ -12,9 +12,10 @@ namespace Mega.Game
         {
             get
             {
+                var buf = redrawing;
                 if (redrawing)
                     redrawing = false;
-                return redrawing;
+                return buf;
             }
         }
 

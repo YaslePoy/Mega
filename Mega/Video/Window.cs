@@ -121,30 +121,31 @@ namespace Mega.Video
         protected override void OnRenderFrame(FrameEventArgs e)
         {
             base.OnRenderFrame(e);
-            if(reload)
-            {
-                reload = false;
-                GL.BufferData(BufferTarget.ArrayBuffer, _vertices.Length * sizeof(float), _vertices, BufferUsageHint.DynamicDraw);
-                var inds = _indices.Values.ToList().SumList();
-                GL.BufferData(BufferTarget.ElementArrayBuffer, inds.Count() * sizeof(uint), inds.ToArray(), BufferUsageHint.DynamicDraw);
-            }
+            //if(reload)
+            //{
+            //    reload = false;
+            //    GL.BufferData(BufferTarget.ArrayBuffer, _vertices.Length * sizeof(float), _vertices, BufferUsageHint.DynamicDraw);
+            //    var inds = _indices.Values.ToList().SumList();
+            //    GL.BufferData(BufferTarget.ElementArrayBuffer, inds.Count() * sizeof(uint), inds.ToArray(), BufferUsageHint.DynamicDraw);
+            //}
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
             GL.BindVertexArray(_vertexArrayObject);
 
             //_shader.SetMatrix4("view", _camera.GetViewMatrix());
             //_shader.SetMatrix4("projection", _camera.GetProjectionMatrix());
-            _meshRender.Projection = _camera.GetProjectionMatrix();
-            _meshRender.View = _camera.GetViewMatrix();
-            int offset = 0;
-            foreach (var tex in _indices)
-            {
-                _meshRender.RenderTexture = TextureHelper.TotalUVMaps[tex.Key].tex;
-                var currentDrawArray = tex.Value;
-                GL.DrawElements(PrimitiveType.Triangles, currentDrawArray.Count(), DrawElementsType.UnsignedInt, offset * sizeof(uint));
+            //_meshRender.Projection = _camera.GetProjectionMatrix();
+            //_meshRender.View = _camera.GetViewMatrix();
+            //int offset = 0;
+            //foreach (var tex in _indices)
+            //{
+            //    _meshRender.RenderTexture = TextureHelper.TotalUVMaps[tex.Key].tex;
+            //    var currentDrawArray = tex.Value;
+            //    GL.DrawElements(PrimitiveType.Triangles, currentDrawArray.Count(), DrawElementsType.UnsignedInt, offset * sizeof(uint));
 
-                offset += currentDrawArray.Count;
-            }
+            //    offset += currentDrawArray.Count;
+            //}
+            _meshRender.Run(world);
             SwapBuffers();
         }
 

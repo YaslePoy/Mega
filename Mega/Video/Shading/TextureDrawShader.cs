@@ -54,7 +54,12 @@ namespace Mega.Video.Shading
             if (world.Redrawing)
             {
                 world.GenerateMesh(out _indices, out _vertices);
+                GL.BufferData(BufferTarget.ArrayBuffer, _vertices.Length * sizeof(float), _vertices, BufferUsageHint.DynamicDraw);
+                var inds = _indices.Values.ToList().SumList();
+                GL.BufferData(BufferTarget.ElementArrayBuffer, inds.Count() * sizeof(uint), inds.ToArray(), BufferUsageHint.DynamicDraw);
             }
+            Projection = world.Player.Cam.GetProjectionMatrix();
+            View = world.Player.Cam.GetViewMatrix();
             int offset = 0;
             foreach (var tex in _indices)
             {
