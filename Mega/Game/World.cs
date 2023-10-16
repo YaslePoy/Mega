@@ -128,8 +128,8 @@ namespace Mega.Game
             var united = Collider.CreateUnitedCollider(colliderList);
             var playerCollider = Player.GetCollider();
             float vertical = (float)(Player.VerticalSpeed * t);
-            if (united.IsContact(playerCollider)/* && Player.Jumping*/)
-                vertical = 0.5f;
+            if (united.IsContact(playerCollider) && Player.Jumping)
+                vertical = 5f * t;
 
             //creating global player's move
             var move = new Vector3(move2d.X, vertical, move2d.Y);
