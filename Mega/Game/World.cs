@@ -20,7 +20,7 @@ namespace Mega.Game
         }
 
         bool isRuninig;
-        Thread updateThread;
+        Task updateThread;
         public const double G = 10d;
         Window _view;
         int i;
@@ -46,59 +46,29 @@ namespace Mega.Game
                 return;
             isRuninig = true;
             this.updateRate = updateRate;
-            updateThread = new Thread(() =>
-            {
-                Stopwatch timer = new Stopwatch();
-                var updateTime = 1f / updateRate;
-                var totalUpdateTime = TimeSpan.FromSeconds(updateTime);
-                DateTime next = DateTime.Now + totalUpdateTime;
-                while (true)
-                {
-                    if (!isRuninig)
-                        return;
-                    while (next > DateTime.Now) ;
-                    next += totalUpdateTime;
-                    Update(updateTime);
-                }
-            })
-            {
-                Name = "World run"
-            };
-            updateThread.Start();
+            updateThread = Task.Factory.StartNew(BasicPhysics);
         }
+
+        void BasicPhysics()
+        {
+            var updateTime = 1f / updateRate;
+            var totalUpdateTime = TimeSpan.FromSeconds(updateTime);
+            DateTime next = DateTime.Now + totalUpdateTime;
+            while (true)
+            {
+                if (!isRuninig)
+                    return;
+                while (next > DateTime.Now) ;
+                next += totalUpdateTime;
+                Update(updateTime);
+            }
+        }
+
         public void Stop()
         {
             isRuninig = false;
         }
-        public void RefreshView()
-        {
-            var sides = new List<RenderSurface>();
-            foreach (var chunk in Area.Chunks.Values)
-            {
-                if (chunk is null) continue;
-                sides.AddRange(chunk.Surface);
-            }
-            uint indOffset = 0;
-            var vertexArray = new float[sides.Count * 20];
-            Dictionary<int, List<uint>> orders = new Dictionary<int, List<uint>>();
-            uint[] adding;
-
-            for (int i = 0; i < sides.Count; i++)
-            {
-                var side = sides[i];
-
-                var v = side.GetRaw();
-                v.CopyTo(vertexArray, 20 * i);
-
-                if (!orders.ContainsKey(side.TextureID))
-                    orders.Add(side.TextureID, new List<uint>());
-                adding = new uint[] { indOffset, 1 + indOffset, 3 + indOffset, 1 + indOffset, 2 + indOffset, 3 + indOffset };
-                orders[side.TextureID].AddRange(adding);
-
-                indOffset += 4;
-            }
-            _view?.UpdateMesh(vertexArray, orders);
-        }
+        
         public void GenerateMesh(out Dictionary<int,  List<uint>> indeces,out float[] verteces)
         {
             var sides = new List<RenderSurface>();
