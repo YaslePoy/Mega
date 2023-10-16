@@ -12,7 +12,6 @@ namespace Mega.Game
 {
     public class World
     {
-        DateTime startTime;
         bool isRuninig;
         Thread updateThread;
         public const double G = 10d;
@@ -102,13 +101,10 @@ namespace Mega.Game
         {
 
             UpdatePlayerPosition(time);
-            //UpdateSelector();
+            UpdateSelector();
         }
         void UpdatePlayerPosition(float t)
         {
-            if (startTime == DateTime.MinValue)
-                startTime = DateTime.Now;
-            Console.WriteLine($"{(DateTime.Now - startTime).TotalMilliseconds} {Player.Position.Y}");
             if (Player.Jumping) // debug trap
                 Console.WriteLine("test");
 
@@ -125,19 +121,27 @@ namespace Mega.Game
 
             var playerPosition = Player.Position;
 
-            //creating global player's move
-            var move = new Vector3(move2d.X, (float)(Player.VerticalSpeed * t), move2d.Y);
-            //reading adjistment colliders
+            //is player standing?
             var playerBlock = (Vector3i)playerPosition;
-
             var nearBlocks = GetHorisontalBlocks(playerBlock - Vector3i.UnitY);
+            var colliderList = nearBlocks.Select(i => i.GetCollider()).ToList();
+            var united = Collider.CreateUnitedCollider(colliderList);
+            var playerCollider = Player.GetCollider();
+            float vertical = (float)(Player.VerticalSpeed * t);
+            if (united.IsContact(playerCollider)/* && Player.Jumping*/)
+                vertical = 0.5f;
+
+            //creating global player's move
+            var move = new Vector3(move2d.X, vertical, move2d.Y);
+            //reading adjistment colliders
+
             nearBlocks.AddRange(GetHorisontalBlocks(playerBlock));
             nearBlocks.AddRange(GetHorisontalBlocks(playerBlock + Vector3i.UnitY));
             nearBlocks.AddRange(GetHorisontalBlocks(playerBlock + 2 * Vector3i.UnitY));
-            var colliderList = nearBlocks.Select(i => i.GetCollider()).ToList();
-            var united = Collider.CreateUnitedCollider(colliderList);
+            colliderList = nearBlocks.Select(i => i.GetCollider()).ToList();
+            united = Collider.CreateUnitedCollider(colliderList);
+
             Vector3 resultalMove = Vector3.Zero;
-            var playerCollider = Player.GetCollider();
 
             //colliding
             if (colliderList.Count != 0)

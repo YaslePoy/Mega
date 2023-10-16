@@ -119,6 +119,26 @@ namespace Mega.Game
             residualMove = Vector3.Zero;
             PlaneLinesCollision(constantColider, out moved, out residualMove);
         }
+
+        public bool IsLyingOn(Vector3 point)
+        {
+            foreach (var plane in sides)
+            {
+                if (Vector3.Dot(plane.plane.Normal, point) != -plane.plane.D)
+                    continue;
+                if (plane.IsContains(point)) return true;
+            }
+            return false;
+        }
+        public bool IsContact(Collider verify)
+        {
+            foreach(var point in verify.Vertexes)
+            {
+                if(IsLyingOn(point))
+                    return true;
+            }
+            return false;
+        }
         //public abstract VolumeMembership GetMembership(Vector3 point);
         //public abstract bool MoveToPossible(Vector3 startPosition, Vector3 moveVector, out Vector3 nextPosition);
         //public enum VolumeMembership
