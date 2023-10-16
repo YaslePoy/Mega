@@ -176,6 +176,7 @@ namespace Mega.Game
             var nn = Chunks.Values.ToList();
             nn.ForEach(i => i.RebuildMesh());
 
+            
             TotalSurface = nn.Select(i => i.Surface).ToList().SumList().ToArray();
         }
     }

@@ -78,16 +78,16 @@ namespace Mega.Game
         {
             var localBorder = Adjacent;
             List<RenderSurface> surfaces = new List<RenderSurface>();
-            var coliders = new bool[6];
+            var sides = new bool[6];
             for (int i = 0; i < localBorder.Count(); i++)
             {
                 var m = area.GetMember(localBorder[i]);
                 if (m)
                     continue;
-                coliders[i] = !m;
+                sides[i] = !m;
                 surfaces.Add(totalSurface[i]);
             }
-            collider = new CubicCollider(Position, coliders);
+            collider = new CubicCollider(Position, sides);
             return surfaces;
         }
         public Collider GetCollider()

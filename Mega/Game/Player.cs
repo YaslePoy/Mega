@@ -13,7 +13,7 @@ namespace Mega.Game
     {
         public const float Growth = 1.75f;
         readonly Vector3 growthAdd = new Vector3(0, Growth, 0);
-        public const float WalkSpeed = 6f;
+        public const float WalkSpeed = 4f;
         public World world;
         public Vector3i SelectedBlock;
         public Vector3i Cursor;
@@ -27,6 +27,17 @@ namespace Mega.Game
         public Vector3 LastUpdateMove;
         public Vector3 View => Cam.Front;
         public Vector3 ViewPoint => Position + growthAdd;
+        public bool IsActs
+        {
+            get => acts; set
+            {
+                acts = value;
+                if(acts)
+                    IsActed = false;
+            }
+        }
+        public bool IsActed { get; set; } = true;
+        bool acts;
         public void UpdateCamPosition()
         {
             Cam.Position = Position + growthAdd;
@@ -40,15 +51,8 @@ namespace Mega.Game
         }
         public void PlaceBlock()
         {
-            try
-            {
-                Window.sw.Restart();
                 var newBlock = new Block(Cursor, 1);
                 world.SetBlock(newBlock);
-                Window.sw.Stop();
-                Console.WriteLine("Change time: " + Window.sw.Elapsed.Microseconds);
-            }
-            catch { }
         }
         public RectangularCollider GetCollider()
         {

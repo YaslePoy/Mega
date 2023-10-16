@@ -12,7 +12,6 @@ namespace Mega.Game
 {
     public class Chunk
     {
-        public Player player;
         public static readonly Vector3i Size = new Vector3i(32, 1024, 32);
         public Block[,,] data;
         public bool[,,] Border;

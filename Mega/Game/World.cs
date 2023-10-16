@@ -53,8 +53,6 @@ namespace Mega.Game
                     while (next > DateTime.Now) ;
                     next += totalUpdateTime;
                     Update(updateTime);
-
-
                 }
             })
             {
@@ -99,14 +97,17 @@ namespace Mega.Game
         }
         public void Update(float time)
         {
+            UpdateSelector();
 
             UpdatePlayerPosition(time);
-            UpdateSelector();
         }
         void UpdatePlayerPosition(float t)
         {
-            if (Player.Jumping) // debug trap
-                Console.WriteLine("test");
+            if (!Player.IsActed)
+            {
+                Player.IsActed = true;
+                Player.PlaceBlock();
+            }
 
             //calculating movement in x-z plane
             var localG = G * t;
@@ -128,8 +129,15 @@ namespace Mega.Game
             var united = Collider.CreateUnitedCollider(colliderList);
             var playerCollider = Player.GetCollider();
             float vertical = (float)(Player.VerticalSpeed * t);
-            if (united.IsContact(playerCollider) && Player.Jumping)
-                vertical = 5f * t;
+            if (united.IsContact(playerCollider))
+            {
+                vertical = Player.Jumping ? 5f * t : 0;
+
+            }
+            else
+            {
+                move2d /= 4;
+            }
 
             //creating global player's move
             var move = new Vector3(move2d.X, vertical, move2d.Y);
@@ -207,12 +215,7 @@ namespace Mega.Game
         {
             Area.SetBlock(block);
             Area.UpdateBorder();
-
-            Window.sw.Restart();
-
             Area.UpdateRenderSurface();
-            Window.sw.Stop();
-            var t = Window.sw.Elapsed;
             RefreshView();
         }
     }

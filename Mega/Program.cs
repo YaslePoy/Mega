@@ -17,6 +17,7 @@ namespace Mega
                 // This is needed to run on macos
                 Flags = ContextFlags.ForwardCompatible,
 
+
             };
             using (var window = new Window(new GameWindowSettings() /*{ UpdateFrequency = 100 }*/, nativeWindowSettings) { })
             {

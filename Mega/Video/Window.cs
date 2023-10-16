@@ -7,6 +7,7 @@ using OpenTK.Windowing.Desktop;
 using Mega.Game;
 using System.Diagnostics;
 using System.ComponentModel;
+using Mega.Video.Shading;
 
 namespace Mega.Video
 {
@@ -25,6 +26,7 @@ namespace Mega.Video
         public static Stopwatch sw;
         Player pl;
         private World world;
+        private bool reload;
         private float[] _vertices;
 
         private Dictionary<int, List<uint>> _indices;
@@ -75,7 +77,6 @@ namespace Mega.Video
             var chunk = Chunk.Flat(1, new Vector2i(0, 0));
             pl = new Player(_camera);
             var nChnk = Chunk.Flat(1, new Vector2i(1, 0));
-            chunk.player = pl;
             world = new World(pl, this, 1);
             world.SetChunk(chunk, 0);
             world.SetChunk(nChnk, 1);
@@ -121,7 +122,13 @@ namespace Mega.Video
         protected override void OnRenderFrame(FrameEventArgs e)
         {
             base.OnRenderFrame(e);
-            
+            if(reload)
+            {
+                reload = false;
+                GL.BufferData(BufferTarget.ArrayBuffer, _vertices.Length * sizeof(float), _vertices, BufferUsageHint.DynamicDraw);
+                var inds = _indices.Values.ToList().SumList();
+                GL.BufferData(BufferTarget.ElementArrayBuffer, inds.Count * sizeof(uint), inds.ToArray(), BufferUsageHint.DynamicDraw);
+            }
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
             GL.BindVertexArray(_vertexArrayObject);
@@ -145,12 +152,9 @@ namespace Mega.Video
 
         public void UpdateMesh(float[] vertexes, Dictionary<int, List<uint>> path)
         {
-
+            reload = true;
             _vertices = vertexes;
             _indices = path;
-            GL.BufferData(BufferTarget.ArrayBuffer, _vertices.Length * sizeof(float), _vertices, BufferUsageHint.DynamicDraw);
-            var inds = _indices.Values.ToList().SumList();
-            GL.BufferData(BufferTarget.ElementArrayBuffer, inds.Count * sizeof(uint), inds.ToArray(), BufferUsageHint.DynamicDraw);
         }
         protected override void OnUpdateFrame(FrameEventArgs e)
         {
@@ -199,7 +203,6 @@ namespace Mega.Video
             if (input.IsKeyDown(Keys.LeftShift))
             {
                 //_camera.Position -= _camera.Up * cameraSpeed * (float)e.Time; // Down
-
             }
             if (input.IsKeyReleased(Keys.R))
             {
@@ -208,10 +211,10 @@ namespace Mega.Video
             pl.Jumping = input.IsKeyDown(Keys.Space);
             // Get the mouse state
             var mouse = MouseState;
-            if (mouse.IsButtonPressed(MouseButton.Left))
-            {
-                pl.PlaceBlock();
-            }
+            pl.IsActs = mouse.IsButtonPressed(MouseButton.Left);
+            //if (mouse.IsButtonPressed(MouseButton.Left))
+            //    pl.PlaceBlock();
+
             if (_firstMove) // This bool variable is initially set to true.
             {
                 _lastPos = new Vector2(0.5f, 0);
