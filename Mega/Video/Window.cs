@@ -92,29 +92,31 @@ namespace Mega.Video
 
             GL.Enable(EnableCap.DepthTest);
 
-            _vertexArrayObject = GL.GenVertexArray();
-            GL.BindVertexArray(_vertexArrayObject);
+            //_vertexArrayObject = GL.GenVertexArray();
+            //GL.BindVertexArray(_vertexArrayObject);
 
-            _vertexBufferObject = GL.GenBuffer();
-            GL.BindBuffer(BufferTarget.ArrayBuffer, _vertexBufferObject);
-            //GL.BufferData(BufferTarget.ArrayBuffer, _vertices.Length * sizeof(float), _vertices, BufferUsageHint.DynamicDraw);
+            //_vertexBufferObject = GL.GenBuffer();
+            //GL.BindBuffer(BufferTarget.ArrayBuffer, _vertexBufferObject);
+            ////GL.BufferData(BufferTarget.ArrayBuffer, _vertices.Length * sizeof(float), _vertices, BufferUsageHint.DynamicDraw);
 
-            _elementBufferObject = GL.GenBuffer();
-            GL.BindBuffer(BufferTarget.ElementArrayBuffer, _elementBufferObject);
-            //GL.BufferData(BufferTarget.ElementArrayBuffer, inds.Count * sizeof(uint), inds.ToArray(), BufferUsageHint.DynamicDraw);
+            //_elementBufferObject = GL.GenBuffer();
+            //GL.BindBuffer(BufferTarget.ElementArrayBuffer, _elementBufferObject);
+            ////GL.BufferData(BufferTarget.ElementArrayBuffer, inds.Count * sizeof(uint), inds.ToArray(), BufferUsageHint.DynamicDraw);
 
             //_shader = new Shader("Shaders/shader.vert", "Shaders/shader.frag");
             _meshRender = new TextureDrawShader();
             _meshRender.Use();
+            _meshRender.Load();
+
             //edgeShader = new Shader("Shaders/shader.vert", "Shaders/edge.frag");
             //edgeShader.Use();
-            var vertexLocation = _meshRender.GetAttribLocation("aPosition");
-            GL.EnableVertexAttribArray(vertexLocation);
-            GL.VertexAttribPointer(vertexLocation, 3, VertexAttribPointerType.Float, false, 5 * sizeof(float), 0);
+            //var vertexLocation = _meshRender.GetAttribLocation("aPosition");
+            //GL.EnableVertexAttribArray(vertexLocation);
+            //GL.VertexAttribPointer(vertexLocation, 3, VertexAttribPointerType.Float, false, 5 * sizeof(float), 0);
 
-            var texCoordLocation = _meshRender.GetAttribLocation("aTexCoord");
-            GL.EnableVertexAttribArray(texCoordLocation);
-            GL.VertexAttribPointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
+            //var texCoordLocation = _meshRender.GetAttribLocation("aTexCoord");
+            //GL.EnableVertexAttribArray(texCoordLocation);
+            //GL.VertexAttribPointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
 
         }
 
@@ -130,7 +132,7 @@ namespace Mega.Video
             //}
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-            GL.BindVertexArray(_vertexArrayObject);
+            //GL.BindVertexArray(_vertexArrayObject);
 
             //_shader.SetMatrix4("view", _camera.GetViewMatrix());
             //_shader.SetMatrix4("projection", _camera.GetProjectionMatrix());

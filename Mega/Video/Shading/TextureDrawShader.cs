@@ -51,6 +51,7 @@ namespace Mega.Video.Shading
         }
         public override void Run(World world)
         {
+            GL.BindVertexArray(_vao);
             if (world.Redrawing)
             {
                 world.GenerateMesh(out _indices, out _vertices);
