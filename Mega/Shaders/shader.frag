@@ -14,5 +14,4 @@ void main()
     if(cl.w < 0.5)
         discard;
     outputColor = cl;
-
 }

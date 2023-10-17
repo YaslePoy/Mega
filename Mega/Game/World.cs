@@ -85,7 +85,7 @@ namespace Mega.Game
             {
                 var side = sides[i];
 
-                var v = side.GetRaw();
+                var v = side.GetRawPolygon();
                 v.CopyTo(verteces, 20 * i);
 
                 if (!indeces.ContainsKey(side.TextureID))

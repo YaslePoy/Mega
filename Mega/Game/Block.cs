@@ -11,6 +11,7 @@ namespace Mega.Game
 {
     public class Block
     {
+        public RenderSurface[] view;
         Vector3i[] localNeibs;
         public Vector3i[] Adjacent => localNeibs == null ? GenerateNeis() : localNeibs;
        CubicCollider collider;
@@ -88,6 +89,7 @@ namespace Mega.Game
                 surfaces.Add(totalSurface[i]);
             }
             collider = new CubicCollider(Position, sides);
+            view = surfaces.ToArray();
             return surfaces;
         }
         public Collider GetCollider()

@@ -9,7 +9,8 @@ namespace Mega.Video
 {
     public class RenderSurface
     {
-        float[] raw;
+        float[] rawPolygon;
+        float[] rawEdges;
         Vector3 move;
         (Vector3, Vector2)[] _vts;
         public int TextureID;
@@ -38,10 +39,10 @@ namespace Mega.Video
             TextureID = tx;
         }
 
-        public float[] GetRaw()
+        public float[] GetRawPolygon()
         {
-            if(raw != null) 
-                return raw;
+            if(rawPolygon != null) 
+                return rawPolygon;
             var ret = new float[_vts.Length * 5];
             int offset = 0;
             for (int i = 0; i < _vts.Length; i++)
@@ -54,8 +55,24 @@ namespace Mega.Video
                 ret[offset + 4] = _vts[i].Item2.Y;
                 offset += 5;
             }
-            raw = ret;
-            return raw;
+            rawPolygon = ret;
+            return rawPolygon;
         }
+        public float[] GetRawEdges()
+        {
+            if (rawEdges != null)
+                return rawEdges;
+            var ret = new float[_vts.Length * 3];
+            int offset = 0;
+            for (int i = 0; i < _vts.Length; i++)
+            {
+                ret[offset++] = _vts[i].Item1.X + move.X;
+                ret[offset++] = _vts[i].Item1.Y + move.Y;
+                ret[offset++] = _vts[i].Item1.Z + move.Z;
+            }
+            rawEdges = ret;
+            return rawEdges;
+        }
+
     }
 }

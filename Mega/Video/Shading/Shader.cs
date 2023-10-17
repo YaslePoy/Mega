@@ -11,6 +11,7 @@ namespace Mega.Video.Shading
     // A simple class meant to help create shaders.
     public abstract class Shader
     {
+        int _ebo, _vao, _vbo;
         public readonly int Handle;
 
         private readonly Dictionary<string, int> _uniformLocations;
@@ -19,6 +20,26 @@ namespace Mega.Video.Shading
         // Shaders are written in GLSL, which is a language very similar to C in its semantics.
         // The GLSL source is compiled *at runtime*, so it can optimize itself for the graphics card it's currently being used on.
         // A commented example of GLSL can be found in shader.vert.
+
+        public virtual void Load()
+        {
+            _vao = GL.GenVertexArray();
+            GL.BindVertexArray(_vao);
+
+            _vbo = GL.GenBuffer();
+            GL.BindBuffer(BufferTarget.ArrayBuffer, _vbo);
+
+            _ebo = GL.GenBuffer();
+            GL.BindBuffer(BufferTarget.ElementArrayBuffer, _ebo);
+        }
+
+        protected void BindBuffers()
+        {
+            Use()
+            GL.BindVertexArray(_vao);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, _vbo);
+            GL.BindBuffer(BufferTarget.ElementArrayBuffer, _ebo);
+        }
         public Shader(string vertPath, string fragPath)
         {
             // There are several different types of shaders, but the only two you need for basic rendering are the vertex and fragment shaders.
@@ -186,7 +207,11 @@ namespace Mega.Video.Shading
             GL.UseProgram(Handle);
             GL.Uniform3(_uniformLocations[name], data);
         }
-
+        public void SetVector4(string name, Vector4 data)
+        {
+            GL.UseProgram(Handle);
+            GL.Uniform4(_uniformLocations[name], data);
+        }
         public abstract void Run(World world);
     }
 

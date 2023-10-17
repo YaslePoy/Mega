@@ -15,7 +15,7 @@ namespace Mega.Video.Shading
 
         private float[] _vertices;
         private Dictionary<int, List<uint>> _indices;
-        public Matrix4 View { set { base.SetMatrix4("view", value); } }
+        public Matrix4 View { set { SetMatrix4("view", value); } }
         public Matrix4 Projection { set { base.SetMatrix4("projection", value); } }
         public Texture RenderTexture
         {
@@ -29,17 +29,9 @@ namespace Mega.Video.Shading
         {
         }
 
-        public void Load()
+        public override void Load()
         {
-            _vao = GL.GenVertexArray();
-            GL.BindVertexArray(_vao);
-
-            _vbo = GL.GenBuffer();
-            GL.BindBuffer(BufferTarget.ArrayBuffer, _vbo);
-
-            _ebo = GL.GenBuffer();
-            GL.BindBuffer(BufferTarget.ElementArrayBuffer, _ebo);
-
+            base.Load();
             var vertexLocation = GetAttribLocation("aPosition");
             GL.EnableVertexAttribArray(vertexLocation);
             GL.VertexAttribPointer(vertexLocation, 3, VertexAttribPointerType.Float, false, 5 * sizeof(float), 0);
@@ -51,13 +43,13 @@ namespace Mega.Video.Shading
         }
         public override void Run(World world)
         {
-            GL.BindVertexArray(_vao);
+            BindBuffers();
             if (world.Redrawing)
             {
                 world.GenerateMesh(out _indices, out _vertices);
                 GL.BufferData(BufferTarget.ArrayBuffer, _vertices.Length * sizeof(float), _vertices, BufferUsageHint.DynamicDraw);
                 var inds = _indices.Values.ToList().SumList();
-                GL.BufferData(BufferTarget.ElementArrayBuffer, inds.Count() * sizeof(uint), inds.ToArray(), BufferUsageHint.DynamicDraw);
+                GL.BufferData(BufferTarget.ArrayBuffer, _vertices.Length * sizeof(float), _vertices, BufferUsageHint.DynamicDraw);
             }
             Projection = world.Player.Cam.GetProjectionMatrix();
             View = world.Player.Cam.GetViewMatrix();

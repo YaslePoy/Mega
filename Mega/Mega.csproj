@@ -34,6 +34,12 @@
     <None Update="Resources\base_all.uv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Shaders\cursor.frag">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Shaders\cursor.vert">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Shaders\edge.frag">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
