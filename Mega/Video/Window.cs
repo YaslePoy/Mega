@@ -26,18 +26,7 @@ namespace Mega.Video
         public static Stopwatch sw;
         Player pl;
         private World world;
-        private bool reload;
-        private float[] _vertices;
-
-        private Dictionary<int, List<uint>> _indices;
-
-        private int _elementBufferObject;
-
-        private int _vertexBufferObject;
-
-        private int _vertexArrayObject;
-
-        private Shader _shader;
+        CursorShader _cursor;
         TextureDrawShader _meshRender;
 
         // The view and projection matrices have been removed as we don't need them here anymore.
@@ -93,6 +82,9 @@ namespace Mega.Video
             _meshRender = new TextureDrawShader();
             _meshRender.Use();
             _meshRender.Load();
+            _cursor = new CursorShader();
+            _cursor.Use();
+            _cursor.Load();
         }
 
         protected override void OnRenderFrame(FrameEventArgs e)
@@ -100,6 +92,7 @@ namespace Mega.Video
             base.OnRenderFrame(e);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             _meshRender.Run(world);
+            _cursor.Run(world);
             SwapBuffers();
         }
 
