@@ -35,7 +35,7 @@ namespace Mega.Video.Shading
 
         protected void BindBuffers()
         {
-            Use()
+            Use();
             GL.BindVertexArray(_vao);
             GL.BindBuffer(BufferTarget.ArrayBuffer, _vbo);
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, _ebo);

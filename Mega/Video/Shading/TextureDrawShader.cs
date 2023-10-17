@@ -49,7 +49,7 @@ namespace Mega.Video.Shading
                 world.GenerateMesh(out _indices, out _vertices);
                 GL.BufferData(BufferTarget.ArrayBuffer, _vertices.Length * sizeof(float), _vertices, BufferUsageHint.DynamicDraw);
                 var inds = _indices.Values.ToList().SumList();
-                GL.BufferData(BufferTarget.ArrayBuffer, _vertices.Length * sizeof(float), _vertices, BufferUsageHint.DynamicDraw);
+                GL.BufferData(BufferTarget.ElementArrayBuffer, inds.Length * sizeof(float), inds, BufferUsageHint.DynamicDraw);
             }
             Projection = world.Player.Cam.GetProjectionMatrix();
             View = world.Player.Cam.GetViewMatrix();
