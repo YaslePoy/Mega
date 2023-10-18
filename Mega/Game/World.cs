@@ -73,8 +73,8 @@ namespace Mega.Game
         {
             isRuninig = false;
         }
-        
-        public void GenerateMesh(out Dictionary<int,  List<uint>> indeces,out float[] verteces)
+
+        public void GenerateMesh(out Dictionary<int, List<uint>> indeces, out float[] verteces)
         {
             var sides = new List<RenderSurface>();
             foreach (var chunk in Area.Chunks.Values)
@@ -103,22 +103,22 @@ namespace Mega.Game
 
         public void generateBlockMesh(/*out uint[] indeces*/out Dictionary<int, List<uint>> indeces, out float[] verteces, Block b)
         {
-                        var sides = b.view.Where(i => Vector3.Dot(i.Normal, Player.View) < 0).ToArray();
+            var sides = b.view.Where(i => Vector3.Dot(i.Normal, Player.View) < 0).ToArray();
             //foreach (var chunk in Area.Chunks.Values)
             //{
             //    if (chunk is null) continue;
             //    sides.AddRange(chunk.Surface);
             //}
             uint indOffset = 0;
-            verteces = new float[sides.Length * 20];
+            verteces = new float[sides.Length * 4 * 3];
             indeces = new Dictionary<int, List<uint>>();
             uint[] adding;
             for (int i = 0; i < sides.Length; i++)
             {
                 var side = sides[i];
 
-                var v = side.GetRawPolygon();
-                v.CopyTo(verteces, 20 * i);
+                var v = side.GetRawEdges();
+                v.CopyTo(verteces, 4 * 3 * i);
 
                 if (!indeces.ContainsKey(side.TextureID))
                     indeces.Add(side.TextureID, new List<uint>());
