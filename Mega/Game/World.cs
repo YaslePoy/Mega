@@ -103,7 +103,7 @@ namespace Mega.Game
 
         public void generateBlockMesh(/*out uint[] indeces*/out Dictionary<int, List<uint>> indeces, out float[] verteces, Block b)
         {
-            var sides = b.view.Where(i => Vector3.Dot(i.Normal, Player.View) < 0).ToArray();
+                        var sides = b.view.Where(i => Vector3.Dot(i.Normal, Player.View) < 0).ToArray();
             //foreach (var chunk in Area.Chunks.Values)
             //{
             //    if (chunk is null) continue;
