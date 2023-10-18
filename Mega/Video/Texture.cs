@@ -1,9 +1,11 @@
-﻿using OpenTK.Graphics.OpenGL4;
+﻿using OpenTK.Graphics.OpenGL;
 using System.Drawing;
 using System.Drawing.Imaging;
-using PixelFormat = OpenTK.Graphics.OpenGL4.PixelFormat;
+using PixelFormat = OpenTK.Graphics.OpenGL.PixelFormat;
 using StbImageSharp;
 using System.IO;
+using System.Reflection.Metadata;
+using System;
 
 namespace Mega.Video
 {
@@ -11,9 +13,8 @@ namespace Mega.Video
     public class Texture
     {
         public readonly int Handle;
-
-        byte[] data;
-        public ImageResult image;
+        public int width, height;
+        public byte[] pixels;
         public static Texture LoadFromFile(string path)
         {
             // Generate handle
@@ -71,12 +72,25 @@ namespace Mega.Video
             // Here is an example of mips in action https://en.wikipedia.org/wiki/File:Mipmap_Aliasing_Comparison.png
             GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
 
-            return new Texture(handle) { image = i };
+            return new Texture(handle) { pixels = i.Data, height = i.Height, width = i.Width };
+        }
+
+        public Texture()
+        {
+            Handle = GL.GenTexture();
+            GL.ActiveTexture(TextureUnit.Texture0);
+            GL.BindTexture(TextureTarget.Texture2D, Handle);
+
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.NearestMipmapNearest);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
         }
 
         public Texture(int glHandle)
         {
             Handle = glHandle;
+
         }
 
         // Activate texture
@@ -91,7 +105,7 @@ namespace Mega.Video
         public void Update()
         {
             Use(TextureUnit.Texture0);
-            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, image.Width, image.Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, image.Data);
+            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, width, height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, pixels);
         }
     }
 }

@@ -27,8 +27,9 @@ namespace Mega.Video
         Player pl;
         private World world;
         //CursorShader _cursor;
-        CursorShader _test;
+        CursorShader _cursor;
         TextureDrawShader _meshRender;
+        UIShader _ui;
 
         // The view and projection matrices have been removed as we don't need them here anymore.
         // They can now be found in the new camera class.
@@ -82,8 +83,10 @@ namespace Mega.Video
 
             _meshRender = new TextureDrawShader();
             _meshRender.Load();
-            _test = new CursorShader();
-            _test.Load();
+            _cursor = new CursorShader();
+            _cursor.Load();
+            _ui = new UIShader();
+            _ui.Load();
             //_cursor = new CursorShader();
             //_cursor.Use();
             //_cursor.Load();
@@ -94,8 +97,8 @@ namespace Mega.Video
             base.OnRenderFrame(e);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             _meshRender.Run(world);
-            //_cursor.Run(world);
-            _test.Run(world);
+            _cursor.Run(world);
+            _ui.Run(world);
             world.Redrawing = false;
             SwapBuffers();
         }

@@ -1,5 +1,5 @@
 ﻿using Mega.Game;
-using OpenTK.Graphics.OpenGL4;
+using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
@@ -20,7 +20,7 @@ namespace Mega.Video.Shading
         {
             set
             {
-                value.Use(OpenTK.Graphics.OpenGL4.TextureUnit.Texture0);
+                value.Use(TextureUnit.Texture0);
                 SetInt("texture0", 0);
             }
         }
