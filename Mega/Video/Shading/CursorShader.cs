@@ -12,10 +12,10 @@ namespace Mega.Video.Shading
     internal class CursorShader : Shader
     {
         private float[] _vertices;
-        private Dictionary<int, List<uint>> _indices;
+        private uint[] _indices;
         public Matrix4 View { set { SetMatrix4("view", value); } }
         public Matrix4 Projection { set { base.SetMatrix4("projection", value); } }
-        public CursorShader() : base("Shaders/shadertest.vert", "Shaders/shadertest.frag")
+        public CursorShader() : base("Shaders/cursor.vert", "Shaders/cursor.frag")
         {
         }
 
@@ -29,7 +29,7 @@ namespace Mega.Video.Shading
             //var texCoordLocation = GetAttribLocation("aTexCoord");
             //GL.EnableVertexAttribArray(texCoordLocation);
             //GL.VertexAttribPointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
-            _indices = new Dictionary<int, List<uint>>();
+            _indices = new uint[0];
             _vertices = new float[0];
         }
         public override void Run(World world)
@@ -43,42 +43,36 @@ namespace Mega.Video.Shading
                 //world.generateBlockMesh(out _indices, out _vertices, sel);
                 UpdateEdges(sel, world);
                 GL.BufferData(BufferTarget.ArrayBuffer, _vertices.Length * sizeof(float), _vertices, BufferUsageHint.DynamicDraw);
-                var inds = _indices.Values.ToList().SumList();
-                GL.BufferData(BufferTarget.ElementArrayBuffer, inds.Length * sizeof(float), inds, BufferUsageHint.DynamicDraw);
+                GL.BufferData(BufferTarget.ElementArrayBuffer, _indices.Length * sizeof(float), _indices, BufferUsageHint.DynamicDraw);
             }
             else
             {
-                _indices =new Dictionary<int, List<uint>>();
+                _indices = new uint[0];
                 _vertices = new float[0];
             }
             //}
             Projection = world.Player.Cam.GetProjectionMatrix();
             View = world.Player.Cam.GetViewMatrix();
-            int offset = 0;
-            foreach (var tex in _indices)
+            for (int i = 0; i < 6; i++)
             {
-                var currentDrawArray = tex.Value;
-                for (int i = 0; i < 6; i++)
-                {
-                    GL.DrawElements(PrimitiveType.LineLoop, 4, DrawElementsType.UnsignedInt, 4 * i * sizeof(uint));
-                }
-
-
-                offset += currentDrawArray.Count;
+                GL.DrawElements(PrimitiveType.LineLoop, 4, DrawElementsType.UnsignedInt, 4 * i * sizeof(uint));
             }
+
+
+
         }
         void UpdateEdges(Block block, World w)
         {
             if (block is null)
             {
-                _indices = new Dictionary<int, List<uint>>();
+                _indices = new uint[0];
                 _vertices = new float[0];
                 return;
             }
-            var sides = block.view.Where(i =>  Vector3.Dot(i.Normal, w.Player.View) < 0).ToArray();
+            var sides = block.view.Where(i => Vector3.Dot(i.Normal, w.Player.View) < 0).ToArray();
             uint offset = 0;
             _vertices = new float[sides.Length * 12];
-            _indices = new Dictionary<int, List<uint>>();
+            _indices = new uint[sides.Length * 4];
             uint[] adding;
             for (int i = 0; i < sides.Length; i++)
             {
@@ -86,12 +80,11 @@ namespace Mega.Video.Shading
 
                 var v = side.GetRawEdges();
                 v.CopyTo(_vertices, 4 * 3 * i);
-
-                if (!_indices.ContainsKey(side.TextureID))
-                    _indices.Add(side.TextureID, new List<uint>());
                 adding = new uint[] { offset, 1 + offset, 2 + offset, 3 + offset };
+                adding.CopyTo(_indices, offset);
+
                 offset += 4;
-                _indices[side.TextureID].AddRange(adding);
+                //_indices[side.TextureID].AddRange(adding);
             }
         }
     }

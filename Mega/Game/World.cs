@@ -100,33 +100,6 @@ namespace Mega.Game
                 indOffset += 4;
             }
         }
-
-        public void generateBlockMesh(/*out uint[] indeces*/out Dictionary<int, List<uint>> indeces, out float[] verteces, Block b)
-        {
-            var sides = b.view.Where(i => Vector3.Dot(i.Normal, Player.View) < 0).ToArray();
-            //foreach (var chunk in Area.Chunks.Values)
-            //{
-            //    if (chunk is null) continue;
-            //    sides.AddRange(chunk.Surface);
-            //}
-            uint indOffset = 0;
-            verteces = new float[sides.Length * 4 * 3];
-            indeces = new Dictionary<int, List<uint>>();
-            uint[] adding;
-            for (int i = 0; i < sides.Length; i++)
-            {
-                var side = sides[i];
-
-                var v = side.GetRawEdges();
-                v.CopyTo(verteces, 4 * 3 * i);
-
-                if (!indeces.ContainsKey(side.TextureID))
-                    indeces.Add(side.TextureID, new List<uint>());
-                adding = new uint[] { indOffset, 1 + indOffset, 2 + indOffset, 3 + indOffset };
-                indOffset += 4;
-                indeces[side.TextureID].AddRange(adding);
-            }
-        }
         public void Update(float time)
         {
             UpdateSelector();
