@@ -11,61 +11,56 @@ namespace Mega.Video.Shading
 {
     internal class CursorShader : Shader
     {
-        float[] mesh;
-        uint[] orders;
-        Vector4 Color { set { SetVector4("color", value); } }
+        private float[] _vertices;
+        private Dictionary<int, List<uint>> _indices;
         public Matrix4 View { set { SetMatrix4("view", value); } }
-        public Matrix4 Projection { set { SetMatrix4("projection", value); } }
-        Vector3i cursor;
-        public CursorShader() : base("Shaders/cursor.vert", "Shaders/cursor.frag") { }
+        public Matrix4 Projection { set { base.SetMatrix4("projection", value); } }
+        public CursorShader() : base("Shaders/shadertest.vert", "Shaders/shadertest.frag")
+        {
+        }
 
         public override void Load()
         {
             base.Load();
-            //Color = new Vector4(1, 1, 1, 1);
-            orders = new uint[0];
-            var vertexLocation = GetAttribLocation("vPos");
+            var vertexLocation = GetAttribLocation("aPosition");
             GL.EnableVertexAttribArray(vertexLocation);
-            GL.VertexAttribPointer(vertexLocation, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
+            GL.VertexAttribPointer(vertexLocation, 3, VertexAttribPointerType.Float, false, 5 * sizeof(float), 0);
 
+            var texCoordLocation = GetAttribLocation("aTexCoord");
+            GL.EnableVertexAttribArray(texCoordLocation);
+            GL.VertexAttribPointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
+            _indices = new Dictionary<int, List<uint>>();
+            _vertices = new float[0];
         }
         public override void Run(World world)
         {
             BindBuffers();
-            var worldCursor = world.Player.SelectedBlock;
-            if (cursor != worldCursor)
-            {
-                cursor = worldCursor;
-                var cursorBlock = world.Area.GetBlock(cursor);
-
-                if (cursorBlock != null)
+            //if (world.Redrawing)
+            //{
+                var sel = world.Area.GetBlock(world.Player.SelectedBlock);
+                if (sel is not null)
                 {
-
-                    mesh = cursorBlock.view.Select(i => i.GetRawEdges()).SumList();
-                    orders = new uint[cursorBlock.view.Count() * 8];
-                    uint offset = 0, index = 0;
-                    for (int i = 0; i < cursorBlock.view.Count(); i++, offset+=8, index += 4)
-                    {
-                        orders[offset] = index;
-                        orders[offset + 1] = index + 1;
-
-                        orders[offset + 2] = index + 1;
-                        orders[offset + 3] = index + 2;
-
-                        orders[offset + 4] = index + 2;
-                        orders[offset + 5] = index + 3;
-
-                        orders[offset + 6] = index + 3;
-                        orders[offset + 7] = index;
-
-                    }
-
-                    GL.BufferData(BufferTarget.ArrayBuffer, mesh.Length * sizeof(float), mesh, BufferUsageHint.DynamicDraw);
-                    GL.BufferData(BufferTarget.ElementArrayBuffer, orders.Length * sizeof(uint), orders, BufferUsageHint.DynamicDraw);
+                    world.generateBlockMesh(out _indices, out _vertices, sel);
+                    GL.BufferData(BufferTarget.ArrayBuffer, _vertices.Length * sizeof(float), _vertices, BufferUsageHint.DynamicDraw);
+                    var inds = _indices.Values.ToList().SumList();
+                    GL.BufferData(BufferTarget.ElementArrayBuffer, inds.Length * sizeof(float), inds, BufferUsageHint.DynamicDraw);
                 }
 
+            //}
+            Projection = world.Player.Cam.GetProjectionMatrix();
+            View = world.Player.Cam.GetViewMatrix();
+            int offset = 0;
+            foreach (var tex in _indices)
+            {
+                var currentDrawArray = tex.Value;
+                for (int i = 0; i < 6; i++)
+                {
+                    GL.DrawElements(PrimitiveType.LineLoop, 4, DrawElementsType.UnsignedInt, 4*i * sizeof(uint));
+                }
+
+
+                offset += currentDrawArray.Count;
             }
-            GL.DrawArrays(PrimitiveType.Lines, 0, orders.Length);
         }
     }
 }

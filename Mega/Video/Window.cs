@@ -27,7 +27,7 @@ namespace Mega.Video
         Player pl;
         private World world;
         //CursorShader _cursor;
-        TestShader _test;
+        CursorShader _test;
         TextureDrawShader _meshRender;
 
         // The view and projection matrices have been removed as we don't need them here anymore.
@@ -82,7 +82,7 @@ namespace Mega.Video
 
             _meshRender = new TextureDrawShader();
             _meshRender.Load();
-            _test = new TestShader();
+            _test = new CursorShader();
             _test.Load();
             //_cursor = new CursorShader();
             //_cursor.Use();
