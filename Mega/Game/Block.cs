@@ -31,7 +31,7 @@ namespace Mega.Game
         public int IDCode;
         public Vector3i Position;
 
-        RenderSurface[] totalSurface;
+        public RenderSurface[] totalSurface;
         public Block()
         {
             totalSurface = new RenderSurface[0];
@@ -48,12 +48,12 @@ namespace Mega.Game
         void GenerateSurface()
         {
             totalSurface = new RenderSurface[6];
-            totalSurface[0] = new RenderSurface(MeshSides[0], TextureHelper.GetTextureCoords(IDCode, 0), Position, IDCode);
-            totalSurface[1] = new RenderSurface(MeshSides[1], TextureHelper.GetTextureCoords(IDCode, 1), Position, IDCode);
-            totalSurface[2] = new RenderSurface(MeshSides[2], TextureHelper.GetTextureCoords(IDCode, 2), Position, IDCode);
-            totalSurface[3] = new RenderSurface(MeshSides[3], TextureHelper.GetTextureCoords(IDCode, 3), Position, IDCode);
-            totalSurface[4] = new RenderSurface(MeshSides[4], TextureHelper.GetTextureCoords(IDCode, 4), Position, IDCode);
-            totalSurface[5] = new RenderSurface(MeshSides[5], TextureHelper.GetTextureCoords(IDCode, 5), Position, IDCode);
+            totalSurface[0] = new RenderSurface(MeshSides[0], TextureHelper.GetTextureCoords(IDCode, 0), Position, Neibs[0], IDCode);
+            totalSurface[1] = new RenderSurface(MeshSides[1], TextureHelper.GetTextureCoords(IDCode, 1), Position, Neibs[1], IDCode);
+            totalSurface[2] = new RenderSurface(MeshSides[2], TextureHelper.GetTextureCoords(IDCode, 2), Position, Neibs[2], IDCode);
+            totalSurface[3] = new RenderSurface(MeshSides[3], TextureHelper.GetTextureCoords(IDCode, 3), Position, Neibs[3], IDCode);
+            totalSurface[4] = new RenderSurface(MeshSides[4], TextureHelper.GetTextureCoords(IDCode, 4), Position, Neibs[4], IDCode);
+            totalSurface[5] = new RenderSurface(MeshSides[5], TextureHelper.GetTextureCoords(IDCode, 5), Position, Neibs[5], IDCode);
         }
 
         public Vector3i[] GenerateNeis()
@@ -75,7 +75,7 @@ namespace Mega.Game
 
             return result.ToArray();
         }
-        public List<RenderSurface> GetDrawingMesh(UnitedChunk area)
+        public RenderSurface[] GetDrawingMesh(UnitedChunk area)
         {
             var localBorder = Adjacent;
             List<RenderSurface> surfaces = new List<RenderSurface>();
@@ -90,7 +90,7 @@ namespace Mega.Game
             }
             collider = new CubicCollider(Position, sides);
             view = surfaces.ToArray();
-            return surfaces;
+            return view;
         }
         public Collider GetCollider()
         {

@@ -22,7 +22,7 @@ namespace Mega.Video.Shading
         public override void Load()
         {
             base.Load();
-            Color = new Vector4(1, 1, 1, 1);
+            //Color = new Vector4(1, 1, 1, 1);
             orders = new uint[0];
             var vertexLocation = GetAttribLocation("vPos");
             GL.EnableVertexAttribArray(vertexLocation);

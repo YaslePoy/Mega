@@ -23,6 +23,7 @@ namespace Mega.Video.Shading
 
         public virtual void Load()
         {
+            Use();
             _vao = GL.GenVertexArray();
             GL.BindVertexArray(_vao);
 

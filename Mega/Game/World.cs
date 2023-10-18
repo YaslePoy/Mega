@@ -12,10 +12,15 @@ namespace Mega.Game
         {
             get
             {
-                var buf = redrawing;
-                if (redrawing)
-                    redrawing = false;
-                return buf;
+                //var buf = redrawing;
+                //if (redrawing)
+                //    redrawing = false;
+                //return buf;
+                return redrawing;
+            }
+            set
+            {
+                redrawing = value;
             }
         }
 
@@ -93,6 +98,33 @@ namespace Mega.Game
                 adding = new uint[] { indOffset, 1 + indOffset, 3 + indOffset, 1 + indOffset, 2 + indOffset, 3 + indOffset };
                 indeces[side.TextureID].AddRange(adding);
                 indOffset += 4;
+            }
+        }
+
+        public void generateBlockMesh(/*out uint[] indeces*/out Dictionary<int, List<uint>> indeces, out float[] verteces, Block b)
+        {
+            var sides = b.view.Where(i => Vector3.Dot(i.Normal, Player.View) < 0).ToArray();
+            //foreach (var chunk in Area.Chunks.Values)
+            //{
+            //    if (chunk is null) continue;
+            //    sides.AddRange(chunk.Surface);
+            //}
+            uint indOffset = 0;
+            verteces = new float[sides.Length * 20];
+            indeces = new Dictionary<int, List<uint>>();
+            uint[] adding;
+            for (int i = 0; i < sides.Length; i++)
+            {
+                var side = sides[i];
+
+                var v = side.GetRawPolygon();
+                v.CopyTo(verteces, 20 * i);
+
+                if (!indeces.ContainsKey(side.TextureID))
+                    indeces.Add(side.TextureID, new List<uint>());
+                adding = new uint[] { indOffset, 1 + indOffset, 2 + indOffset, 3 + indOffset };
+                indOffset += 4;
+                indeces[side.TextureID].AddRange(adding);
             }
         }
         public void Update(float time)

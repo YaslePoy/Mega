@@ -13,6 +13,7 @@ namespace Mega.Video
         float[] rawEdges;
         Vector3 move;
         (Vector3, Vector2)[] _vts;
+        public readonly Vector3 Normal;
         public int TextureID;
 
         public RenderSurface((Vector3, Vector2)[] vertexes, Vector3 move)
@@ -27,7 +28,7 @@ namespace Mega.Video
 
         }
 
-        public RenderSurface(Vector3[] vertices, Vector2[] texture, Vector3 move, int tx)
+        public RenderSurface(Vector3[] vertices, Vector2[] texture, Vector3 move, Vector3 normal, int tx)
         {
             this.move = move;
             var t = new List<(Vector3, Vector2)>();
@@ -37,6 +38,7 @@ namespace Mega.Video
             }
             _vts = t.ToArray();
             TextureID = tx;
+            this.Normal = normal;
         }
 
         public float[] GetRawPolygon()
