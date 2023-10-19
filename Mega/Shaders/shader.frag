@@ -8,8 +8,6 @@ uniform sampler2D texture0;
 
 void main()
 {
-
-    
     vec4 cl = texture(texture0, texCoord);
     if(cl.w < 0.5)
         discard;

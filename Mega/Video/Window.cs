@@ -78,7 +78,7 @@ namespace Mega.Video
 
         void GLInit()
         {
-            GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+            GL.ClearColor(0f, 0.5f, 0.5f, 1.0f);
             GL.Enable(EnableCap.DepthTest);
 
             _meshRender = new TextureDrawShader();

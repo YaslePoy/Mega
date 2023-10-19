@@ -52,7 +52,8 @@ namespace Mega.Video.Shading
                     height = image.Height,
                     pixels = image.Data
                 };
-
+                tx.Use(TextureUnit.Texture0);
+                tx.Update();
             }
 
             var vertexLocation = GetAttribLocation("aPosition");
@@ -64,14 +65,14 @@ namespace Mega.Video.Shading
             GL.VertexAttribPointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
             GL.BufferData(BufferTarget.ArrayBuffer, _vertices.Length * sizeof(float), _vertices, BufferUsageHint.DynamicDraw);
             GL.BufferData(BufferTarget.ElementArrayBuffer, _indices.Length * sizeof(float), _indices, BufferUsageHint.DynamicDraw);
-            tx = new Texture();
         }
         public override void Run(World world)
         {
             BindBuffers();
 
-            tx.Use(TextureUnit.Texture0);
-
+            //tx.Use(TextureUnit.Texture0);
+            TextureHelper.TotalUVMaps[0].tex.Use(TextureUnit.Texture0);
+            SetInt("texture0", 0);
             GL.DrawElements(PrimitiveType.Triangles, _indices.Length, DrawElementsType.UnsignedInt, 0);
         }
     }
