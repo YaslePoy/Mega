@@ -42,7 +42,7 @@ namespace Mega.Generation
             //return cell;
             var cell = new Height();
             var central = ((x - cells.GetLength(0) / 2d) / 64, (y - cells.GetLength(1) / 2d) / 64);
-            var h = (Math.Sin(central.Item2) * Math.Sin(central.Item1) * (2 / MathHelper.InverseSqrtFast(central.Item1 * central.Item1 + central.Item2 * central.Item2)) + 1) / 2;
+            var h = (Math.Sin(central.Item2) * central.Item1 * (2 / MathHelper.InverseSqrtFast(central.Item1 * central.Item1 + central.Item2 * central.Item2)) + 1) / 2;
 
             cell.h = h;
 
