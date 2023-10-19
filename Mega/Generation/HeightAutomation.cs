@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OpenTK.Mathematics;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,7 +14,7 @@ namespace Mega.Generation
         }
         public override void Start()
         {
-            for (int i = 0; i < 20; i++)
+            for (int i = 0; i < 32; i++)
             {
 
                 while (true)
@@ -31,13 +32,21 @@ namespace Mega.Generation
         }
         public override Height Propogate(int x, int y)
         {
-            var cell = Get(x, y);
-            if(cell.isStatic)
-            return cell;
-            cell.h += GetAdjacentCircle(x, y).Select(i => i.h).Sum();
-            cell.h /= 9;
-            return cell;
+            //var cell = Get(x, y);
+            //if (cell.isStatic)
+            //    return cell;
 
+            //cell.h = GetAdjacentCrist(x, y).Select(i => i.h).Max();
+            //cell.h -= 0.01;
+            //cell.h *= cell.h;
+            //return cell;
+            var cell = new Height();
+            var central = ((x - cells.GetLength(0) / 2d) / 64, (y - cells.GetLength(1) / 2d) / 64);
+            var h = (Math.Sin(central.Item2) * Math.Sin(central.Item1) * (2 / MathHelper.InverseSqrtFast(central.Item1 * central.Item1 + central.Item2 * central.Item2)) + 1) / 2;
+
+            cell.h = h;
+
+            return cell;
         }
         public override byte[] GetPixel(Height cell)
         {
@@ -54,7 +63,8 @@ namespace Mega.Generation
             h = 0;
             isStatic = false;
         }
-        public Height(double h) {
+        public Height(double h)
+        {
             this.h = h;
             isStatic = true;
         }

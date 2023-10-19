@@ -143,7 +143,16 @@ namespace Mega.Generation
 
         public virtual Image GetImage()
         {
-            var img = new Image() { Width = cells.GetLength(0), Height = cells.GetLength(1), Data = cells.Cast<T>().Select(GetPixel).SumList() };
+
+            var cs = cells.Cast<T>().Chunk(64).ToArray();
+            byte[][] pre = new byte[cs.Count()][];
+
+            void Raster(int i)
+            {
+                pre[i] = cs[i].Select(GetPixel).SumList();
+            }
+            Parallel.For(0, cs.Count(), Raster);
+            var img = new Image() { Width = cells.GetLength(0), Height = cells.GetLength(1), Data = pre.SumList() };
             return img;
         }
 
