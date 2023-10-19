@@ -77,6 +77,7 @@ namespace Mega.Game
         }
         public RenderSurface[] GetDrawingMesh(UnitedChunk area)
         {
+            
             var localBorder = Adjacent;
             List<RenderSurface> surfaces = new List<RenderSurface>();
             var sides = new bool[6];

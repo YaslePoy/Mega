@@ -8,6 +8,7 @@ using Mega.Game;
 using System.Diagnostics;
 using System.ComponentModel;
 using Mega.Video.Shading;
+using Mega.Generation;
 
 namespace Mega.Video
 {
@@ -96,6 +97,10 @@ namespace Mega.Video
         {
             base.OnRenderFrame(e);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+
+            if(world.Redrawing)
+                world.Area.UpdateRenderSurface();
+
             _meshRender.Run(world);
             _cursor.Run(world);
             _ui.Run(world);

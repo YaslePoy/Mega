@@ -25,8 +25,6 @@ namespace Mega.Game
         }
         public CubicCollider(Vector3 position, bool[] verify)
         {
-            if (position == Vector3.One)
-                Console.WriteLine();
             Position = position;
             var limits = Block.MeshSides;
             var normals = Block.Neibs;

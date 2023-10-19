@@ -69,7 +69,11 @@ namespace Mega.Video.Shading
                 _vertices = new float[0];
                 return;
             }
-            var sides = block.view.Where(i => Vector3.Dot(i.Normal, w.Player.View) < 0).ToArray();
+            RenderSurface[] sides;
+            //if (block.view is null)
+            //    sides = block.GetDrawingMesh(w.Area);
+            //else
+                sides = block.view;
             uint offset = 0;
             _vertices = new float[sides.Length * 12];
             _indices = new uint[sides.Length * 4];

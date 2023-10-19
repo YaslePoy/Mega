@@ -200,7 +200,8 @@ namespace Mega.Game
             if (Player == null) return;
             var viewDir = Player.View;
             Ray viewRay = new Ray(Player.ViewPoint, viewDir);
-
+            Player.SelectedBlock = -Vector3i.One;
+            Player.Cursor = Player.SelectedBlock;
             foreach (var block in viewRay.GetCrossBlocks(5))
             {
                 if (!Area.GetMember(block.block))
@@ -215,12 +216,7 @@ namespace Mega.Game
         {
             Area.SetBlock(block);
             Area.UpdateBorder();
-            Task.Run(() =>
-            {
-                Area.UpdateRenderSurface();
-                //RefreshView();
-                redrawing = true;
-            });
+            redrawing = true;
         }
     }
 }
