@@ -1,4 +1,5 @@
-﻿using StbImageSharp;
+﻿using Mega.Video.Shading;
+using StbImageSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -140,16 +141,9 @@ namespace Mega.Generation
         }
         public virtual void Start() { }
 
-        public virtual ImageResult GetImage()
+        public virtual Image GetImage()
         {
-            var img = new ImageResult() { Width = cells.GetLength(0), Height = cells.GetLength(1), };
-            var data = new byte[cells.Length * 4];
-            var preRaw = cells.Cast<T>().ToList();
-            for (int i = 0; i < preRaw.Count; i++)
-            {
-                GetPixel(preRaw[i]).CopyTo(data, i * 4);
-            }
-            img.Data = data;
+            var img = new Image() { Width = cells.GetLength(0), Height = cells.GetLength(1), Data = cells.Cast<T>().Select(GetPixel).SumList() };
             return img;
         }
 

@@ -71,8 +71,8 @@ namespace Mega.Generation
         public override byte[] GetPixel(Area cell)
         {
             if (cell is null)
-                return new byte[4];
-            return new byte[] { Math.Min(byte.MaxValue, (byte)cell.Color.X), Math.Min(byte.MaxValue, (byte)cell.Color.Y), Math.Min(byte.MaxValue, (byte)cell.Color.Z), Math.Min(byte.MaxValue, (byte)cell.Color.W), };
+                return new byte[4] { 0, 0, 0,byte.MaxValue};
+            return new byte[] { Math.Min(byte.MaxValue, (byte)cell.Color.X), Math.Min(byte.MaxValue, (byte)cell.Color.Y), Math.Min(byte.MaxValue, (byte)cell.Color.Z), Math.Min(byte.MaxValue, byte.MaxValue), };
         }
     }
 
