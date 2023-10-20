@@ -179,5 +179,13 @@ namespace Mega.Game
             
             TotalSurface = nn.Select(i => i.Surface).ToList().SumList().ToArray();
         }
+
+        public IEnumerator<Chunk> GetEnumerator()
+        {
+            foreach (var chunk in Chunks.Values)
+            {
+                yield return chunk;
+            }
+        }
     }
 }

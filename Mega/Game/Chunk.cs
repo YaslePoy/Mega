@@ -129,5 +129,10 @@ namespace Mega.Game
             BorderMembers = new bool[Size.X, Size.Y, Size.Z];
             BorderMembersList.Clear();
         }
+        public IEnumerator<Block> GetEnumerator()
+        {
+            foreach (var block in data)
+                yield return block;
+        }
     }
 }

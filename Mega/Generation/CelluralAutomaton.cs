@@ -144,7 +144,7 @@ namespace Mega.Generation
         public virtual Image GetImage()
         {
 
-            var cs = cells.Cast<T>().Chunk(64).ToArray();
+            var cs = cells.Cast<T>().Chunk(128).ToArray();
             byte[][] pre = new byte[cs.Count()][];
 
             void Raster(int i)
