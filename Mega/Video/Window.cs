@@ -66,7 +66,8 @@ namespace Mega.Video
             // We make the mouse cursor invisible and captured so we can have proper FPS-camera movement.
             CursorState = CursorState.Grabbed;
 
-            var chunk = Chunk.Flat(1, new Vector2i(0, 0));
+            //var chunk = Chunk.Flat(1, new Vector2i(0, 0));
+            var chunk = WorldSaver.LoadChunk(Vector2i.Zero);
             pl = new Player(_camera);
             var nChnk = Chunk.Flat(1, new Vector2i(1, 0));
             world = new World(pl, this, 1);
@@ -159,6 +160,10 @@ namespace Mega.Video
             if (input.IsKeyReleased(Keys.R))
             {
                 _camera.Position = new Vector3(MathF.Round(_camera.Position.X), MathF.Round(_camera.Position.Y), MathF.Round(_camera.Position.Z));
+            }
+            if (input.IsKeyReleased(Keys.T))
+            {
+                WorldSaver.SaveWorld(world.Area);
             }
             pl.Jumping = input.IsKeyDown(Keys.Space);
             // Get the mouse state

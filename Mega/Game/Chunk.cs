@@ -12,7 +12,7 @@ namespace Mega.Game
 {
     public class Chunk
     {
-        public static readonly Vector3i Size = new Vector3i(32, 1024, 32);
+        public static readonly Vector3i Size = new Vector3i(32, 256, 32);
         public Block[,,] data;
         public bool[,,] Border;
         public bool[,,] Members;
@@ -62,6 +62,8 @@ namespace Mega.Game
                 return;
             var block = new Block(location, blockId);
             data.Set(location, block);
+            MembersList.Add(location.InChunk());
+
         }
         void add(Block block)
         {

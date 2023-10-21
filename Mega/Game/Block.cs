@@ -14,7 +14,7 @@ namespace Mega.Game
         public RenderSurface[] view;
         Vector3i[] localNeibs;
         public Vector3i[] Adjacent => localNeibs == null ? GenerateNeis() : localNeibs;
-       CubicCollider collider;
+        CubicCollider collider;
         public static readonly Vector3i[] Neibs = {
             Vector3i.UnitX, Vector3i.UnitY, Vector3i.UnitZ,
             -Vector3i.UnitX, -Vector3i.UnitY, -Vector3i.UnitZ
@@ -37,12 +37,12 @@ namespace Mega.Game
             totalSurface = new RenderSurface[0];
         }
 
-        public Block(Vector3i pos, int id)
+        public Block(Vector3i pos, int id, bool generateSurface = true)
         {
             Position = pos;
             IDCode = id;
-
-            GenerateSurface();
+            if (generateSurface)
+                GenerateSurface();
         }
 
         void GenerateSurface()
@@ -72,12 +72,12 @@ namespace Mega.Game
             result.Add(neib);
             neib = Position + Neibs[5];
             result.Add(neib);
-
+            view = new RenderSurface[0];
             return result.ToArray();
         }
         public RenderSurface[] GetDrawingMesh(UnitedChunk area)
         {
-            
+
             var localBorder = Adjacent;
             List<RenderSurface> surfaces = new List<RenderSurface>();
             var sides = new bool[6];
@@ -100,6 +100,10 @@ namespace Mega.Game
         public override string ToString()
         {
             return $"[{Position.X} {Position.Y} {Position.Z}]";
+        }
+        public BinaryInt GetSaveData()
+        {
+            return new BinaryInt(IDCode + 2, 4);
         }
     }
 }

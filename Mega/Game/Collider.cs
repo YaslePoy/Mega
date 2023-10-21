@@ -18,7 +18,7 @@ namespace Mega.Game
         public static Collider CreateUnitedCollider(List<Collider> colliders)
         {
             var collider = new Collider();
-            colliders.Remove(null);
+            colliders.RemoveAll(i => i is null);
             collider.Vertexes = colliders.Select(i => i.Vertexes).SumList().ToArray();
             collider.sides = colliders.Select(i => i.sides).SumList().ToArray();
             collider.tag = string.Join("\n", colliders.Select(i => i.tag));
