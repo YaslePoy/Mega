@@ -42,7 +42,9 @@ namespace Mega.Video.Shading
         public UIShader() : base("Shaders/ui.vert", "Shaders/ui.frag")
         {
         }
-
+        public UIShader(string frag) : base("Shaders/ui.vert", frag)
+        {
+        }
         public override void Load()
         {
             base.Load();

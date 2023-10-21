@@ -58,7 +58,7 @@ namespace Mega.Game
             var file = Path.Combine(SavePath, $"{position.X}x{position.Y}.cd");
             var data = File.ReadAllBytes(file);
             int curBlock = 0;
-            int lastBlock = Chunk.Size.X * Chunk.Size.Y * Chunk.Size.Z - 1;
+            int lastBlock = Chunk.Size.X * Chunk.Size.Y * Chunk.Size.Z;
             SmartBitArray save = new SmartBitArray(new BitArray(data));
             Vector3i pos = Vector3i.Zero;
             void nextPos()
@@ -78,8 +78,7 @@ namespace Mega.Game
 
             while (curBlock != lastBlock)
             {
-                try
-                {
+
                     int curID = save.GetInt(4) - 2;
                     if (curID == -2)
                     {
@@ -95,18 +94,11 @@ namespace Mega.Game
                     }
                     else
                     {
-                        if (curID == -1)
-                            continue;
-                        chunk.SetBlock(pos, curID);
+                        if (curID != -1)
+                            chunk.SetBlock(pos, curID);
+                        nextPos();
                         curBlock++;
                     }
-                }
-                catch
-                {
-                    break;
-                }
-
-
             }
             return chunk;
         }

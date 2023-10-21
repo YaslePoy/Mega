@@ -1,4 +1,5 @@
-﻿using OpenTK.Mathematics;
+﻿using Mega.Game;
+using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,8 @@ namespace Mega.Generation
 {
     public class HeightAutomation : CelluralAutomaton<Height>
     {
+        public int Scale = 128;
+        UnitedChunk area;
         public HeightAutomation(int size) : base(size)
         {
         }
@@ -51,9 +54,55 @@ namespace Mega.Generation
 
             return cell;
         }
+        public Height ToImgFormat(int x, int y)
+        {
+            var cell = Get(x, y);
+            cell.h = (byte)(cell.h * byte.MaxValue);
+            return cell;
+        }
+        public void ToImage()
+        {
+            NextSpecial(ToImgFormat);
+        }
+        public Height Minimize(int x, int y)
+        {
+            var cell = Get(x, y);
+            var central = ((x - cells.GetLength(0) / 2d) / Scale, (y - cells.GetLength(1) / 2d) / Scale);
+            double dist = MathHelper.InverseSqrtFast(central.Item1 * central.Item1 + central.Item2 * central.Item2);
+            cell.h *= dist * 4;
+            cell.h = Math.Min(cell.h, byte.MaxValue);
+            return cell;
+        }
+
+        public void CreateHill()
+        {
+            NextSpecial(Minimize);
+        }
+        public Height SavePix(int x, int y)
+        {
+            var cell = Get(x, y);
+            var h = cells.GetLength(0) / 2;
+            var real = (x - h, y - h);
+            area.SetBlock(new Block(new Vector3i(real.Item1, (int)Math.Truncate(cell.h), real.Item2), 0, false));
+            return cell;
+        }
+        public void Save()
+        {
+            area = new UnitedChunk(16_384);
+            var n = cells.GetLength(0) / 64;
+            for (int i = -n; i < n; i++)
+            {
+                for (int j = -n; j < n; j++)
+                {
+                    area.AddChunk(new Chunk(new Vector2i(i, j)));
+                }
+            }
+            NextSpecial(SavePix, false);
+            WorldSaver.SaveWorld(area);
+        }
         public override byte[] GetPixel(Height cell)
         {
-            byte d = (byte)(cell.h * byte.MaxValue);
+            byte d = (byte)(/*cell.h * byte.MaxValue*/cell.h);
             return new byte[] { d, d, d, byte.MaxValue };
         }
     }

@@ -13,6 +13,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="gw\-1x-1.cd">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="gw\-1x0.cd">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="gw\0x-1.cd">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="gw\0x0.cd">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="gw\world.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

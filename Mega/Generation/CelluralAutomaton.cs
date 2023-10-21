@@ -12,6 +12,7 @@ namespace Mega.Generation
 {
     public class CelluralAutomaton<T>
     {
+        object locker = 1;
         protected int iteration;
         public RandomNumberGenerator rng;
         protected Random rand;
@@ -110,32 +111,39 @@ namespace Mega.Generation
         {
             return Get(x, y);
         }
-        public virtual void Next()
+        public virtual void Next(bool pararell = true)
         {
             changed = false;
-            NextSpecial(Propogate);
+            NextSpecial(Propogate, pararell);
         }
 
-        public virtual void NextSpecial(Func<int, int, T> method)
+        public virtual void NextSpecial(Func<int, int, T> method, bool pararell = true)
         {
             if (iteration == 0)
                 Start();
             var backup = new T[cells.GetLength(0), cells.GetLength(1)];
-            Parallel.For(0, cells.GetLength(0), (i => {
-                for (int y = 0; y < cells.GetLength(1); y++)
+            if (pararell)
+                Parallel.For(0, cells.GetLength(0), (i =>
                 {
-                    var nextVal = method(i, y);
-                    backup[i, y] = nextVal;
+                    for (int y = 0; y < cells.GetLength(1); y++)
+                    {
+                        var nextVal = method(i, y);
+                        lock (locker)
+                        {
+                            backup[i, y] = nextVal;
+
+                        }
+                    }
+                }));
+            else
+                for (int x = 0; x < cells.GetLength(0); x++)
+                {
+                    for (int y = 0; y < cells.GetLength(1); y++)
+                    {
+                        var nextVal = method(x, y);
+                        backup[x, y] = nextVal;
+                    }
                 }
-            }));
-            //for (int x = 0; x < cells.GetLength(0); x++)
-            //{
-            //    for (int y = 0; y < cells.GetLength(1); y++)
-            //    {
-            //        var nextVal = method(x, y);
-            //        backup[x, y] = nextVal;
-            //    }
-            //}
             cells = backup;
             iteration++;
         }
@@ -143,7 +151,6 @@ namespace Mega.Generation
 
         public virtual Image GetImage()
         {
-
             var cs = cells.Cast<T>().Chunk(128).ToArray();
             byte[][] pre = new byte[cs.Count()][];
 

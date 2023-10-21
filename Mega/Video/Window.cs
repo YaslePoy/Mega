@@ -68,6 +68,8 @@ namespace Mega.Video
 
             //var chunk = Chunk.Flat(1, new Vector2i(0, 0));
             var chunk = WorldSaver.LoadChunk(Vector2i.Zero);
+            //var chunk = Chunk.Flat(1, new Vector2i(0, 0));
+
             pl = new Player(_camera);
             var nChnk = Chunk.Flat(1, new Vector2i(1, 0));
             world = new World(pl, this, 1);
