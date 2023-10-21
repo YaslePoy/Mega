@@ -64,12 +64,12 @@ namespace Mega.Game
             void nextPos()
             {
                 pos.X++;
-                if (pos.X == Chunk.Size.X - 1)
+                if (pos.X == Chunk.Size.X)
                 {
                     pos.X = 0;
                     pos.Y++;
                 }
-                if (pos.Y == Chunk.Size.Y - 1)
+                if (pos.Y == Chunk.Size.Y)
                 {
                     pos.Y = 0;
                     pos.Z++;
@@ -84,8 +84,8 @@ namespace Mega.Game
                     if (curID == -2)
                     {
                         int block = save.GetInt(4);
-                        int count = save.GetInt(8);
-                        for (int i = 0; i != count; i++)
+                        int count = save.GetInt(8) + 1;
+                        for (int i = 0; i < count; i++)
                         {
                             if (block != 1)
                                 chunk.SetBlock(pos, block - 2);

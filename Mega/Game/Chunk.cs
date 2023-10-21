@@ -63,6 +63,7 @@ namespace Mega.Game
             var block = new Block(location, blockId);
             data.Set(location, block);
             MembersList.Add(location.InChunk());
+            Console.WriteLine($"{location} {blockId}");
 
         }
         void add(Block block)
