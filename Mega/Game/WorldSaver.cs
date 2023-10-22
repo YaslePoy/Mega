@@ -31,13 +31,13 @@ namespace Mega.Game
                     }
                     else if (streak > 3)
                     {
-                        sba.Append(new BitArray(4));
+                        sba.Append(new BinaryInt(0, 4));
                         sba.Append(block.GetSaveData());
                         sba.Append(new BinaryInt(streak, 8));
                     }
                     else
                     {
-                        Enumerable.Repeat(block.GetSaveData(), streak).ToList().ForEach(i => sba.Append(i));
+                        Enumerable.Repeat(block.GetSaveData(), streak + 1).ToList().ForEach(val => sba.Append(val));
                     }
                     streak = 0;
                 }
@@ -69,6 +69,7 @@ namespace Mega.Game
                     pos.Y = 0;
                     pos.Z++;
                 }
+                curBlock++;
             }
 
             while (curBlock != lastBlock)
@@ -83,7 +84,6 @@ namespace Mega.Game
                         {
                             if (block != -1)
                                 chunk.SetBlock(pos, block);
-                            curBlock++;
                             nextPos();
                         }
                     }
@@ -92,7 +92,6 @@ namespace Mega.Game
                         if (curID != -1)
                             chunk.SetBlock(pos, curID);
                         nextPos();
-                        curBlock++;
                     }
             }
             return chunk;
@@ -125,7 +124,7 @@ namespace Mega.Game
         }
         public byte[] ToByteArray()
         {
-            byte[] ret = new byte[(int)Math.Ceiling(array.Count / 8f)];
+            byte[] ret = new byte[(array.Length % 8 == 0) ? array.Length / 8 : array.Length / 8 + 1];
             array.CopyTo(ret, 0);
             return ret;
         }

@@ -61,7 +61,7 @@ namespace Mega.Video
 
             // We initialize the camera so that it is 3 units back from where the rectangle is.
             // We also give it the proper aspect ratio.
-            _camera = new Camera(new Vector3(2.5f, 200, 2.5f), Size.X / (float)Size.Y);
+            _camera = new Camera(new Vector3(2.5f, 50, 2.5f), Size.X / (float)Size.Y);
 
             // We make the mouse cursor invisible and captured so we can have proper FPS-camera movement.
             CursorState = CursorState.Grabbed;
