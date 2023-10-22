@@ -40,7 +40,7 @@ namespace Mega.Game
             Area = new UnitedChunk((renderDistance * renderDistance + renderDistance) * 4 + 1);
             player.world = this;
         }
-        public void SetChunk(Chunk chunk, int index)
+        public void SetChunk(Chunk chunk)
         {
             chunk.Root = Area;
             Area.AddChunk(chunk);

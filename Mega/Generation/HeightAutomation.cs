@@ -81,9 +81,14 @@ namespace Mega.Generation
         public Height SavePix(int x, int y)
         {
             var cell = Get(x, y);
-            var h = cells.GetLength(0) / 2;
-            var real = (x - h, y - h);
-            area.SetBlock(new Block(new Vector3i(real.Item1, (int)Math.Truncate(cell.h), real.Item2), 0, false));
+            var half = cells.GetLength(0) / 2;
+            var real = (x - half, y - half);
+            var h = (int)Math.Truncate(cell.h / 8) + 1;
+            for (int i = 0; i < h; i++)
+            {
+                area.SetBlock(new Block(new Vector3i(real.Item1, i, real.Item2), 0, false));
+
+            }
             return cell;
         }
         public void Save()

@@ -61,20 +61,23 @@ namespace Mega.Video
 
             // We initialize the camera so that it is 3 units back from where the rectangle is.
             // We also give it the proper aspect ratio.
-            _camera = new Camera(new Vector3(2.5f, 20, 2.5f), Size.X / (float)Size.Y);
+            _camera = new Camera(new Vector3(2.5f, 200, 2.5f), Size.X / (float)Size.Y);
 
             // We make the mouse cursor invisible and captured so we can have proper FPS-camera movement.
             CursorState = CursorState.Grabbed;
 
             //var chunk = Chunk.Flat(1, new Vector2i(0, 0));
-            var chunk = WorldSaver.LoadChunk(Vector2i.Zero);
-            //var chunk = Chunk.Flat(1, new Vector2i(0, 0));
+            Chunk zero;
+            if (File.Exists("gw//0x0.cd"))
+                zero = WorldSaver.LoadChunk(Vector2i.Zero);
+            else
+                zero = Chunk.Flat(1, new Vector2i(0, 0));
 
             pl = new Player(_camera);
             var nChnk = Chunk.Flat(1, new Vector2i(1, 0));
             world = new World(pl, this, 1);
-            world.SetChunk(chunk, 0);
-            world.SetChunk(nChnk, 1);
+            world.SetChunk(zero);
+            world.SetChunk(nChnk);
             world.Area.UpdateBorder();
             world.Area.UpdateRenderSurface();
             world.Start(100);
@@ -101,7 +104,7 @@ namespace Mega.Video
             base.OnRenderFrame(e);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-            if(world.Redrawing)
+            if (world.Redrawing)
                 world.Area.UpdateRenderSurface();
 
             _meshRender.Run(world);

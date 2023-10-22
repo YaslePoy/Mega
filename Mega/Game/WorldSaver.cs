@@ -15,11 +15,6 @@ namespace Mega.Game
                 BitArray ba = new BitArray(5);
                 bool start = true;
                 Block lastBlock = null;
-                void appdendStreak()
-                {
-                    sba.Append(new BitArray(4));
-                    sba.Append(new BinaryInt(streak, 8));
-                }
                 var stringed = chunk.data.Cast<Block>().Select(i => i is null ? new Block(OpenTK.Mathematics.Vector3i.One, -1, false) : i).ToArray();
                 var count = stringed.Length;
                 for (int i = 0; i < count;)
@@ -54,7 +49,7 @@ namespace Mega.Game
 
         public static Chunk LoadChunk(Vector2i position)
         {
-            Chunk chunk = new Chunk();
+            Chunk chunk = new Chunk(position);
             var file = Path.Combine(SavePath, $"{position.X}x{position.Y}.cd");
             var data = File.ReadAllBytes(file);
             int curBlock = 0;
@@ -82,12 +77,12 @@ namespace Mega.Game
                     int curID = save.GetInt(4) - 2;
                     if (curID == -2)
                     {
-                        int block = save.GetInt(4);
+                        int block = save.GetInt(4) - 2;
                         int count = save.GetInt(8) + 1;
                         for (int i = 0; i < count; i++)
                         {
-                            if (block != 1)
-                                chunk.SetBlock(pos, block - 2);
+                            if (block != -1)
+                                chunk.SetBlock(pos, block);
                             curBlock++;
                             nextPos();
                         }
