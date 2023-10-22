@@ -59,7 +59,7 @@ namespace Mega
         }
         public static Vector3i InChunk(this Vector3i globalPosition)
         {
-            Vector3i ret = new Vector3i();
+            Vector3i ret = new Vector3i(0, globalPosition.Y, 0);
             if (globalPosition.X >= 0)
             {
                 ret.X = globalPosition.X % Chunk.Size.X;

@@ -78,20 +78,21 @@ namespace Mega.Game
         public RenderSurface[] GetDrawingMesh(UnitedChunk area)
         {
 
-            var localBorder = Adjacent;
-            List<RenderSurface> surfaces = new List<RenderSurface>();
-            var sides = new bool[6];
-            for (int i = 0; i < localBorder.Count(); i++)
-            {
-                var m = area.GetMember(localBorder[i]);
-                if (m)
-                    continue;
-                sides[i] = !m;
-                surfaces.Add(totalSurface[i]);
-            }
-            collider = new CubicCollider(Position, sides);
-            view = surfaces.ToArray();
-            return view;
+            //var localBorder = Adjacent;
+            //List<RenderSurface> surfaces = new List<RenderSurface>();
+            //var sides = new bool[6];
+            //for (int i = 0; i < localBorder.Count(); i++)
+            //{
+            //    var m = area.GetMember(localBorder[i]);
+            //    if (m)
+            //        continue;
+            //    sides[i] = !m;
+            //    surfaces.Add(totalSurface[i]);
+            //}
+            //collider = new CubicCollider(Position, sides);
+            //view = surfaces.ToArray();
+            //return view;
+            return totalSurface;
         }
         public Collider GetCollider()
         {
