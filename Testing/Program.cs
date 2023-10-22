@@ -13,8 +13,14 @@ namespace Testing
             //BinaryInt i = new BinaryInt(13, 4);
             //BinaryInt j = new BinaryInt(5, 3);
             //var x = i + j;
-            Vector3i test = new Vector3i(-32, 5, -32);
-            var ic = test.ToWorldPath();
+            for (int i = 5; i >= -70; i--)
+            {
+
+                    var testVec = new Vector3i(i, 0, 5);
+                    var res = testVec.ToWorldPath();
+                    Console.WriteLine($"{testVec} chunk is {res.chunk} in chunk {res.block}");
+                
+            }
         }
     }
 }

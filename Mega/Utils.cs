@@ -38,13 +38,45 @@ namespace Mega
         public const float G = 30f;
         public static (Vector2i chunk, Vector3i block) ToWorldPath(this Vector3i vec)
         {
-            Vector2i cn = new Vector2i((int)Math.Floor((double)(vec.X) / Chunk.Size.X), (int)Math.Floor((double)(vec.Z) / Chunk.Size.Z));
+            Vector2i cn = new Vector2i(0, 0);
+            if (vec.X > 0)
+            {
+                cn.X = (int)Math.Floor((double)vec.X / Chunk.Size.X);
+            }
+            else
+            {
+                cn.X = -(int)Math.Abs(Math.Floor(((double)vec.X) / Chunk.Size.X));
+            }
+            if (vec.Z > 0)
+            {
+                cn.Y = (int)Math.Floor((double)vec.Z / Chunk.Size.Z);
+            }
+            else
+            {
+                cn.Y = -(int)Math.Abs(Math.Floor(((double)vec.Z) / Chunk.Size.Z));
+            }
             return (cn, vec.InChunk());
         }
         public static Vector3i InChunk(this Vector3i globalPosition)
         {
-            (bool x, bool y) signs = (globalPosition.X <= 0, globalPosition.Z <= 0);
-            return new Vector3i((signs.x ? 31 : 0) + globalPosition.X % Chunk.Size.X, globalPosition.Y, (signs.y ? 31 : 0) + globalPosition.Z % Chunk.Size.Z);
+            Vector3i ret = new Vector3i();
+            if (globalPosition.X >= 0)
+            {
+                ret.X = globalPosition.X % Chunk.Size.X;
+            }
+            else
+            {
+                ret.X = Chunk.Size.X + ((globalPosition.X + 1) % Chunk.Size.X) - 1;
+            }
+            if (globalPosition.Z >= 0)
+            {
+                ret.Z = globalPosition.Z % Chunk.Size.Z;
+            }
+            else
+            {
+                ret.Z = Chunk.Size.Z + ((globalPosition.Z + 1) % Chunk.Size.Z) - 1;
+            }
+            return ret;
         }
 
         public static bool IsInChunk(this Vector3i position) => position.X >= 0 && position.X < Chunk.Size.X &&
