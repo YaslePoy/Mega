@@ -1,4 +1,5 @@
-﻿using OpenTK.Mathematics;
+﻿using Mega.Generation;
+using OpenTK.Mathematics;
 using System.Collections;
 
 namespace Mega.Game
@@ -46,10 +47,16 @@ namespace Mega.Game
                 File.WriteAllBytes($"gw/{chunk.Location.X}x{chunk.Location.Y}.cd", data);
             }
         }
-
-        public static Chunk LoadChunk(Vector2i position)
+        public static Chunk LoadFromFile(string path, UnitedChunk chunkStorage)
+        {
+            var parts = path.Split('\\').Last().Split('x', '.')[0..2];
+            return LoadChunk(new Vector2i(int.Parse(parts[0]), int.Parse(parts[1])), chunkStorage);
+        }
+        public static Chunk LoadChunk(Vector2i position, UnitedChunk area)
         {
             Chunk chunk = new Chunk(position);
+            chunk.Root = area;
+            area.AddChunk(chunk);
             var file = Path.Combine(SavePath, $"{position.X}x{position.Y}.cd");
             var data = File.ReadAllBytes(file);
             int curBlock = 0;
@@ -71,28 +78,31 @@ namespace Mega.Game
                 }
                 curBlock++;
             }
-
+            Vector3i toGlobal(Vector3i inChunk)
+            {
+                return new Vector3i((inChunk.Z + Chunk.Size.Z * position.X), inChunk.Y, inChunk.X + Chunk.Size.X * position.Y);
+            }
             while (curBlock != lastBlock)
             {
 
-                    int curID = save.GetInt(4) - 2;
-                    if (curID == -2)
+                int curID = save.GetInt(4) - 2;
+                if (curID == -2)
+                {
+                    int block = save.GetInt(4) - 2;
+                    int count = save.GetInt(8) + 1;
+                    for (int i = 0; i < count; i++)
                     {
-                        int block = save.GetInt(4) - 2;
-                        int count = save.GetInt(8) + 1;
-                        for (int i = 0; i < count; i++)
-                        {
-                            if (block != -1)
-                                chunk.SetBlock(pos, block);
-                            nextPos();
-                        }
-                    }
-                    else
-                    {
-                        if (curID != -1)
-                            chunk.SetBlock(pos, curID);
+                        if (block != -1)
+                            chunk.SetBlock(new Block(pos.Zyx, block, false));
                         nextPos();
                     }
+                }
+                else
+                {
+                    if (curID != -1)
+                        chunk.SetBlock(new Block(pos.Zyx, curID, false));
+                    nextPos();
+                }
             }
             return chunk;
         }

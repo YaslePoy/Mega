@@ -16,7 +16,8 @@ namespace Mega
                 Title = "Mega Game",
                 // This is needed to run on macos
                 Flags = ContextFlags.ForwardCompatible,
-                //WindowBorder = WindowBorder.Hidden
+                WindowBorder = WindowBorder.Hidden,
+                
                 //WindowState = WindowState.Fullscreen
             };
             using (var window = new Window(new GameWindowSettings() /*{ UpdateFrequency = 100 }*/, nativeWindowSettings) { })

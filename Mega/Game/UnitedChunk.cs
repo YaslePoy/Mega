@@ -16,7 +16,7 @@ namespace Mega.Game
         RenderSurface[] TotalSurface;
         public UnitedChunk(int chunks)
         {
-            Chunks = new ();
+            Chunks = new();
         }
         public void AddChunk(Chunk chunk)
         {
@@ -42,7 +42,7 @@ namespace Mega.Game
             chunk.data.Set(path.block, block);
             chunk.Members.Set(path.block, true);
             chunk.MembersList.Add(path.block);
-             
+
         }
         public Chunk GetChunkByLocation(Vector2i location)
         {
@@ -88,7 +88,7 @@ namespace Mega.Game
         }
         public bool GetBorderMember(Vector3i position)
         {
-            var path = position.ToWorldPath(); 
+            var path = position.ToWorldPath();
             if (!path.block.IsInChunk())
                 return false;
             var chunk = GetChunkByLocation(path.chunk);
@@ -123,12 +123,25 @@ namespace Mega.Game
         }
         void VerifyBlock(Vector3i border, Vector3i block, Chunk host)
         {
-            if (!host.Members.Get(border))
+            if (border.Y != -1)
+                if (!host.Members.Get(border))
+                {
+                    host.BorderMembers.Set(block, true);
+                    if (host.BorderMembersList.Count == 0 || host.BorderMembersList.Last() != block)
+                        host.BorderMembersList.Add(block);
+                    host.Border.Set(border, true);
+                }
+        }
+
+        public void BuildGlobalCoordinates()
+        {
+            foreach (var chunk in Chunks.Values)
             {
-                host.BorderMembers.Set(block, true);
-                if (host.BorderMembersList.Count == 0 || host.BorderMembersList.Last() != block)
-                    host.BorderMembersList.Add(block);
-                host.Border.Set(border, true);
+                chunk.UpdateGlobalCoords();
+            }
+            foreach (var chunk in Chunks.Values)
+            {
+                chunk.GenerateSurface();
             }
         }
         public void UpdateBorder()
@@ -176,7 +189,7 @@ namespace Mega.Game
             var nn = Chunks.Values.ToList();
             nn.ForEach(i => i.RebuildMesh());
 
-            
+
             TotalSurface = nn.Select(i => i.Surface).ToList().SumList().ToArray();
         }
 

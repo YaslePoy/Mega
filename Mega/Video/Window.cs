@@ -54,7 +54,7 @@ namespace Mega.Video
         {
             base.OnLoad();
             TextureHelper.LoadUV();
-
+            this.Location = new Vector2i(100, 100);
             GLInit();
 
             sw = new Stopwatch();
@@ -66,18 +66,13 @@ namespace Mega.Video
             // We make the mouse cursor invisible and captured so we can have proper FPS-camera movement.
             CursorState = CursorState.Grabbed;
 
-            //var chunk = Chunk.Flat(1, new Vector2i(0, 0));
-            Chunk zero;
-            if (File.Exists("gw//0x0.cd"))
-                zero = WorldSaver.LoadChunk(Vector2i.Zero);
-            else
-                zero = Chunk.Flat(1, new Vector2i(0, 0));
-
             pl = new Player(_camera);
-            var nChnk = Chunk.Flat(1, new Vector2i(1, 0));
             world = new World(pl, this, 1);
-            world.SetChunk(zero);
-            world.SetChunk(nChnk);
+            foreach (var item in Directory.GetFiles("gw"))
+            {
+                WorldSaver.LoadFromFile(item, world.Area);
+            }
+            world.Area.BuildGlobalCoordinates();
             world.Area.UpdateBorder();
             world.Area.UpdateRenderSurface();
             world.Start(100);
@@ -87,7 +82,6 @@ namespace Mega.Video
         {
             GL.ClearColor(0f, 0.5f, 0.5f, 1.0f);
             GL.Enable(EnableCap.DepthTest);
-
             _meshRender = new TextureDrawShader();
             _meshRender.Load();
             _cursor = new CursorShader();

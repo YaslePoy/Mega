@@ -45,7 +45,7 @@ namespace Mega.Game
                 GenerateSurface();
         }
 
-        void GenerateSurface()
+        public void GenerateSurface()
         {
             totalSurface = new RenderSurface[6];
             totalSurface[0] = new RenderSurface(MeshSides[0], TextureHelper.GetTextureCoords(IDCode, 0), Position, Neibs[0], IDCode);

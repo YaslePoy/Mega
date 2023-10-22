@@ -3,6 +3,7 @@ using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -56,15 +57,13 @@ namespace Mega.Game
             return result;
         }
 
-        public void SetBlock(Vector3i location, int blockId)
+        public void SetBlock(Block block)
         {
-            if (Members.Get(location))
+            if (Members.Get(block.Position))
                 return;
-            var block = new Block(location, blockId);
-            data.Set(location, block);
-            MembersList.Add(location.InChunk());
-            Members.Set(location.InChunk(), true);
-            Console.WriteLine($"{location} {blockId}");
+            data.Set(block.Position, block);
+            MembersList.Add(block.Position);
+            Members.Set(block.Position, true);
 
         }
         void add(Block block)
@@ -137,6 +136,37 @@ namespace Mega.Game
         {
             foreach (var block in data)
                 yield return block;
+        }
+
+        public void UpdateGlobalCoords()
+        {
+            int xOffset, yOffset;
+            if(Location.X > 0)
+            {
+                xOffset = Location.X * Size.X;
+            }
+            else
+            {
+                xOffset = (Location.X * Size.X) - 1;
+            }
+            if(Location.Y > 0)
+            {
+                yOffset = Location.Y * Size.Z;
+            }
+            else
+            {
+                yOffset = (Location.Y * Size.Z) - 1;
+            }
+            var blocks = MembersList.Select(i => data.Get(i));
+            foreach (var item in blocks)
+            {
+                item.Position.X += xOffset;
+                item.Position.Z += yOffset;
+            }
+        }
+        public void GenerateSurface()
+        {
+            MembersList.ForEach(i => data.Get(i).GenerateSurface());
         }
     }
 }

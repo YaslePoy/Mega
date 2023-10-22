@@ -10,9 +10,11 @@ namespace Testing
     {
         static void Main(string[] args)
         {
-            BinaryInt i = new BinaryInt(13, 4);
-            BinaryInt j = new BinaryInt(5, 3);
-            var x = i + j;
+            //BinaryInt i = new BinaryInt(13, 4);
+            //BinaryInt j = new BinaryInt(5, 3);
+            //var x = i + j;
+            Vector3i test = new Vector3i(-32, 5, -32);
+            var ic = test.ToWorldPath();
         }
     }
 }
