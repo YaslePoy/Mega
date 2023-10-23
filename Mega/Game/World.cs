@@ -6,6 +6,7 @@ namespace Mega.Game
 {
     public class World
     {
+        public static Vector3 Sun = new Vector3(1, -1, 0.5f).Normalized();
         private bool redrawing = true;
 
         public bool Redrawing
@@ -83,7 +84,7 @@ namespace Mega.Game
                 sides.AddRange(chunk.Surface);
             }
             uint indOffset = 0;
-            verteces = new float[sides.Count * 20];
+            verteces = new float[sides.Count * 4*8];
             indeces = new Dictionary<int, List<uint>>();
             uint[] adding;
             for (int i = 0; i < sides.Count; i++)
@@ -91,7 +92,7 @@ namespace Mega.Game
                 var side = sides[i];
 
                 var v = side.GetRawPolygon();
-                v.CopyTo(verteces, 20 * i);
+                v.CopyTo(verteces, 4 * 8 * i);
 
                 if (!indeces.ContainsKey(side.TextureID))
                     indeces.Add(side.TextureID, new List<uint>());

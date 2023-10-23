@@ -45,17 +45,19 @@ namespace Mega.Video
         {
             if(rawPolygon != null) 
                 return rawPolygon;
-            var ret = new float[_vts.Length * 5];
+            var ret = new float[_vts.Length * (2 + 3 + 3)];
             int offset = 0;
             for (int i = 0; i < _vts.Length; i++)
             {
 
-                ret[offset + 0] = _vts[i].Item1.X + move.X;
-                ret[offset + 1] = _vts[i].Item1.Y + move.Y;
-                ret[offset + 2] = _vts[i].Item1.Z + move.Z;
-                ret[offset + 3] = _vts[i].Item2.X;
-                ret[offset + 4] = _vts[i].Item2.Y;
-                offset += 5;
+                ret[offset++] = _vts[i].Item1.X + move.X;
+                ret[offset++] = _vts[i].Item1.Y + move.Y;
+                ret[offset++] = _vts[i].Item1.Z + move.Z;
+                ret[offset++] = _vts[i].Item2.X;
+                ret[offset++] = _vts[i].Item2.Y;
+                ret[offset++] = Normal.X;
+                ret[offset++] = Normal.Y;
+                ret[offset++] = Normal.Z;
             }
             rawPolygon = ret;
             return rawPolygon;
