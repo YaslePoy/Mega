@@ -94,7 +94,7 @@ namespace Mega.Game
         {
             var sides = new List<RenderSurface>();
             object l = false;
-            Parallel.ForEach(BorderMembersList, i =>
+            Parallel.ForEach(MembersList, i =>
             {
                 var s = data.Get(i).GetDrawingMesh(Root);
                 lock (l)
@@ -141,7 +141,7 @@ namespace Mega.Game
         public void UpdateGlobalCoords()
         {
             int xOffset, yOffset;
-            if(Location.X > 0)
+            if(Location.X >= 0)
             {
                 xOffset = Location.X * Size.X;
             }
@@ -149,7 +149,7 @@ namespace Mega.Game
             {
                 xOffset = (Location.X * Size.X) - 1;
             }
-            if(Location.Y > 0)
+            if(Location.Y >= 0)
             {
                 yOffset = Location.Y * Size.Z;
             }
@@ -167,6 +167,10 @@ namespace Mega.Game
         public void GenerateSurface()
         {
             MembersList.ForEach(i => data.Get(i).GenerateSurface());
+        }
+        public override string ToString()
+        {
+            return Location.ToString();
         }
     }
 }

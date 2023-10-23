@@ -54,27 +54,33 @@ namespace Mega.Video
         {
             base.OnLoad();
             TextureHelper.LoadUV();
-            this.Location = new Vector2i(100, 100);
+            //this.Location = new Vector2i(100, 100);
             GLInit();
-
-            sw = new Stopwatch();
 
             // We initialize the camera so that it is 3 units back from where the rectangle is.
             // We also give it the proper aspect ratio.
-            _camera = new Camera(new Vector3(2.5f, 50, 2.5f), Size.X / (float)Size.Y);
+            _camera = new Camera(new Vector3(0f, 50, 0f), Size.X / (float)Size.Y);
 
             // We make the mouse cursor invisible and captured so we can have proper FPS-camera movement.
             CursorState = CursorState.Grabbed;
 
             pl = new Player(_camera);
             world = new World(pl, this, 1);
+            Stopwatch sw = Stopwatch.StartNew();
             foreach (var item in Directory.GetFiles("gw"))
             {
+                Console.WriteLine($"Loading {item}");
                 WorldSaver.LoadFromFile(item, world.Area);
+
             }
+            Console.WriteLine("BuildGlobalCoordinates");
             world.Area.BuildGlobalCoordinates();
+            Console.WriteLine("UpdateBorder");
             world.Area.UpdateBorder();
+            Console.WriteLine("UpdateRenderSurface");
             world.Area.UpdateRenderSurface();
+            sw.Stop();
+            Console.WriteLine(sw.Elapsed);
             world.Start(100);
         }
 
@@ -121,7 +127,8 @@ namespace Mega.Video
 
             if (input.IsKeyDown(Keys.Escape))
             {
-                Close();
+                //Close();
+                Process.GetCurrentProcess().Kill();
             }
 
             const float cameraSpeed = 5f;
@@ -212,6 +219,7 @@ namespace Mega.Video
         {
             base.OnClosing(e);
             world.Stop();
+            Console.ReadLine();
         }
     }
 }

@@ -135,25 +135,23 @@ namespace Mega.Game
 
         public void BuildGlobalCoordinates()
         {
-            foreach (var chunk in Chunks.Values)
-            {
-                chunk.UpdateGlobalCoords();
-            }
-            foreach (var chunk in Chunks.Values)
-            {
-                chunk.GenerateSurface();
-            }
+            Chunks.Values.AsParallel().ForAll(i => i.UpdateGlobalCoords());
+            Chunks.Values.AsParallel().ForAll(i => i.GenerateSurface());
         }
         public void UpdateBorder()
         {
+            var testVec = new Vector3i(6, 6, -36);
             foreach (var cn in Chunks.Values)
             {
                 if (cn == null)
                     continue;
                 foreach (var blockPos in cn.MembersList)
                 {
+
                     bool skip = false;
                     var block = cn.Get(blockPos);
+                    if (block.Position == testVec)
+                        Debug.Trap();
                     var nbs = block.Adjacent;
                     foreach (var verifyAdjacent in nbs)
                     {
@@ -178,6 +176,14 @@ namespace Mega.Game
                                 continue;
                             VerifyBlock(verify, nextBlock, nextChunk);
                         }
+                        //if(GetMember(verifyAdjacent) == null)
+                        //{
+                        //    skip = true;
+                        //    cn.BorderMembersList.Add(blockPos);
+                        //    cn.BorderMembers.Set(blockPos, true);
+                        //    break;
+                        //}
+
                     }
                     if (skip)
                         break;

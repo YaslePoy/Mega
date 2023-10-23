@@ -3,6 +3,7 @@ using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -45,7 +46,10 @@ namespace Mega.Video.Shading
             BindBuffers();
             if (world.Redrawing)
             {
+                Stopwatch sw = Stopwatch.StartNew();
                 world.GenerateMesh(out _indices, out _vertices);
+                sw.Stop();
+                Console.WriteLine($"MeshGen {sw.Elapsed}");
                 GL.BufferData(BufferTarget.ArrayBuffer, _vertices.Length * sizeof(float), _vertices, BufferUsageHint.DynamicDraw);
                 var inds = _indices.Values.ToList().SumList();
                 GL.BufferData(BufferTarget.ElementArrayBuffer, inds.Length * sizeof(float), inds, BufferUsageHint.DynamicDraw);

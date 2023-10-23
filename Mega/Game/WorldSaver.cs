@@ -44,7 +44,10 @@ namespace Mega.Game
                 }
                 sba.Bake();
                 var data = sba.ToByteArray();
+                Console.WriteLine($"Write {chunk.Location} started");
                 File.WriteAllBytes($"gw/{chunk.Location.X}x{chunk.Location.Y}.cd", data);
+                Console.WriteLine($"Write {chunk.Location} finished");
+
             }
         }
         public static Chunk LoadFromFile(string path, UnitedChunk chunkStorage)
@@ -78,10 +81,6 @@ namespace Mega.Game
                 }
                 curBlock++;
             }
-            Vector3i toGlobal(Vector3i inChunk)
-            {
-                return new Vector3i((inChunk.Z + Chunk.Size.Z * position.X), inChunk.Y, inChunk.X + Chunk.Size.X * position.Y);
-            }
             while (curBlock != lastBlock)
             {
 
@@ -93,7 +92,7 @@ namespace Mega.Game
                     for (int i = 0; i < count; i++)
                     {
                         if (block != -1)
-                            chunk.SetBlock(new Block(pos.Zyx, block, false));
+                            chunk.SetBlock(new Block(pos.Zyx, block, generateSurface: false));
                         nextPos();
                     }
                 }

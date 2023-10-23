@@ -89,7 +89,7 @@ namespace Mega.Game
                 sides[i] = !m;
                 surfaces.Add(totalSurface[i]);
             }
-            collider = new CubicCollider(Position, sides);
+            collider = new CubicCollider(Position/*, sides*/);
             view = surfaces.ToArray();
             return view;
             return totalSurface;

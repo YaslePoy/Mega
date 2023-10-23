@@ -102,73 +102,89 @@ namespace Mega.Game
         }
         public void Update(float time)
         {
+            if (!Player.IsActed)
+                Debug.Trap();
             UpdateSelector();
             UpdatePlayerPosition(time);
 
         }
         void UpdatePlayerPosition(float t)
         {
+
             if (!Player.IsActed)
             {
                 Player.IsActed = true;
-                Player.PlaceBlock();
+                //Player.PlaceBlock();
             }
 
             //calculating movement in x-z plane
-            var localG = G * t;
-            Player.VerticalSpeed -= (float)localG;
-            var clearMove = Player.Moving * (float)(t * Player.WalkSpeed);
-            var move2d = new Vector2();
-            var localFront = Player.Cam.Front;
-            localFront.Y = 0;
-            localFront.Normalize();
-            move2d += localFront.Xz * clearMove.X;
-            move2d += -Player.Cam.Right.Xz * clearMove.Y;
-
-            var playerPosition = Player.Position;
-
-            //is player standing?
-            var playerBlock = (Vector3i)playerPosition;
-            var nearBlocks = GetHorisontalBlocks(playerBlock - Vector3i.UnitY);
-            var colliderList = nearBlocks.Select(i => i.GetCollider()).ToList();
-            var united = Collider.CreateUnitedCollider(colliderList);
-            var playerCollider = Player.GetCollider();
-            float vertical = (float)(Player.VerticalSpeed * t);
-            if (united.IsContact(playerCollider))
+            if (false)
             {
-                vertical = Player.Jumping ? 5f * t : 0;
 
-            }
+                var localG = G * t;
+                Player.VerticalSpeed -= (float)localG;
+                var clearMove = Player.Moving * (float)(t * Player.WalkSpeed);
+                var move2d = new Vector2();
+                var localFront = Player.Cam.Front;
+                localFront.Y = 0;
+                localFront.Normalize();
+                move2d += localFront.Xz * clearMove.X;
+                move2d += -Player.Cam.Right.Xz * clearMove.Y;
 
-            //creating global player's move
-            var move = new Vector3(move2d.X, vertical, move2d.Y);
-            //reading adjistment colliders
+                var playerPosition = Player.Position;
 
-            nearBlocks.AddRange(GetHorisontalBlocks(playerBlock));
-            nearBlocks.AddRange(GetHorisontalBlocks(playerBlock + Vector3i.UnitY));
-            nearBlocks.AddRange(GetHorisontalBlocks(playerBlock + 2 * Vector3i.UnitY));
-            colliderList = nearBlocks.Select(i => i.GetCollider()).ToList();
-            united = Collider.CreateUnitedCollider(colliderList);
-
-            Vector3 resultalMove = Vector3.Zero;
-
-            //colliding
-            if (colliderList.Count != 0)
-                do
+                //is player standing?
+                var playerBlock = (Vector3i)playerPosition;
+                var nearBlocks = GetHorisontalBlocks(playerBlock - Vector3i.UnitY);
+                var colliderList = nearBlocks.Select(i => i.GetCollider()).ToList();
+                var united = Collider.CreateUnitedCollider(colliderList);
+                var playerCollider = Player.GetCollider();
+                float vertical = (float)(Player.VerticalSpeed * t);
+                if (united.IsContact(playerCollider))
                 {
-                    playerCollider.move = move;
-                    playerCollider.Collide(united, out move, out resultalMove);
-                    Player.MoveTo(move);
-                    move = resultalMove;
+                    vertical = Player.Jumping ? 5f * t : 0;
 
-                } while (resultalMove != Vector3.Zero);
+                }
+
+                //creating global player's move
+                var move = new Vector3(move2d.X, vertical, move2d.Y);
+                //reading adjistment colliders
+
+                nearBlocks.AddRange(GetHorisontalBlocks(playerBlock));
+                nearBlocks.AddRange(GetHorisontalBlocks(playerBlock + Vector3i.UnitY));
+                nearBlocks.AddRange(GetHorisontalBlocks(playerBlock + 2 * Vector3i.UnitY));
+                colliderList = nearBlocks.Select(i => i.GetCollider()).ToList();
+                united = Collider.CreateUnitedCollider(colliderList);
+
+                Vector3 resultalMove = Vector3.Zero;
+
+                //colliding
+                if (colliderList.Count != 0)
+                    do
+                    {
+                        playerCollider.move = move;
+                        playerCollider.Collide(united, out move, out resultalMove);
+                        Player.MoveTo(move);
+                        move = resultalMove;
+
+                    } while (resultalMove != Vector3.Zero);
+                else
+                {
+                    Player.MoveTo(move);
+                }
+                Player.VerticalSpeed = (Player.Position.Y - playerPosition.Y) / t;
+            }
             else
             {
-                Player.MoveTo(move);
+                if(Player.Moving.X != 0)
+                {
+                    var localFront = (Player.Cam.Front / 5);
+                    Player.MoveTo(localFront);
+
+                }
+
             }
-            Player.VerticalSpeed = (Player.Position.Y - playerPosition.Y) / t;
             Player.UpdateCamPosition();
-            var delta = playerPosition - Player.Position;
 
 
         }
@@ -187,10 +203,7 @@ namespace Mega.Game
                 Area.GetBlock(center + diagA),
                 Area.GetBlock(center - diagA),
                 Area.GetBlock(center + diagB),
-
                 Area.GetBlock(center - diagB)
-
-
             };
             result.RemoveAll(i => i is null);
             return result;
@@ -200,6 +213,7 @@ namespace Mega.Game
             if (Player == null) return;
             var viewDir = Player.View;
             Ray viewRay = new Ray(Player.ViewPoint, viewDir);
+            var archive = Player.SelectedBlock;
             Player.SelectedBlock = -Vector3i.One;
             Player.Cursor = Player.SelectedBlock;
             foreach (var block in viewRay.GetCrossBlocks(5))
@@ -211,6 +225,8 @@ namespace Mega.Game
                 Player.Cursor = block.block - block.side;
                 break;
             }
+            if(archive != Player.SelectedBlock)
+                Console.WriteLine($"New Block selected {Player.SelectedBlock}");
         }
         public void SetBlock(Block block)
         {

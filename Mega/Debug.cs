@@ -27,5 +27,9 @@ namespace Mega
         {
             File.WriteAllText("debug.log", logs.ToString());
         }
+
+        internal static void Trap()
+        {
+        }
     }
 }
