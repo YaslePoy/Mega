@@ -66,30 +66,6 @@ namespace Mega.Game
             Members.Set(block.Position, true);
 
         }
-        void add(Block block)
-        {
-
-            MembersList.Add(block.Position.InChunk());
-            Members.Set(block.Position, true);
-
-            Border.Set(block.Position, false);
-            BorderMembers.Set(block.Position, true);
-            BorderMembersList.Add(block.Position.InChunk());
-            var addingBorder = block.Adjacent;
-
-            for (int i = 0; i < addingBorder.Length; i++)
-                TrySetBorder(addingBorder[i]);
-        }
-        void TrySetBorder(Vector3i location)
-        {
-            if (Members.Get(location))
-                return;
-            Border.Set(location, true);
-            if (BorderMembers.Get(location))
-            {
-                BorderMembersList.Remove(location.InChunk());
-            }
-        }
         public void RebuildMesh()
         {
             var sides = new List<RenderSurface>();
