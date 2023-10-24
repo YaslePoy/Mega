@@ -38,7 +38,7 @@ namespace Mega.Game
         {
             Player = player;
             this._view = view;
-            Area = new UnitedChunk((renderDistance * renderDistance + renderDistance) * 4 + 1);
+            Area = new UnitedChunk();
             player.world = this;
         }
         public void SetChunk(Chunk chunk)

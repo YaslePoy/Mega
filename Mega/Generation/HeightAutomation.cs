@@ -11,7 +11,7 @@ namespace Mega.Generation
     public class HeightAutomation : CelluralAutomaton<Height>
     {
         public int Scale = 128;
-        UnitedChunk area;
+        UnitedChunk world;
         public HeightAutomation(int size) : base(size)
         {
         }
@@ -86,29 +86,46 @@ namespace Mega.Generation
             var h = (int)Math.Truncate(cell.h / 8) + 1;
             for (int i = 0; i < h; i++)
             {
-                area.SetBlock(new Block(new Vector3i(real.Item1, i, real.Item2), 0, false));
+                world.SetBlock(new Block(new Vector3i(real.Item1, i, real.Item2), 0, false));
 
             }
             return cell;
         }
         public void Save()
         {
-            area = new UnitedChunk(16_384);
+            world = new UnitedChunk();
             var n = cells.GetLength(0) / 64;
             for (int i = -n; i < n; i++)
             {
                 for (int j = -n; j < n; j++)
                 {
-                    area.AddChunk(new Chunk(new Vector2i(i, j)));
+                    world.AddChunk(new Chunk(new Vector2i(i, j)));
                 }
             }
             NextSpecial(SavePix, false);
-            WorldSaver.SaveWorld(area);
+            WorldSaver.SaveWorld(world);
         }
         public override byte[] GetPixel(Height cell)
         {
             byte d = (byte)(/*cell.h * byte.MaxValue*/cell.h);
             return new byte[] { d, d, d, byte.MaxValue };
+        }
+
+        internal void SaveTo(ref UnitedChunk area)
+        {
+
+            this.world = new UnitedChunk();
+            
+            var n = cells.GetLength(0) / 64;
+            for (int i = -n; i < n; i++)
+            {
+                for (int j = -n; j < n; j++)
+                {
+                    world.AddChunk(new Chunk(new Vector2i(i, j)));
+                }
+            }
+            NextSpecial(SavePix, false);
+            area = world;
         }
     }
     public struct Height

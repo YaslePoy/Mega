@@ -14,7 +14,7 @@ namespace Mega.Game
         public List<Vector3i> MembersList;
         public List<Vector3i> BorderMembersList;
         RenderSurface[] TotalSurface;
-        public UnitedChunk(int chunks)
+        public UnitedChunk()
         {
             Chunks = new();
         }

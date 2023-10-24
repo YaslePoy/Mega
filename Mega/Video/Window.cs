@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.ComponentModel;
 using Mega.Video.Shading;
 using Mega.Generation;
+using System.Drawing;
 
 namespace Mega.Video
 {
@@ -67,12 +68,23 @@ namespace Mega.Video
             pl = new Player(_camera);
             world = new World(pl, this, 1);
             Stopwatch sw = Stopwatch.StartNew();
-            foreach (var item in Directory.GetFiles("gw"))
-            {
-                Console.WriteLine($"Loading {item}");
-                WorldSaver.LoadFromFile(item, world.Area);
+            var Autimation = new HeightAutomation(128);
+            Autimation.Scale = 16;
 
-            }
+            Autimation.SetRandom(30);
+            Autimation.Next();
+            Console.WriteLine("Next ready");
+            Autimation.ToImage();
+            Console.WriteLine("Img ready");
+            Autimation.CreateHill();
+            Console.WriteLine("Hill ready");
+            Console.WriteLine("Save start");
+            Autimation.SaveTo(ref world.Area);
+            //foreach (var item in Directory.GetFiles("gw"))
+            //{
+            //    Console.WriteLine($"Loading {item}");
+            //    WorldSaver.LoadFromFile(item, world.Area);
+            //}
             Console.WriteLine("BuildGlobalCoordinates");
             world.Area.BuildGlobalCoordinates();
             Console.WriteLine("UpdateBorder");
