@@ -70,7 +70,7 @@ namespace Mega.Game
         {
             var sides = new List<RenderSurface>();
             object l = false;
-            Parallel.ForEach(MembersList, i =>
+            Parallel.ForEach(BorderMembersList, i =>
             {
                 var s = data.Get(i).GetDrawingMesh(Root);
                 lock (l)

@@ -133,9 +133,10 @@ namespace Mega.Game
                 }
         }
 
-        public void BuildGlobalCoordinates()
+        public void BuildGlobalCoordinates(bool coords = true)
         {
-            Chunks.Values.AsParallel().ForAll(i => i.UpdateGlobalCoords());
+            if (coords)
+                Chunks.Values.AsParallel().ForAll(i => i.UpdateGlobalCoords());
             Chunks.Values.AsParallel().ForAll(i => i.GenerateSurface());
         }
         public void UpdateBorder()

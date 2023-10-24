@@ -86,7 +86,7 @@ namespace Mega.Video
             //    WorldSaver.LoadFromFile(item, world.Area);
             //}
             Console.WriteLine("BuildGlobalCoordinates");
-            world.Area.BuildGlobalCoordinates();
+            world.Area.BuildGlobalCoordinates(false);
             Console.WriteLine("UpdateBorder");
             world.Area.UpdateBorder();
             Console.WriteLine("UpdateRenderSurface");
