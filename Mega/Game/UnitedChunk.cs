@@ -20,6 +20,7 @@ namespace Mega.Game
         }
         public void AddChunk(Chunk chunk)
         {
+            chunk.Root = this;
             Chunks.Add(chunk.Location, chunk);
         }
         public Block GetBlock(Vector3i position)

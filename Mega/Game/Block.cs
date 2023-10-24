@@ -83,13 +83,13 @@ namespace Mega.Game
             var sides = new bool[6];
             for (int i = 0; i < localBorder.Count(); i++)
             {
-                var m = /*area.GetMember(localBorder[i]);*/false;
+                var m = area.GetMember(localBorder[i]);
                 if (m)
                     continue;
                 sides[i] = !m;
                 surfaces.Add(totalSurface[i]);
             }
-            collider = new CubicCollider(Position/*, sides*/);
+            collider = new CubicCollider(Position, sides);
             view = surfaces.ToArray();
             return view;
             return totalSurface;
