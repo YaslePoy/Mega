@@ -105,7 +105,7 @@ namespace Mega.Game
         {
             if (!Player.IsActed)
                 Debug.Trap();
-            UpdateSelector();
+            //UpdateSelector();
             UpdatePlayerPosition(time);
 
         }

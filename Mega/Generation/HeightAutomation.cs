@@ -69,7 +69,7 @@ namespace Mega.Generation
             var cell = Get(x, y);
             var central = ((x - cells.GetLength(0) / 2d) / Scale, (y - cells.GetLength(1) / 2d) / Scale);
             double dist = MathHelper.InverseSqrtFast(central.Item1 * central.Item1 + central.Item2 * central.Item2);
-            cell.h *= dist / 2;
+            cell.h *= dist * 4;
             cell.h = Math.Min(cell.h, byte.MaxValue);
             return cell;
         }
@@ -99,7 +99,7 @@ namespace Mega.Generation
             {
                 for (int j = -n; j < n; j++)
                 {
-                    world.AddChunk(new Chunk(new Vector2i(i, j)));
+                    world.AddChunk(new Chunk(new Vector2i(i, j), world));
                 }
             }
             NextSpecial(SavePix, false);
@@ -121,7 +121,7 @@ namespace Mega.Generation
             {
                 for (int j = -n; j < n; j++)
                 {
-                    world.AddChunk(new Chunk(new Vector2i(i, j)));
+                    world.AddChunk(new Chunk(new Vector2i(i, j), world));
                 }
             }
             NextSpecial(SavePix, false);

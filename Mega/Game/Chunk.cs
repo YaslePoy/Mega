@@ -24,7 +24,7 @@ namespace Mega.Game
         public UnitedChunk Root;
 
         public RenderSurface[] Surface;
-        public Chunk()
+        public Chunk(UnitedChunk root)
         {
 
             data = new Block[Size.X, Size.Y, Size.Z];
@@ -33,28 +33,12 @@ namespace Mega.Game
             BorderMembers = new bool[Size.X, Size.Y, Size.Z];
             MembersList = new List<Vector3i>();
             BorderMembersList = new List<Vector3i>();
-
+            Root = root;
         }
 
-        public Chunk(Vector2i location) : this()
+        public Chunk(Vector2i location, UnitedChunk root) : this(root)
         {
             this.Location = location;
-        }
-        public static Chunk Flat(int level, Vector2i location)
-        {
-            Chunk result = new Chunk(location);
-            var chunkMove = location * Size.Xz;
-            var chunkEnd = (location + Vector2i.One) * Size.Xz;
-            var blocks = new List<Block>();
-            for (int i = chunkMove.X; i < chunkEnd.X; i++)
-            {
-                for (int j = chunkMove.Y; j < chunkEnd.Y; j++)
-                {
-                    blocks.Add(new Block(new Vector3i(i, level, j), 0));
-                }
-            }
-            result.GenerateFromBlocks(blocks);
-            return result;
         }
 
         public void SetBlock(Block block)

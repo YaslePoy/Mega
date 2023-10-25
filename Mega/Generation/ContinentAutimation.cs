@@ -92,5 +92,9 @@ namespace Mega.Generation
         {
             return ID.ToString();
         }
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
     }
 }

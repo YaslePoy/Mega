@@ -57,8 +57,7 @@ namespace Mega.Game
         }
         public static Chunk LoadChunk(Vector2i position, UnitedChunk area)
         {
-            Chunk chunk = new Chunk(position);
-            chunk.Root = area;
+            Chunk chunk = new Chunk(position, area);
             area.AddChunk(chunk);
             var file = Path.Combine(SavePath, $"{position.X}x{position.Y}.cd");
             var data = File.ReadAllBytes(file);

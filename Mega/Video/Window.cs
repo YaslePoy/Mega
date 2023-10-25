@@ -67,32 +67,31 @@ namespace Mega.Video
 
             pl = new Player(_camera);
             world = new World(pl, this, 1);
-            Stopwatch sw = Stopwatch.StartNew();
-            var Autimation = new HeightAutomation(128);
+            var Autimation = new HeightAutomation(128*6);
             Autimation.Scale = 16;
 
             Autimation.SetRandom(30);
+            TimeMeasurementService.Start("Base generation");
             Autimation.Next();
-            Console.WriteLine("Next ready");
+            TimeMeasurementService.Start("To image");
             Autimation.ToImage();
-            Console.WriteLine("Img ready");
+            TimeMeasurementService.Start("Hill");
             Autimation.CreateHill();
-            Console.WriteLine("Hill ready");
-            Console.WriteLine("Save start");
+            TimeMeasurementService.Start("Saving");
             Autimation.SaveTo(ref world.Area);
+
             //foreach (var item in Directory.GetFiles("gw"))
             //{
             //    Console.WriteLine($"Loading {item}");
             //    WorldSaver.LoadFromFile(item, world.Area);
             //}
-            Console.WriteLine("BuildGlobalCoordinates");
+            TimeMeasurementService.Start("BuildGlobalCoordinates");
             world.Area.BuildGlobalCoordinates(false);
-            Console.WriteLine("UpdateBorder");
+            TimeMeasurementService.Start("UpdateBorder");
             world.Area.UpdateBorder();
-            Console.WriteLine("UpdateRenderSurface");
+            TimeMeasurementService.Start("UpdateRenderSurface");
             world.Area.UpdateRenderSurface();
-            sw.Stop();
-            Console.WriteLine(sw.Elapsed);
+            TimeMeasurementService.Stop();
             world.Start(100);
         }
 
@@ -120,7 +119,7 @@ namespace Mega.Video
                 world.Area.UpdateRenderSurface();
 
             _meshRender.Run(world);
-            _cursor.Run(world);
+            //_cursor.Run(world);
             _ui.Run(world);
             world.Redrawing = false;
             SwapBuffers();
