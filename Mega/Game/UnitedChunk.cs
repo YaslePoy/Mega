@@ -11,8 +11,7 @@ namespace Mega.Game
     public class UnitedChunk
     {
         public Dictionary<Vector2i, Chunk> Chunks;
-        public List<Vector3i> MembersList;
-        public List<Vector3i> BorderMembersList;
+
         RenderSurface[] TotalSurface;
         public UnitedChunk()
         {
@@ -62,8 +61,6 @@ namespace Mega.Game
         }
         public void ClearMesh()
         {
-            MembersList.Clear();
-            BorderMembersList.Clear();
             foreach (var cn in Chunks)
             {
                 cn.Value.ClearInternalData();

@@ -15,8 +15,8 @@ namespace Mega.Game
     {
         public static readonly Vector3i Size = new Vector3i(32, 256, 32);
         public Block[,,] data;
-        public List<Vector3i> MembersList;
-        public List<Vector3i> BorderMembersList;
+        public List<ChunkLocation> MembersList;
+        public List<ChunkLocation> BorderMembersList;
         public readonly Vector2i Location;
         public UnitedChunk Root;
 
@@ -25,8 +25,8 @@ namespace Mega.Game
         {
 
             data = new Block[Size.X, Size.Y, Size.Z];
-            MembersList = new List<Vector3i>();
-            BorderMembersList = new List<Vector3i>();
+            MembersList = new List<ChunkLocation>();
+            BorderMembersList = new List<ChunkLocation>();
             Root = root;
         }
 

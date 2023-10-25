@@ -17,19 +17,6 @@ namespace Mega.Game
             Position = position;
             Direction = direction.Normalized();
         }
-        //public Vector3i[] GetBlocks(float len)
-        //{
-        //    Vector3i last = Position.Round();
-        //    List<Vector3i> result = new List<Vector3i>() { last };
-        //    for (float i = 0; i < len; i += 0.25f) {
-        //        var newPos = (last + Direction * i).Round();
-        //        if (newPos == last)
-        //            continue;
-        //        result.Add(newPos);
-        //        last = newPos;
-        //    }
-        //    return result.ToArray();
-        //}
 
         public IEnumerable<(Vector3i block, Vector3i side)> GetCrossBlocks(float rayLen)
         {
