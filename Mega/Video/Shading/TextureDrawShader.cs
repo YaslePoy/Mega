@@ -13,8 +13,7 @@ namespace Mega.Video.Shading
     internal class TextureDrawShader : Shader
     {
 
-        private float[] _vertices;
-        private Dictionary<int, List<uint>> _indices;
+        private Dictionary<int, int> _drawOrder;
         public Matrix4 View { set { SetMatrix4("view", value); } }
         public Matrix4 Projection { set { base.SetMatrix4("projection", value); } }
         public Texture RenderTexture
@@ -50,23 +49,27 @@ namespace Mega.Video.Shading
             if (world.Redrawing)
             {
                 Stopwatch sw = Stopwatch.StartNew();
-                world.GenerateMesh(out _indices, out _vertices);
+                world.GenerateMesh(out Dictionary<int, List<uint>> _indeces, out float[] _vertices);
                 sw.Stop();
                 Console.WriteLine($"MeshGen {sw.Elapsed}");
                 GL.BufferData(BufferTarget.ArrayBuffer, _vertices.Length * sizeof(float), _vertices, BufferUsageHint.DynamicDraw);
-                var inds = _indices.Values.ToList().SumList();
+                var inds = _indeces.Values.ToList().SumList();
+                _drawOrder = new Dictionary<int, int>();
+                foreach (var order in _indeces)
+                {
+                    _drawOrder.Add(order.Key, order.Value.Count);
+                }
                 GL.BufferData(BufferTarget.ElementArrayBuffer, inds.Length * sizeof(float), inds, BufferUsageHint.DynamicDraw);
-
             }
             Projection = world.Player.Cam.GetProjectionMatrix();
             View = world.Player.Cam.GetViewMatrix();
             int offset = 0;
-            foreach (var tex in _indices)
+            foreach (var tex in _drawOrder)
             {
                 RenderTexture = TextureHelper.TotalUVMaps[tex.Key].tex;
                 var currentDrawArray = tex.Value;
-                GL.DrawElements(PrimitiveType.Triangles, currentDrawArray.Count(), DrawElementsType.UnsignedInt, offset * sizeof(uint));
-                offset += currentDrawArray.Count;
+                GL.DrawElements(PrimitiveType.Triangles, currentDrawArray, DrawElementsType.UnsignedInt, offset * sizeof(uint));
+                offset += currentDrawArray;
             }
         }
     }

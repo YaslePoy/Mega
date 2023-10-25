@@ -15,9 +15,6 @@ namespace Mega.Game
     {
         public static readonly Vector3i Size = new Vector3i(32, 256, 32);
         public Block[,,] data;
-        public bool[,,] Border;
-        public bool[,,] Members;
-        public bool[,,] BorderMembers;
         public List<Vector3i> MembersList;
         public List<Vector3i> BorderMembersList;
         public readonly Vector2i Location;
@@ -28,9 +25,6 @@ namespace Mega.Game
         {
 
             data = new Block[Size.X, Size.Y, Size.Z];
-            Border = new bool[Size.X, Size.Y, Size.Z];
-            Members = new bool[Size.X, Size.Y, Size.Z];
-            BorderMembers = new bool[Size.X, Size.Y, Size.Z];
             MembersList = new List<Vector3i>();
             BorderMembersList = new List<Vector3i>();
             Root = root;
@@ -43,12 +37,8 @@ namespace Mega.Game
 
         public void SetBlock(Block block)
         {
-            if (Members.Get(block.Position))
-                return;
             data.Set(block.Position, block);
             MembersList.Add(block.Position);
-            Members.Set(block.Position, true);
-
         }
         public void RebuildMesh()
         {
@@ -74,7 +64,6 @@ namespace Mega.Game
             foreach (var block in blocks)
             {
                 data.Set(block.Position.InChunk(), block);
-                Members.Set(block.Position.InChunk(), true);
                 MembersList.Add(block.Position.InChunk());
             }
             //RebuildMesh();
@@ -87,9 +76,6 @@ namespace Mega.Game
 
         public void ClearInternalData()
         {
-            Border = new bool[Size.X, Size.Y, Size.Z];
-            Members = new bool[Size.X, Size.Y, Size.Z];
-            BorderMembers = new bool[Size.X, Size.Y, Size.Z];
             BorderMembersList.Clear();
         }
         public IEnumerator<Block> GetEnumerator()

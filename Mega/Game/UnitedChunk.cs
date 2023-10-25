@@ -41,7 +41,6 @@ namespace Mega.Game
             if (chunk == null)
                 return;
             chunk.data.Set(path.block, block);
-            chunk.Members.Set(path.block, true);
             chunk.MembersList.Add(path.block);
 
         }
@@ -51,24 +50,6 @@ namespace Mega.Game
             Chunks.TryGetValue(location, out cn);
             return cn;
         }
-        public bool GetBorder(Vector3i position)
-        {
-            var path = position.ToWorldPath();
-            if (!path.block.IsInChunk())
-                return false;
-            var chunk = GetChunkByLocation(path.chunk);
-            if (chunk == null)
-                return false;
-            return chunk.Border.Get(path.block);
-        }
-        public void SetBorder(Vector3i position, bool value)
-        {
-            var path = position.ToWorldPath();
-            var chunk = GetChunkByLocation(path.chunk);
-            if (chunk == null)
-                return;
-            chunk.Border.Set(path.block, value);
-        }
         public bool GetMember(Vector3i position)
         {
             var path = position.ToWorldPath();
@@ -77,42 +58,8 @@ namespace Mega.Game
             var chunk = GetChunkByLocation(path.chunk);
             if (chunk == null)
                 return false;
-            return chunk.Members.Get(path.block);
+            return chunk.data.Get(path.block)  is not null;
         }
-        public void SetMember(Vector3i position, bool value)
-        {
-            var path = position.ToWorldPath();
-            var chunk = GetChunkByLocation(path.chunk);
-            if (chunk == null)
-                return;
-            chunk.Members.Set(path.block, value);
-        }
-        public bool GetBorderMember(Vector3i position)
-        {
-            var path = position.ToWorldPath();
-            if (!path.block.IsInChunk())
-                return false;
-            var chunk = GetChunkByLocation(path.chunk);
-            if (chunk == null)
-                return false;
-            return chunk.BorderMembers.Get(path.block);
-        }
-        public void SetBorderMember(Vector3i position, bool value)
-        {
-            var path = position.ToWorldPath();
-            var chunk = GetChunkByLocation(path.chunk);
-            if (chunk == null)
-                return;
-            chunk.BorderMembers.Set(path.block, value);
-        }
-        //public void UpdateMemberList()
-        //{
-        //    MembersList = Chunks.Where(i => i != null).Select(i => i.MembersList).ToList().SumList();
-        //}
-        //public void UpdateBorderMembersList()
-        //{
-        //    BorderMembersList = Chunks.Where(i => i != null).Select(i => i.BorderMembersList).ToList().SumList();
-        //}
         public void ClearMesh()
         {
             MembersList.Clear();
@@ -125,12 +72,10 @@ namespace Mega.Game
         void VerifyBlock(Vector3i border, Vector3i block, Chunk host)
         {
             if (border.Y != -1)
-                if (!host.Members.Get(border))
+                if (host.data.Get(border) is not null)
                 {
-                    host.BorderMembers.Set(block, true);
                     if (host.BorderMembersList.Count == 0 || host.BorderMembersList.Last() != block)
                         host.BorderMembersList.Add(block);
-                    host.Border.Set(border, true);
                 }
         }
 
@@ -166,7 +111,6 @@ namespace Mega.Game
                         {
                             if (blockPos.Y < 0 || blockPos.Y > Chunk.Size.Y)
                             {
-                                cn.BorderMembers.Set(blockPos, true);
                                 cn.BorderMembersList.Add(blockPos);
                                 skip = true;
                                 break;

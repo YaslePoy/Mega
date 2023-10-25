@@ -178,7 +178,7 @@ namespace Mega.Game
             else
             {
 
-                    var localFront = (Player.Cam.Front / 5 * Player.Moving.X - Player.Cam.Right / 5 * Player.Moving.Y);
+                    var localFront = (Player.Cam.Front / 2 * Player.Moving.X - Player.Cam.Right / 2 * Player.Moving.Y);
                     Player.MoveTo(localFront);
 
             }
