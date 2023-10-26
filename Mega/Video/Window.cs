@@ -67,27 +67,27 @@ namespace Mega.Video
 
             pl = new Player(_camera);
             world = new World(pl, this, 1);
-            var Autimation = new HeightAutomation(128*2);
-            Autimation.Scale = 16;
+            //var Autimation = new HeightAutomation(128*2);
+            //Autimation.Scale = 16;
 
-            Autimation.SetRandom(30);
-            TimeMeasurementService.Start("Base generation");
-            Autimation.Next();
-            TimeMeasurementService.Start("To image");
-            Autimation.ToImage();
-            TimeMeasurementService.Start("Hill");
-            Autimation.CreateHill();
-            TimeMeasurementService.Start("Saving");
-            Autimation.SaveTo(ref world.Area);
+            //Autimation.SetRandom(30);
+            //TimeMeasurementService.Start("Base generation");
+            //Autimation.Next();
+            //TimeMeasurementService.Start("To image");
+            //Autimation.ToImage();
+            //TimeMeasurementService.Start("Hill");
+            //Autimation.CreateHill();
+            //TimeMeasurementService.Start("Saving");
+            ////Autimation.SaveTo(ref world.Area);
             //Autimation.Save();
             //return;
-            //foreach (var item in Directory.GetFiles("gw").Where(i => i.EndsWith(".cd")))
-            //{
-            //    Console.WriteLine($"Loading {item}");
-            //    WorldSaver.LoadFromFile(item, world.Area);
-            //}
+            foreach (var item in Directory.GetFiles("gw").Where(i => i.EndsWith(".cd")))
+            {
+                TimeMeasurementService.Start($"Loading {item}");
+                WorldSaver.LoadFromFile(item, world.Area);
+            }
             TimeMeasurementService.Start("BuildGlobalCoordinates");
-            world.Area.BuildGlobalCoordinates(false);
+            world.Area.BuildGlobalCoordinates(true);
             TimeMeasurementService.Start("UpdateBorder");
             world.Area.UpdateBorder();
             TimeMeasurementService.Start("UpdateRenderSurface");
