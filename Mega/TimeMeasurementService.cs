@@ -17,8 +17,14 @@ namespace Mega
         }
         public static void Start(string measureName)
         {
-            if (name == measureName)
+            if (name == measureName )
                 return;
+            if(name == null)
+            {
+                name = measureName;
+                time.Start();
+                return;
+            }
             ShowTime();
             name = measureName;
             time.Restart();

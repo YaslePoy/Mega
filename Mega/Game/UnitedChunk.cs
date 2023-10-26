@@ -59,17 +59,10 @@ namespace Mega.Game
                 return false;
             return chunk.data.Get(path.block)  is not null;
         }
-        public void ClearMesh()
-        {
-            foreach (var cn in Chunks)
-            {
-                cn.Value.ClearInternalData();
-            }
-        }
         void VerifyBlock(Vector3i border, Vector3i block, Chunk host)
         {
             if (border.Y != -1)
-                if (host.data.Get(border) is not null)
+                if (host.data.Get(border) is null)
                 {
                     if (host.BorderMembersList.Count == 0 || host.BorderMembersList.Last() != block)
                         host.BorderMembersList.Add(block);
@@ -99,7 +92,7 @@ namespace Mega.Game
                     var nbs = block.Adjacent;
                     foreach (var verifyAdjacent in nbs)
                     {
-                        var verify = verifyAdjacent.InChunk();
+                        Vector3i verify = verifyAdjacent.InChunk();
                         if (verify.IsInChunk())
                         {
                             VerifyBlock(verify, blockPos, cn);
@@ -119,13 +112,6 @@ namespace Mega.Game
                                 continue;
                             VerifyBlock(verify, nextBlock, nextChunk);
                         }
-                        //if(GetMember(verifyAdjacent) == null)
-                        //{
-                        //    skip = true;
-                        //    cn.BorderMembersList.Add(blockPos);
-                        //    cn.BorderMembers.Set(blockPos, true);
-                        //    break;
-                        //}
 
                     }
                     if (skip)

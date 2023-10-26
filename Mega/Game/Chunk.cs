@@ -59,24 +59,9 @@ namespace Mega.Game
             //}
             Surface = sides.ToArray();
         }
-        public void GenerateFromBlocks(List<Block> blocks)
-        {
-            foreach (var block in blocks)
-            {
-                data.Set(block.Position.InChunk(), block);
-                MembersList.Add(block.Position.InChunk());
-            }
-            //RebuildMesh();
-        }
         public Block Get(Vector3i pos)
         {
             return data.Get(pos);
-        }
-        bool IsSave(Vector3 pos) => ((Vector3i)(pos)).IsInRange(0, Size.X);
-
-        public void ClearInternalData()
-        {
-            BorderMembersList.Clear();
         }
         public IEnumerator<Block> GetEnumerator()
         {

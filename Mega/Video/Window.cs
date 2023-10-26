@@ -67,7 +67,7 @@ namespace Mega.Video
 
             pl = new Player(_camera);
             world = new World(pl, this, 1);
-            var Autimation = new HeightAutomation(128*6);
+            var Autimation = new HeightAutomation(128*8);
             Autimation.Scale = 16;
 
             Autimation.SetRandom(30);
