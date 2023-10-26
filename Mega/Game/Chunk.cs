@@ -78,7 +78,7 @@ namespace Mega.Game
             }
             else
             {
-                xOffset = (Location.X * Size.X) - 1;
+                xOffset = (Location.X * Size.X);
             }
             if(Location.Y >= 0)
             {
@@ -86,7 +86,7 @@ namespace Mega.Game
             }
             else
             {
-                yOffset = (Location.Y * Size.Z) - 1;
+                yOffset = (Location.Y * Size.Z);
             }
             var blocks = MembersList.Select(i => data.Get(i));
             foreach (var item in blocks)
