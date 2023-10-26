@@ -103,5 +103,26 @@ namespace Mega.Game
         {
             return Location.ToString();
         }
+        public Vector3i BlockOffset()
+        {
+            int xOffset, yOffset;
+            if (Location.X >= 0)
+            {
+                xOffset = Location.X * Size.X;
+            }
+            else
+            {
+                xOffset = (Location.X * Size.X) - 1;
+            }
+            if (Location.Y >= 0)
+            {
+                yOffset = Location.Y * Size.Z;
+            }
+            else
+            {
+                yOffset = (Location.Y * Size.Z) - 1;
+            }
+            return new Vector3i(xOffset, 0, yOffset);
+        }
     }
 }

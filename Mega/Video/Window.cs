@@ -80,11 +80,11 @@ namespace Mega.Video
             TimeMeasurementService.Start("Saving");
             Autimation.SaveTo(ref world.Area);
 
-            //foreach (var item in Directory.GetFiles("gw"))
-            //{
-            //    Console.WriteLine($"Loading {item}");
-            //    WorldSaver.LoadFromFile(item, world.Area);
-            //}
+            foreach (var item in Directory.GetFiles("gw").Where(i => i.EndsWith(".cd")))
+            {
+                Console.WriteLine($"Loading {item}");
+                WorldSaver.LoadFromFile(item, world.Area);
+            }
             TimeMeasurementService.Start("BuildGlobalCoordinates");
             world.Area.BuildGlobalCoordinates(false);
             TimeMeasurementService.Start("UpdateBorder");

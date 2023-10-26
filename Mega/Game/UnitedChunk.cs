@@ -92,27 +92,31 @@ namespace Mega.Game
                     var nbs = block.Adjacent;
                     foreach (var verifyAdjacent in nbs)
                     {
-                        Vector3i verify = verifyAdjacent.InChunk();
-                        if (verify.IsInChunk())
+                        //Vector3i verify = verifyAdjacent.InChunk();
+                        //if (verify.IsInChunk())
+                        //{
+                        //    VerifyBlock(verify, blockPos, cn);
+                        //}
+                        //else
+                        //{
+                        //    if (blockPos.Y < 0 || blockPos.Y > Chunk.Size.Y)
+                        //    {
+                        //        cn.BorderMembersList.Add(blockPos);
+                        //        skip = true;
+                        //        break;
+                        //    }
+                        //    var nextBlock = verify.InChunk();
+                        //    var nextChunkLocation = cn.Location + new Vector2i(nextBlock.X == 0 ? 1 : -1, nextBlock.Y == 0 ? 1 : -1);
+                        //    var nextChunk = GetChunkByLocation(nextChunkLocation);
+                        //    if (nextChunk == null)
+                        //        continue;
+                        //    VerifyBlock(verify, nextBlock, nextChunk);
+                        //}
+                        if (!GetMember(verifyAdjacent))
                         {
-                            VerifyBlock(verify, blockPos, cn);
+                            cn.BorderMembersList.Add(blockPos);
+                            break;
                         }
-                        else
-                        {
-                            if (blockPos.Y < 0 || blockPos.Y > Chunk.Size.Y)
-                            {
-                                cn.BorderMembersList.Add(blockPos);
-                                skip = true;
-                                break;
-                            }
-                            var nextBlock = verify.InChunk();
-                            var nextChunkLocation = cn.Location + new Vector2i(nextBlock.X == 0 ? 1 : -1, nextBlock.Y == 0 ? 1 : -1);
-                            var nextChunk = GetChunkByLocation(nextChunkLocation);
-                            if (nextChunk == null)
-                                continue;
-                            VerifyBlock(verify, nextBlock, nextChunk);
-                        }
-
                     }
                     if (skip)
                         break;
