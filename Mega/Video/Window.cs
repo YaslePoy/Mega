@@ -67,7 +67,7 @@ namespace Mega.Video
 
             pl = new Player(_camera);
             world = new World(pl, this, 1);
-            var Autimation = new HeightAutomation(128*8);
+            var Autimation = new HeightAutomation(128*2);
             Autimation.Scale = 16;
 
             Autimation.SetRandom(30);
@@ -79,12 +79,13 @@ namespace Mega.Video
             Autimation.CreateHill();
             TimeMeasurementService.Start("Saving");
             Autimation.SaveTo(ref world.Area);
-
-            foreach (var item in Directory.GetFiles("gw").Where(i => i.EndsWith(".cd")))
-            {
-                Console.WriteLine($"Loading {item}");
-                WorldSaver.LoadFromFile(item, world.Area);
-            }
+            //Autimation.Save();
+            //return;
+            //foreach (var item in Directory.GetFiles("gw").Where(i => i.EndsWith(".cd")))
+            //{
+            //    Console.WriteLine($"Loading {item}");
+            //    WorldSaver.LoadFromFile(item, world.Area);
+            //}
             TimeMeasurementService.Start("BuildGlobalCoordinates");
             world.Area.BuildGlobalCoordinates(false);
             TimeMeasurementService.Start("UpdateBorder");
