@@ -35,10 +35,10 @@ namespace Mega.Game
             this.Location = location;
         }
 
-        public void SetBlock(Block block)
+        public void SetBlock(Block block, ChunkLocation location)
         {
-            data.Set(block.Position, block);
-            MembersList.Add(block.Position);
+            data.Set(location, block);
+            MembersList.Add(location);
         }
         public void RebuildMesh()
         {
@@ -71,28 +71,12 @@ namespace Mega.Game
 
         public void UpdateGlobalCoords()
         {
-            int xOffset, yOffset;
-            if(Location.X >= 0)
-            {
-                xOffset = Location.X * Size.X;
-            }
-            else
-            {
-                xOffset = (Location.X * Size.X);
-            }
-            if(Location.Y >= 0)
-            {
-                yOffset = Location.Y * Size.Z;
-            }
-            else
-            {
-                yOffset = (Location.Y * Size.Z);
-            }
+            var offset = BlockOffset();
             var blocks = MembersList.Select(i => data.Get(i));
             foreach (var item in blocks)
             {
-                item.Position.X += xOffset;
-                item.Position.Z += yOffset;
+                item.Position += offset;
+
             }
         }
         public void GenerateSurface()
@@ -112,7 +96,7 @@ namespace Mega.Game
             }
             else
             {
-                xOffset = (Location.X * Size.X) - 1;
+                xOffset = (Location.X * Size.X);
             }
             if (Location.Y >= 0)
             {
@@ -120,7 +104,7 @@ namespace Mega.Game
             }
             else
             {
-                yOffset = (Location.Y * Size.Z) - 1;
+                yOffset = (Location.Y * Size.Z);
             }
             return new Vector3i(xOffset, 0, yOffset);
         }

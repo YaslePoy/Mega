@@ -37,26 +37,23 @@ namespace Mega.Video.Shading
             BindBuffers();
             //if (world.Redrawing)
             //{
-            var sel = world.Area.GetBlock(world.Player.SelectedBlock);
-            if (sel is not null)
+            if (world.Player.SelectedBlock.HasValue)
             {
-                //world.generateBlockMesh(out _indices, out _vertices, sel);
+                var sel = world.Area.GetBlock(world.Player.SelectedBlock.Value);
+
                 UpdateEdges(sel, world);
                 GL.BufferData(BufferTarget.ArrayBuffer, _vertices.Length * sizeof(float), _vertices, BufferUsageHint.DynamicDraw);
                 GL.BufferData(BufferTarget.ElementArrayBuffer, _indices.Length * sizeof(float), _indices, BufferUsageHint.DynamicDraw);
+
+                Projection = world.Player.Cam.GetProjectionMatrix();
+                View = world.Player.Cam.GetViewMatrix();
+                for (int i = 0; i < 6; i++)
+                {
+                    GL.DrawElements(PrimitiveType.LineLoop, 4, DrawElementsType.UnsignedInt, 4 * i * sizeof(uint));
+                }
             }
-            else
-            {
-                _indices = new uint[0];
-                _vertices = new float[0];
-            }
-            //}
-            Projection = world.Player.Cam.GetProjectionMatrix();
-            View = world.Player.Cam.GetViewMatrix();
-            for (int i = 0; i < 6; i++)
-            {
-                GL.DrawElements(PrimitiveType.LineLoop, 4, DrawElementsType.UnsignedInt, 4 * i * sizeof(uint));
-            }
+
+
 
 
 

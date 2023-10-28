@@ -80,25 +80,26 @@ namespace Mega.Game
                 }
                 curBlock++;
             }
+            var offset = chunk.BlockOffset();
             while (curBlock != lastBlock)
             {
 
                 int curID = save.GetInt(4) - 2;
                 if (curID == -2)
                 {
-                    int block = save.GetInt(4) - 2;
+                    int id = save.GetInt(4) - 2;
                     int count = save.GetInt(8) + 1;
                     for (int i = 0; i < count; i++)
                     {
-                        if (block != -1)
-                            chunk.SetBlock(new Block(pos.Zyx, block, generateSurface: false));
+                        if (id != -1)
+                            chunk.SetBlock(new Block(pos.Zyx + offset, id, generateSurface: true), pos.Zyx);
                         nextPos();
                     }
                 }
                 else
                 {
                     if (curID != -1)
-                        chunk.SetBlock(new Block(pos.Zyx, curID, false));
+                        chunk.SetBlock(new Block(pos.Zyx + offset, curID, true), pos.Zyx);
                     nextPos();
                 }
             }

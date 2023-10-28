@@ -15,8 +15,8 @@ namespace Mega.Game
         readonly Vector3 growthAdd = new Vector3(0, Growth, 0);
         public const float WalkSpeed = 4f;
         public World world;
-        public Vector3i SelectedBlock;
-        public Vector3i Cursor;
+        public Vector3i? SelectedBlock;
+        public Vector3i? Cursor;
         public Camera Cam;
         public Vector2 Moving;
         public float VerticalSpeed;
@@ -32,7 +32,7 @@ namespace Mega.Game
             get => acts; set
             {
                 acts = value;
-                if(acts)
+                if (acts)
                     IsActed = false;
             }
         }
@@ -51,8 +51,10 @@ namespace Mega.Game
         }
         public void PlaceBlock()
         {
-                var newBlock = new Block(Cursor, 1);
-                world.SetBlock(newBlock);
+            if (!Cursor.HasValue)
+                return;
+            var newBlock = new Block(Cursor.Value, 1);
+            world.SetBlock(newBlock);
         }
         public RectangularCollider GetCollider()
         {

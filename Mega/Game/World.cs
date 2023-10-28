@@ -8,7 +8,7 @@ namespace Mega.Game
     {
         public static Vector3 Sun = new Vector3(1, -1, 0.5f).Normalized();
         private bool redrawing = true;
-
+       
         public bool Redrawing
         {
             get
@@ -64,9 +64,11 @@ namespace Mega.Game
             {
                 if (!isRuninig)
                     return;
-                while (next > DateTime.Now) ;
-                next += totalUpdateTime;
+                next = DateTime.Now + totalUpdateTime;
                 Update(updateTime);
+                var sleep = next - DateTime.Now;
+                if (sleep > TimeSpan.Zero)
+                    Thread.Sleep(sleep);
             }
         }
 
@@ -84,7 +86,7 @@ namespace Mega.Game
                 sides.AddRange(chunk.Surface);
             }
             uint indOffset = 0;
-            verteces = new float[sides.Count * 4*8];
+            verteces = new float[sides.Count * 4 * 8];
             indeces = new Dictionary<int, List<uint>>();
             uint[] adding;
             for (int i = 0; i < sides.Count; i++)
@@ -105,7 +107,7 @@ namespace Mega.Game
         {
             if (!Player.IsActed)
                 Debug.Trap();
-            //UpdateSelector();
+            UpdateSelector();
             UpdatePlayerPosition(time);
 
         }
@@ -119,7 +121,7 @@ namespace Mega.Game
             }
 
             //calculating movement in x-z plane
-            if (false)
+            if (true)
             {
 
                 var localG = G * t;
@@ -178,8 +180,8 @@ namespace Mega.Game
             else
             {
 
-                    var localFront = (Player.Cam.Front / 2 * Player.Moving.X - Player.Cam.Right / 2 * Player.Moving.Y);
-                    Player.MoveTo(localFront);
+                var localFront = (Player.Cam.Front / 2 * Player.Moving.X - Player.Cam.Right / 2 * Player.Moving.Y);
+                Player.MoveTo(localFront);
 
             }
             Player.UpdateCamPosition();
@@ -212,8 +214,8 @@ namespace Mega.Game
             var viewDir = Player.View;
             Ray viewRay = new Ray(Player.ViewPoint, viewDir);
             var archive = Player.SelectedBlock;
-            Player.SelectedBlock = -Vector3i.One;
-            Player.Cursor = Player.SelectedBlock;
+            Player.SelectedBlock = null;
+            Player.Cursor = null;
             foreach (var block in viewRay.GetCrossBlocks(5))
             {
                 if (!Area.GetMember(block.block))
@@ -223,7 +225,7 @@ namespace Mega.Game
                 Player.Cursor = block.block - block.side;
                 break;
             }
-            if(archive != Player.SelectedBlock)
+            if (archive != Player.SelectedBlock)
                 Console.WriteLine($"New Block selected {Player.SelectedBlock}");
         }
         public void SetBlock(Block block)

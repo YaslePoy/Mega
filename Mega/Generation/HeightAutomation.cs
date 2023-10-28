@@ -83,11 +83,10 @@ namespace Mega.Generation
             var cell = Get(x, y);
             var half = cells.GetLength(0) / 2;
             var real = (x - half, y - half);
-            var h = (int)Math.Truncate(cell.h / 8) + 1;
+            var h = (int)Math.Truncate(cell.h / 32) + 1;
             for (int i = 0; i < h; i++)
             {
-                world.SetBlock(new Block(new Vector3i(real.Item1, i, real.Item2), 0, false));
-
+                world.SetBlock(new Block(new Vector3i(real.Item1, i, real.Item2), 0, true));
             }
             return cell;
         }

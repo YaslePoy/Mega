@@ -7,15 +7,17 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 
 namespace Mega.Video.Shading
 {
     internal class TextureDrawShader : Shader
     {
-
+        int frames = 0;
         private Dictionary<int, int> _drawOrder;
         public Matrix4 View { set { SetMatrix4("view", value); } }
         public Matrix4 Projection { set { base.SetMatrix4("projection", value); } }
+
         public Texture RenderTexture
         {
             set
@@ -42,6 +44,7 @@ namespace Mega.Video.Shading
             var norLocation = GetAttribLocation("nor");
             GL.EnableVertexAttribArray(norLocation);
             GL.VertexAttribPointer(norLocation, 3, VertexAttribPointerType.Float, false, 8 * sizeof(float), 5 * sizeof(float));
+            var x = GL.GetUniformLocation(this.Handle, "viewDir");
         }
         public override void Run(World world)
         {
@@ -71,6 +74,7 @@ namespace Mega.Video.Shading
                 GL.DrawElements(PrimitiveType.Triangles, currentDrawArray, DrawElementsType.UnsignedInt, offset * sizeof(uint));
                 offset += currentDrawArray;
             }
+            frames++;
         }
     }
 }

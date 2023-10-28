@@ -8,15 +8,18 @@ using OpenTK.Mathematics;
 
 namespace Benchmark
 {
-    internal class Test
+    internal unsafe class Test
     {
-        int[][] lists;
-        public Test()
+        Vector3 a, b;
+        float* cache;
+        public unsafe Test()
         {
-            lists = Enumerable.Repeat(Enumerable.Range(0, 1000).ToArray(),100).ToArray();
+            a = new Vector3(1, 2, 3);
+            b = new Vector3(2, 3, 4);
+            cache = new float[] { 1, 2, 3, 4 };
         }
 
-        public void now()
+        public unsafe void now()
         {
             var sum = lists.SumList();
         }
@@ -24,6 +27,6 @@ namespace Benchmark
         {
         }
 
-        
+
     }
 }

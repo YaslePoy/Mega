@@ -42,7 +42,7 @@ namespace Mega.Game
             Position = pos;
             IDCode = id;
             if (generateSurface)
-                GenerateSurface();
+                Task.Run(GenerateSurface);
         }
 
         public void GenerateSurface()
