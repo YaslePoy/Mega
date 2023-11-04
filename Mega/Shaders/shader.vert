@@ -17,9 +17,5 @@ void main(void)
 {
     texCoord = aTexCoord;
     normal = nor;
-    vec4 pre = vec4(nor, 0);
-    pre = pre * view * projection;
-    normalRot = pre.xyz;
-    
     gl_Position = vec4(aPosition, 1.0) * view * projection;
 }

@@ -121,7 +121,7 @@ namespace Mega.Game
             }
 
             //calculating movement in x-z plane
-            if (true)
+            if (false)
             {
 
                 var localG = G * t;

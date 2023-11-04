@@ -34,7 +34,7 @@ namespace Mega.Game
         public RenderSurface[] totalSurface;
         public Block()
         {
-            totalSurface = new RenderSurface[0];
+            totalSurface = Array.Empty<RenderSurface>();
         }
 
         public Block(Vector3i pos, int id, bool generateSurface = true)
@@ -72,7 +72,7 @@ namespace Mega.Game
             result.Add(neib);
             neib = Position + Neibs[5];
             result.Add(neib);
-            view = new RenderSurface[0];
+            view = Array.Empty<RenderSurface>();
             return result.ToArray();
         }
         public RenderSurface[] GetDrawingMesh(UnitedChunk area)

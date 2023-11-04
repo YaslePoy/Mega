@@ -10,6 +10,7 @@ using System.ComponentModel;
 using Mega.Video.Shading;
 using Mega.Generation;
 using System.Drawing;
+using Monitor = OpenTK.Windowing.GraphicsLibraryFramework.Monitor;
 
 namespace Mega.Video
 {
@@ -67,7 +68,9 @@ namespace Mega.Video
 
             pl = new Player(_camera);
             world = new World(pl, this, 1);
-            var Autimation = new HeightAutomation(128 * 8);
+            int worldSize = 128 * 4;
+            var Autimation = new HeightAutomation(worldSize);
+            Console.WriteLine(worldSize);
             Autimation.Scale = 16;
 
             Autimation.SetRandom(30);
@@ -91,6 +94,7 @@ namespace Mega.Video
             world.Area.UpdateRenderSurface();
             TimeMeasurementService.Stop();
             world.Start(100);
+            
         }
 
         void GLInit()

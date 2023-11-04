@@ -21,5 +21,5 @@ void main()
     x = 0;
     x = (x + 1) / 2;
     cl *= x;
-    outputColor = vec4(normalRot, 1);
+    outputColor = cl;
 }

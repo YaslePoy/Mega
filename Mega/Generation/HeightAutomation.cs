@@ -45,11 +45,12 @@ namespace Mega.Generation
             //return cell;
             var cell = new Height();
             var central = ((x - cells.GetLength(0) / 2d) / Scale, (y - cells.GetLength(1) / 2d) / Scale);
-            double dist = 1 / MathHelper.InverseSqrtFast(central.Item1 * central.Item1 + central.Item2 * central.Item2);
-            var h = (Math.Cos(central.Item2) * Math.Sin(central.Item1) * (2 * dist) + 1) / 2;
+            //double dist = 1 / MathHelper.InverseSqrtFast(central.Item1 * central.Item1 + central.Item2 * central.Item2);
+            //var h = (Math.Cos(central.Item2) * Math.Sin(central.Item1) * (2 * dist) + 1) / 2;
+            var h = (Math.Sin(central.Item1) * Math.Cos(central.Item2) + 1) / 2;
             //var h = (Math.Sin(central.Item2) * central.Item1 * (2 / MathHelper.InverseSqrtFast(central.Item1 * central.Item1 + central.Item2 * central.Item2)) + 1) / 2;
             //var h = (Math.Cos(Math.Sqrt(central.Item1 * central.Item1 * central.Item2 * central.Item2)) + 1) / 2;
-            h *= (16 - dist) / 16 /** 0.1*/;
+            //h *= (16 - dist) / 16 /** 0.1*/;
             cell.h = h;
 
             return cell;
@@ -83,10 +84,10 @@ namespace Mega.Generation
             var cell = Get(x, y);
             var half = cells.GetLength(0) / 2;
             var real = (x - half, y - half);
-            var h = (int)Math.Truncate(cell.h / 32) + 1;
+            var h = (int)Math.Truncate(cell.h / 8) + 1;
             for (int i = 0; i < h; i++)
             {
-                world.SetBlock(new Block(new Vector3i(real.Item1, i, real.Item2), 0, true));
+                world.SetBlock(new Block(new Vector3i(real.Item1, i, real.Item2), rand.Next(0, 2), true));
             }
             return cell;
         }

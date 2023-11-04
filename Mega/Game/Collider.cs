@@ -52,27 +52,27 @@ namespace Mega.Game
             bool isColled = false;
             void Direct()
             {
-                if (verifyPlanes.Count() != 0)
-                    foreach (var ray in rays)
+                if (!verifyPlanes.Any()) return;
+                foreach (var ray in rays)
+                {
+                    if (isColled && bufT == 0)
+                        break;
+                    foreach (var plane in verifyPlanes)
                     {
                         if (isColled && bufT == 0)
                             break;
-                        foreach (var plane in verifyPlanes)
-                        {
-                            if (isColled && bufT == 0)
-                                break;
 
-                            var xyz = GeometricEngine.PlaneAndLine(plane, ray, out bufT);
-                            if (bufT < 0 || bufT > 1 || bufT >= maxT)
-                                continue;
-                            if (!plane.IsContains(xyz))
-                                continue;
-                            maxT = bufT;
-                            collision = xyz;
-                            normal = plane.plane.Normal;
-                            isColled = true;
-                        }
+                        var xyz = GeometricEngine.PlaneAndLine(plane, ray, out bufT);
+                        if (bufT < 0 || bufT > 1 || bufT >= maxT)
+                            continue;
+                        if (!plane.IsContains(xyz))
+                            continue;
+                        maxT = bufT;
+                        collision = xyz;
+                        normal = plane.plane.Normal;
+                        isColled = true;
                     }
+                }
 
             }
             void Revercive()
