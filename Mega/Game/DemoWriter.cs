@@ -24,6 +24,9 @@ namespace Mega.Game
                 return;
             addFloat(world.Player.Cam.Pitch);
             addFloat(world.Player.Cam.Yaw);
+            addFloat(world.Player.Moving.X);
+            addFloat(world.Player.Moving.Y);
+
             addLine();
         }
 
@@ -52,6 +55,9 @@ namespace Mega.Game
             var floats = lineParts.Select(float.Parse).ToArray();
             world.Player.Cam.Pitch = floats[0];
             world.Player.Cam.Yaw = floats[1];
+            world.Player.Moving.X = floats[2];
+            world.Player.Moving.Y = floats[3];
+
         }
 
         public static void NextFrame()
