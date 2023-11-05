@@ -54,59 +54,19 @@ namespace Mega.Game
                 return false;
             return chunk.data.Get(path.block) is not null;
         }
-        void VerifyBlock(Vector3i border, Vector3i block, Chunk host)
-        {
-            if (border.Y != -1)
-                if (host.data.Get(border) is null)
-                {
-                    if (host.BorderMembersList.Count == 0 || host.BorderMembersList.Last() != block)
-                        host.BorderMembersList.Add(block);
-                }
-        }
 
-        public void BuildGlobalCoordinates(bool coords = true)
-        {
-            if (coords)
-                Chunks.Values.AsParallel().ForAll(i => i.UpdateGlobalCoords());
-            Chunks.Values.AsParallel().ForAll(i => i.GenerateSurface());
-        }
         public void UpdateBorder()
         {
-            var testVec = new Vector3i(6, 6, -36);
-            foreach (var cn in Chunks.Values)
+            Chunks.Values.AsParallel().ForAll(cn =>
             {
-                if (cn == null)
-                    continue;
                 foreach (var blockPos in cn.MembersList)
                 {
 
                     bool skip = false;
                     var block = cn.Get(blockPos);
-                    if (block.Position == testVec)
-                        Debug.Trap();
                     var nbs = block.Adjacent;
                     foreach (var verifyAdjacent in nbs)
                     {
-                        //Vector3i verify = verifyAdjacent.InChunk();
-                        //if (verify.IsInChunk())
-                        //{
-                        //    VerifyBlock(verify, blockPos, cn);
-                        //}
-                        //else
-                        //{
-                        //    if (blockPos.Y < 0 || blockPos.Y > Chunk.Size.Y)
-                        //    {
-                        //        cn.BorderMembersList.Add(blockPos);
-                        //        skip = true;
-                        //        break;
-                        //    }
-                        //    var nextBlock = verify.InChunk();
-                        //    var nextChunkLocation = cn.Location + new Vector2i(nextBlock.X == 0 ? 1 : -1, nextBlock.Y == 0 ? 1 : -1);
-                        //    var nextChunk = GetChunkByLocation(nextChunkLocation);
-                        //    if (nextChunk == null)
-                        //        continue;
-                        //    VerifyBlock(verify, nextBlock, nextChunk);
-                        //}
                         if (!GetMember(verifyAdjacent))
                         {
                             cn.BorderMembersList.Add(blockPos);
@@ -116,7 +76,7 @@ namespace Mega.Game
                     if (skip)
                         break;
                 }
-            }
+            });
         }
         public void UpdateRenderSurface()
         {

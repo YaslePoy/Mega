@@ -71,10 +71,6 @@ namespace Mega.Game
 
             }
         }
-        public void GenerateSurface()
-        {
-            MembersList.ForEach(i => data.Get(i).GenerateSurface());
-        }
         public override string ToString()
         {
             return Location.ToString();

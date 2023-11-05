@@ -35,7 +35,7 @@ public class Collider
         }).ToArray();
     }
 
-    public void GenerateVertexes()
+    public virtual void GenerateVertexes()
     {
         var vts = new List<Vector3>();
         sides.ToList().ForEach(side => vts.AddRange(side.Limits));

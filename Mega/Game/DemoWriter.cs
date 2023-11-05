@@ -11,8 +11,7 @@ namespace Mega.Game
         private static int currentLine;
         static List<string> demoStrings;
         static StringBuilder line;
-        public static bool Write, Read;
-
+        public static bool Write, Read, Nexting;
         static DemoWriter()
         {
             line = new StringBuilder();

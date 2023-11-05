@@ -66,7 +66,7 @@ public class Window : GameWindow
 
         pl = new Player(_camera);
         world = new World(pl, this, 1);
-        var worldSize = 128 * 1;
+        var worldSize = 128 * 2;
         var Autimation = new HeightAutomation(worldSize);
         Console.WriteLine(worldSize);
         Autimation.Scale = 16;
@@ -88,10 +88,14 @@ public class Window : GameWindow
         //}
         TimeMeasurementService.Start("UpdateBorder");
         world.Area.UpdateBorder();
-        TimeMeasurementService.Start("UpdateRenderSurface");
+        int i = 0;
+
+        TimeMeasurementService.Start(" UpdateRenderSurface");
         world.Area.UpdateRenderSurface();
-        TimeMeasurementService.Stop();
+
+
         world.Start(100);
+
     }
 
     private void GLInit()
@@ -163,22 +167,24 @@ public class Window : GameWindow
             //_camera.Position -= _camera.Up * cameraSpeed * (float)e.Time; // Down
         }
 
-        if (input.IsKeyDown(Keys.KeyPad0))
+        if (input.IsKeyPressed(Keys.KeyPad0))
         {
             DemoWriter.SaveDemo();
         }
-        if (input.IsKeyDown(Keys.KeyPad1))
+        if (input.IsKeyPressed(Keys.KeyPad1))
         {
-            DemoWriter.Write = true;
+            DemoWriter.Write = !DemoWriter.Write;
         }
-        if (input.IsKeyDown(Keys.KeyPad2))
+        if (input.IsKeyPressed(Keys.KeyPad2))
         {
-            DemoWriter.Read = true;
+            DemoWriter.Read = !DemoWriter.Read;
         }
-        if (input.IsKeyDown(Keys.KeyPad3))
+        if (input.IsKeyPressed(Keys.KeyPad3))
         {
             DemoWriter.LoadDemo();
         }
+
+        DemoWriter.Nexting = input.IsKeyDown(Keys.KeyPad5);
         if (input.IsKeyReleased(Keys.R)) Debug.SaveEnable = !Debug.SaveEnable;
 
         if (input.IsKeyReleased(Keys.T)) Debug.SaveLogs();
