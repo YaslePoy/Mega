@@ -10,6 +10,6 @@ namespace Benchmark
             runner.RunBenchmark(10000);
             Console.ReadLine();
         }
-        
+
     }
 }

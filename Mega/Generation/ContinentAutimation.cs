@@ -1,11 +1,5 @@
 ﻿using OpenTK.Mathematics;
-using StbImageSharp;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Mega.Generation
 {
@@ -41,12 +35,12 @@ namespace Mega.Generation
                 return Get(x, y);
             if (around.Any(i => i != around.First()))
                 return Get(x, y);
-            
+
             if (around.Count() == 1 && iteration > 1)
                 return Get(x, y);
             //if (around.Count() >= 7 && iteration > 5)
             //    return around[0];
-            if (RandomNumberGenerator.GetInt32(0,100) > ratio * around[0].K)
+            if (RandomNumberGenerator.GetInt32(0, 100) > ratio * around[0].K)
                 return around[0];
             return Get(x, y);
         }
@@ -66,12 +60,12 @@ namespace Mega.Generation
             //    }
             //}
             var gen = new Area { K = rand.NextDouble(), ID = 0, Color = new Vector4((float)(rand.NextDouble() * byte.MaxValue), (float)(rand.NextDouble() * byte.MaxValue), (float)(rand.NextDouble() * byte.MaxValue), 255) };
-             Set(cells.GetLength(0) / 2, cells.GetLength(1) / 2, gen);
+            Set(cells.GetLength(0) / 2, cells.GetLength(1) / 2, gen);
         }
         public override byte[] GetPixel(Area cell)
         {
             if (cell is null)
-                return new byte[4] { 0, 0, 0,byte.MaxValue};
+                return new byte[4] { 0, 0, 0, byte.MaxValue };
             return new byte[] { Math.Min(byte.MaxValue, (byte)cell.Color.X), Math.Min(byte.MaxValue, (byte)cell.Color.Y), Math.Min(byte.MaxValue, (byte)cell.Color.Z), Math.Min(byte.MaxValue, byte.MaxValue), };
         }
     }
@@ -85,7 +79,7 @@ namespace Mega.Generation
         public static bool operator !=(Area c1, Area c2) => c1.ID != c2.ID;
         public override bool Equals(object? obj)
         {
-            if(obj == null || obj is not Area) return false;
+            if (obj == null || obj is not Area) return false;
             return this == (Area)obj;
         }
         public override string ToString()

@@ -1,11 +1,4 @@
 ﻿using OpenTK.Mathematics;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.Metrics;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Mega.Game
 {
@@ -23,14 +16,7 @@ namespace Mega.Game
             plane = new Plane(normal,
                 -Vector3.Dot(normal, limits[0]));
             Limits = limits;
-            if(order == OrderMode.Circle)
-            {
-                orders = new []{ 0, 1, 2, 0, 2, 3 };
-            }
-            else
-            {
-                orders = new[] { 0, 1, 2, 1, 2, 3 };
-            }
+            orders = order == OrderMode.Circle ? new[] { 0, 1, 2, 0, 2, 3 } : new[] { 0, 1, 2, 1, 2, 3 };
         }
         public static implicit operator Plane(LimitedPlane x)
         {
@@ -68,8 +54,8 @@ namespace Mega.Game
             var triangles = orders.Chunk(3).ToList();
             foreach (var tri in triangles)
             {
-                var points = new Vector2[] { pts[0], pts[tri[0] + 1], pts[tri[1] + 1], pts[tri[2] + 1] };
-                if(IsInTreangle(points))
+                var points = new[] { pts[0], pts[tri[0] + 1], pts[tri[1] + 1], pts[tri[2] + 1] };
+                if (IsInTreangle(points))
                     return true;
             }
             return false;
@@ -80,7 +66,7 @@ namespace Mega.Game
             float a = (pts[1].X - pts[0].X) * (pts[2].Y - pts[1].Y) - (pts[2].X - pts[1].X) * (pts[1].Y - pts[0].Y);
             float b = (pts[2].X - pts[0].X) * (pts[3].Y - pts[2].Y) - (pts[3].X - pts[2].X) * (pts[2].Y - pts[0].Y);
             float c = (pts[3].X - pts[0].X) * (pts[1].Y - pts[3].Y) - (pts[1].X - pts[3].X) * (pts[3].Y - pts[0].Y);
-            return (a >= 0 && b >= 0 && c >= 0) || (a <= 0 && b <= 0 && c <= 0);
+            return (a > 0 && b > 0 && c > 0) || (a < 0 && b < 0 && c < 0);
         }
         public override string ToString()
         {

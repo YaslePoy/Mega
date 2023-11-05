@@ -1,13 +1,5 @@
 ﻿using Mega.Game;
-using Mega.Generation;
 using OpenTK.Graphics.OpenGL;
-using StbImageSharp;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Mega.Video.Shading
 {

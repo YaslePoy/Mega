@@ -1,8 +1,5 @@
 ﻿using Mega;
-using Mega.Game;
-using Mega.Video;
 using OpenTK.Mathematics;
-using System.Collections;
 
 namespace Testing
 {
@@ -16,10 +13,10 @@ namespace Testing
             for (int i = 5; i >= -70; i--)
             {
 
-                    var testVec = new Vector3i(i, 0, 5);
-                    var res = testVec.ToWorldPath();
-                    Console.WriteLine($"{testVec} chunk is {res.chunk} in chunk {res.block}");
-                
+                var testVec = new Vector3i(i, 0, 5);
+                var res = testVec.ToWorldPath();
+                Console.WriteLine($"{testVec} chunk is {res.chunk} in chunk {res.block}");
+
             }
         }
     }

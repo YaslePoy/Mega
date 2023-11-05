@@ -1,12 +1,7 @@
-﻿using OpenTK.Graphics.OpenGL;
-using System.Drawing;
-using System.Drawing.Imaging;
-using PixelFormat = OpenTK.Graphics.OpenGL.PixelFormat;
+﻿using Mega.Video.Shading;
+using OpenTK.Graphics.OpenGL;
 using StbImageSharp;
-using System.IO;
-using System.Reflection.Metadata;
-using System;
-using Mega.Video.Shading;
+using PixelFormat = OpenTK.Graphics.OpenGL.PixelFormat;
 
 namespace Mega.Video
 {

@@ -1,10 +1,5 @@
 ﻿using Mega.Game;
 using OpenTK.Mathematics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Mega.Generation
 {
@@ -115,7 +110,7 @@ namespace Mega.Generation
         {
 
             this.world = new UnitedChunk();
-            
+
             var n = cells.GetLength(0) / 64;
             for (int i = -n; i < n; i++)
             {

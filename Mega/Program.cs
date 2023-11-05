@@ -1,5 +1,4 @@
-﻿using Mega.Game;
-using Mega.Video;
+﻿using Mega.Video;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
@@ -17,7 +16,7 @@ namespace Mega
                 // This is needed to run on macos
                 Flags = ContextFlags.ForwardCompatible,
                 WindowBorder = WindowBorder.Hidden,
-                
+
                 //WindowState = WindowState.Fullscreen
             };
             using (var window = new Window(new GameWindowSettings() /*{ UpdateFrequency = 100 }*/, nativeWindowSettings) { })

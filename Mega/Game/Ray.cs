@@ -1,9 +1,4 @@
 ﻿using OpenTK.Mathematics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Mega.Game
 {
@@ -38,7 +33,7 @@ namespace Mega.Game
                 foreach (var nib in niobous)
                 {
                     var newBlock = startBlock + nib;
-                    var vec = newBlock + adding - Position; 
+                    var vec = newBlock + adding - Position;
                     vec.Normalize();
                     lengths.Add((newBlock, Vector3.Dot(vec, Direction), nib));
                 }

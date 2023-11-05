@@ -1,10 +1,5 @@
 ﻿using Mega.Video;
 using OpenTK.Mathematics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Mega.Game
 {
@@ -57,7 +52,7 @@ namespace Mega.Game
             var chunk = GetChunkByLocation(path.chunk);
             if (chunk == null)
                 return false;
-            return chunk.data.Get(path.block)  is not null;
+            return chunk.data.Get(path.block) is not null;
         }
         void VerifyBlock(Vector3i border, Vector3i block, Chunk host)
         {

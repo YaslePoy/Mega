@@ -1,9 +1,4 @@
 ﻿using OpenTK.Mathematics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Mega.Video
 {
@@ -124,7 +119,7 @@ namespace Mega.Video
             var text = File.ReadAllLines(path);
             if (text.Length == 1 && text[0].StartsWith("use"))
                 return new LinkMap(text[0].Substring(4));
-                var sides = new List<UVSide>();
+            var sides = new List<UVSide>();
             foreach (var line in text)
             {
                 if (line.StartsWith("link"))

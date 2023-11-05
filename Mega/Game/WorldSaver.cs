@@ -1,5 +1,4 @@
-﻿using Mega.Generation;
-using OpenTK.Mathematics;
+﻿using OpenTK.Mathematics;
 using System.Collections;
 
 namespace Mega.Game
@@ -114,6 +113,7 @@ namespace Mega.Game
         public SmartBitArray(BitArray ba)
         {
             array = ba;
+            
         }
         public SmartBitArray()
         {

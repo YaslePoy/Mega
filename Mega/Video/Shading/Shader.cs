@@ -1,10 +1,6 @@
-﻿using System;
-using System.IO;
-using System.Text;
-using System.Collections.Generic;
+﻿using Mega.Game;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
-using Mega.Game;
 
 namespace Mega.Video.Shading
 {

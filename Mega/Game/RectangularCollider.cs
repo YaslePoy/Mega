@@ -1,9 +1,4 @@
 ﻿using OpenTK.Mathematics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Mega.Game
 {
@@ -37,7 +32,7 @@ namespace Mega.Game
         }
         void GenerateSides(Vector3 move)
         {
-            var localMove = (move  + Vector3.One) / -2;
+            var localMove = (move + Vector3.One) / -2;
             sides = CubicCollider.OneCube.Select(i => i + localMove).ToArray();
             sides = sides.Select(i => i * size).ToArray();
             GenerateVertexes();

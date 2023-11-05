@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
 
 namespace Mega
 {
@@ -17,9 +12,9 @@ namespace Mega
         }
         public static void Start(string measureName)
         {
-            if (name == measureName )
+            if (name == measureName)
                 return;
-            if(name == null)
+            if (name == null)
             {
                 name = measureName;
                 time.Start();
