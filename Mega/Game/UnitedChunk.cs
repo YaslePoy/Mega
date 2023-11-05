@@ -20,22 +20,22 @@ namespace Mega.Game
         public Block GetBlock(Vector3i position)
         {
             var path = position.ToWorldPath();
-            if (!path.block.IsInChunk())
+            if (!path.InChunk.IsInChunk())
                 return null;
-            var chunk = GetChunkByLocation(path.chunk);
+            var chunk = GetChunkByLocation(path.Chunk);
             if (chunk == null)
                 return null;
-            return chunk.data.Get(path.block);
+            return chunk.data.Get(path.InChunk);
         }
 
         public void SetBlock(Block block)
         {
             var path = block.Position.ToWorldPath();
-            var chunk = GetChunkByLocation(path.chunk);
+            var chunk = GetChunkByLocation(path.Chunk);
             if (chunk == null)
                 return;
-            chunk.data.Set(path.block, block);
-            chunk.MembersList.Add(path.block);
+            chunk.data.Set(path.InChunk, block);
+            chunk.MembersList.Add(path.InChunk);
 
         }
         public Chunk GetChunkByLocation(Vector2i location)
@@ -46,13 +46,8 @@ namespace Mega.Game
         }
         public bool GetMember(Vector3i position)
         {
-            var path = position.ToWorldPath();
-            if (!path.block.IsInChunk())
-                return false;
-            var chunk = GetChunkByLocation(path.chunk);
-            if (chunk == null)
-                return false;
-            return chunk.data.Get(path.block) is not null;
+
+            return GetBlock(position) is { } block;
         }
 
         public void UpdateBorder()

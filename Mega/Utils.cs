@@ -30,26 +30,9 @@ namespace Mega
             return ret;
         }
         public const float G = 30f;
-        public static (Vector2i chunk, Vector3i block) ToWorldPath(this Vector3i vec)
+        public static WorldPath ToWorldPath(this Vector3i globalPosition)
         {
-            Vector2i cn = new Vector2i(0, 0);
-            if (vec.X > 0)
-            {
-                cn.X = (int)Math.Floor((double)vec.X / Chunk.Size.X);
-            }
-            else
-            {
-                cn.X = -(int)Math.Abs(Math.Floor(((double)vec.X) / Chunk.Size.X));
-            }
-            if (vec.Z > 0)
-            {
-                cn.Y = (int)Math.Floor((double)vec.Z / Chunk.Size.Z);
-            }
-            else
-            {
-                cn.Y = -(int)Math.Abs(Math.Floor(((double)vec.Z) / Chunk.Size.Z));
-            }
-            return (cn, vec.InChunk());
+            return CppHelpers.ToWorldPath(globalPosition);
         }
         public static Vector3i InChunk(this Vector3i globalPosition)
         {
@@ -73,9 +56,8 @@ namespace Mega
             return ret;
         }
 
-        public static bool IsInChunk(this Vector3i position) => position.X >= 0 && position.X < Chunk.Size.X &&
-                                                                position.Y >= 0 && position.Y < Chunk.Size.Y &&
-                                                                position.Z >= 0 && position.Z < Chunk.Size.Z;
+        public static bool IsInChunk(this Vector3i position) =>
+                                                                position.Y >= 0 && position.Y < Chunk.Size.Y;
         public static Sys.Vector3 ToSys(this Vector3 otk) => new Sys.Vector3(otk.X, otk.Y, otk.Z);
 
         public static float Sum(this Vector3 vector) => vector.X + vector.Y + vector.Z;

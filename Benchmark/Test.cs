@@ -1,25 +1,36 @@
 ﻿using Mega;
 using OpenTK.Mathematics;
+using System;
 
 namespace Benchmark
 {
     internal unsafe class Test
     {
-        Vector3 a, b;
-        float* cache;
+        private Vector3i[] a;
         public unsafe Test()
         {
-            a = new Vector3(1, 2, 3);
-            b = new Vector3(2, 3, 4);
-            cache = new float[] { 1, 2, 3, 4 };
+            var r = new Random();
+            var half = int.MaxValue / 2;
+            a = new Vector3i[200];
+            for (int i = 0; i < a.Length; i++)
+            {
+                a[i] = new Vector3i(r.Next() - half, r.Next() - half, r.Next() - half);
+            }
         }
 
-        public unsafe void now()
+        public void Cs()
         {
-            var sum = lists.SumList();
+            for (int i = 0; i < a.Length; i++)
+            {
+                var n = a[i].ToWorldPath();
+            }
         }
-        public void next()
+        public void Cpp()
         {
+            for (int i = 0; i < a.Length; i++)
+            {
+                var n = CppHelpers.ToWorldPath(a[i]);
+            }
         }
 
 

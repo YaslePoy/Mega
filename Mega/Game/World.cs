@@ -245,4 +245,31 @@ namespace Mega.Game
             redrawing = true;
         }
     }
+
+    public struct WorldPath
+    {
+        public Vector3i InChunk;
+        public Vector2i Chunk;
+
+        public WorldPath(Vector3i inChunk, Vector2i chunk)
+        {
+            InChunk = inChunk;
+            Chunk = chunk;
+        }
+
+        public override string ToString()
+        {
+            return $"({InChunk}-{Chunk})";
+        }
+
+        public static bool operator ==(WorldPath left, WorldPath right)
+        {
+            return left.Chunk == right.Chunk && right.InChunk == left.InChunk;
+        }
+
+        public static bool operator !=(WorldPath left, WorldPath right)
+        {
+            return !(left == right);
+        }
+    }
 }
