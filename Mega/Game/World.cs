@@ -248,7 +248,7 @@ namespace Mega.Game
 
     public struct WorldPath
     {
-        public Vector3i InChunk;
+        public ChunkLocation InChunk;
         public Vector2i Chunk;
 
         public WorldPath(Vector3i inChunk, Vector2i chunk)

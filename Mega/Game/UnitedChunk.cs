@@ -20,7 +20,7 @@ namespace Mega.Game
         public Block GetBlock(Vector3i position)
         {
             var path = position.ToWorldPath();
-            if (!path.InChunk.IsInChunk())
+            if ((path.InChunk.Y > Chunk.Size.Y))
                 return null;
             var chunk = GetChunkByLocation(path.Chunk);
             if (chunk == null)

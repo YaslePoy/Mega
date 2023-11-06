@@ -34,24 +34,24 @@ namespace Mega
         {
             return CppHelpers.ToWorldPath(globalPosition);
         }
-        public static Vector3i InChunk(this Vector3i globalPosition)
+        public static ChunkLocation InChunk(this Vector3i globalPosition)
         {
-            Vector3i ret = new Vector3i(0, globalPosition.Y, 0);
+            ChunkLocation ret = new ChunkLocation(0, (ushort)globalPosition.Y, 0);
             if (globalPosition.X >= 0)
             {
-                ret.X = globalPosition.X % Chunk.Size.X;
+                ret.X = (byte)(globalPosition.X % Chunk.Size.X);
             }
             else
             {
-                ret.X = Chunk.Size.X + ((globalPosition.X + 1) % Chunk.Size.X) - 1;
+                ret.X = (byte)(Chunk.Size.X + ((globalPosition.X + 1) % Chunk.Size.X) - 1);
             }
             if (globalPosition.Z >= 0)
             {
-                ret.Z = globalPosition.Z % Chunk.Size.Z;
+                ret.Z = (byte)(globalPosition.Z % Chunk.Size.Z);
             }
             else
             {
-                ret.Z = Chunk.Size.Z + ((globalPosition.Z + 1) % Chunk.Size.Z) - 1;
+                ret.Z = (byte)(Chunk.Size.Z + ((globalPosition.Z + 1) % Chunk.Size.Z) - 1);
             }
             return ret;
         }

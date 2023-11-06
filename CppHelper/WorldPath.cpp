@@ -6,13 +6,14 @@
 
 WorldPath::WorldPath(Vector3i inChunk, Vector2i chunk)
 {
-	InChunk = inChunk;
+	InChunk = ChunkLocation(inChunk);
 	Chunk = chunk;
 }
 
 WorldPath::WorldPath(Vector3i globalPosition)
 {
-	InChunk = globalPosition.InChunk();
+	InChunk = 
+        ChunkLocation(globalPosition);
 	Chunk = Vector2i();
     if (globalPosition.X > 0)
     {

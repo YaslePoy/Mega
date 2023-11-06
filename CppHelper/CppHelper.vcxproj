@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ChunkLocation.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Helper.h" />
     <ClInclude Include="pch.h" />
@@ -147,6 +148,7 @@
     <ClInclude Include="WorldPath.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ChunkLocation.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="Helper.cpp" />
     <ClCompile Include="pch.cpp">

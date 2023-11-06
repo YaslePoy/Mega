@@ -92,7 +92,7 @@ public class Window : GameWindow
 
         TimeMeasurementService.Start(" UpdateRenderSurface");
         world.Area.UpdateRenderSurface();
-
+        TimeMeasurementService.Stop();
 
         world.Start(100);
 
