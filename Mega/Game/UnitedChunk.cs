@@ -6,11 +6,12 @@ namespace Mega.Game
     public class UnitedChunk
     {
         public Dictionary<Vector2i, Chunk> Chunks;
-
+        private HashSet<Vector2i> remeshRequest;
         RenderSurface[] TotalSurface;
         public UnitedChunk()
         {
             Chunks = new();
+            remeshRequest = new HashSet<Vector2i>();
         }
         public void AddChunk(Chunk chunk)
         {
@@ -36,6 +37,7 @@ namespace Mega.Game
                 return;
             chunk.data.Set(path.InChunk, block);
             chunk.MembersList.Add(path.InChunk);
+            remeshRequest.Add(path.Chunk);
 
         }
         public Chunk GetChunkByLocation(Vector2i location)
@@ -76,8 +78,9 @@ namespace Mega.Game
         public void UpdateRenderSurface()
         {
             var nn = Chunks.Values.ToList();
-            nn.ForEach(i => i.RebuildMesh());
+            nn.Where(i => remeshRequest.Contains(i.Location)).ToList().ForEach(i => i.RebuildMesh());
             TotalSurface = nn.Select(i => i.Surface).ToList().SumList().ToArray();
+            remeshRequest.Clear();
         }
 
         public IEnumerator<Chunk> GetEnumerator()

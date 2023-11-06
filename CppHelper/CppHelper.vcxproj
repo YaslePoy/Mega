@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AdjacentBlocks.h" />
     <ClInclude Include="ChunkLocation.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Helper.h" />
@@ -148,6 +149,7 @@
     <ClInclude Include="WorldPath.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AdjacentBlocks.cpp" />
     <ClCompile Include="ChunkLocation.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="Helper.cpp" />

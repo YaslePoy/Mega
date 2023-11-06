@@ -60,17 +60,6 @@ namespace Mega.Game
             foreach (var block in data)
                 yield return block;
         }
-
-        public void UpdateGlobalCoords()
-        {
-            var offset = BlockOffset();
-            var blocks = MembersList.Select(i => data.Get(i));
-            foreach (var item in blocks)
-            {
-                item.Position += offset;
-
-            }
-        }
         public override string ToString()
         {
             return Location.ToString();

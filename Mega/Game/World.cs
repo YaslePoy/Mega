@@ -116,18 +116,18 @@ namespace Mega.Game
             if (!Player.IsActed)
             {
                 Player.IsActed = true;
-                //Player.PlaceBlock();
+                Player.PlaceBlock();
             }
             DemoWriter.TakePhoto(this);
             DemoWriter.ApplyPhoto(this);
             //calculating movement in x-z plane
             try
             {
-                if (true)
+                if (Player.Fly)
                 {
                     var localG = G * t;
                     Player.VerticalSpeed -= (float)localG;
-                    var clearMove = Player.Moving * (float)(t * Player.WalkSpeed);
+                    var clearMove = Player.Moving * (float)(t * Player.WalkSpeed) * (Player.Fast ? 2 : 1);
                     var move2d = new Vector2();
                     var localFront = Player.Cam.Front;
                     localFront.Y = 0;

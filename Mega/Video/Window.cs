@@ -77,7 +77,7 @@ public class Window : GameWindow
         TimeMeasurementService.Start("To image");
         Autimation.ToImage();
         TimeMeasurementService.Start("Hill");
-        Autimation.CreateHill();
+        //Autimation.CreateHill();
         TimeMeasurementService.Start("Saving");
         Autimation.SaveTo(ref world.Area);
         ////Autimation.Save();
@@ -88,9 +88,8 @@ public class Window : GameWindow
         //}
         TimeMeasurementService.Start("UpdateBorder");
         world.Area.UpdateBorder();
-        int i = 0;
 
-        TimeMeasurementService.Start(" UpdateRenderSurface");
+        TimeMeasurementService.Start("UpdateRenderSurface");
         world.Area.UpdateRenderSurface();
         TimeMeasurementService.Stop();
 
@@ -121,7 +120,6 @@ public class Window : GameWindow
 
         if (world.Redrawing)
             world.Area.UpdateRenderSurface();
-
         _meshRender.Run(world);
         _cursor.Run(world);
         _ui.Run(world);
@@ -184,6 +182,9 @@ public class Window : GameWindow
             DemoWriter.LoadDemo();
         }
 
+        if (input.IsKeyPressed(Keys.F))
+            pl.Fly = !pl.Fly;
+        pl.Fast = input.IsKeyDown(Keys.LeftShift);
         DemoWriter.Nexting = input.IsKeyDown(Keys.KeyPad5);
         if (input.IsKeyReleased(Keys.R)) Debug.SaveEnable = !Debug.SaveEnable;
 

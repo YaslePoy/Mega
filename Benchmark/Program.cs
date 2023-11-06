@@ -7,7 +7,7 @@ namespace Benchmark
         static void Main(string[] args)
         {
             Runner<Test> runner = new Runner<Test>();
-            runner.RunBenchmark(10000);
+            runner.RunBenchmark();
             Console.ReadLine();
         }
 

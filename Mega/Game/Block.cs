@@ -6,8 +6,7 @@ namespace Mega.Game
     public class Block
     {
         public RenderSurface[] view;
-        Vector3i[] localNeibs;
-        public Vector3i[] Adjacent => localNeibs == null ? GenerateNeis() : localNeibs;
+        public readonly Vector3i[] Adjacent;
         CubicCollider collider;
         public static readonly Vector3i[] Neibs = {
             Vector3i.UnitX, Vector3i.UnitY, Vector3i.UnitZ,
@@ -25,29 +24,21 @@ namespace Mega.Game
         public int IDCode;
         public Vector3i Position;
 
-        public Block()
-        {
-        }
 
         public Block(Vector3i pos, int id, bool generateSurface = true)
         {
             Position = pos;
             IDCode = id;
-        }
 
-        public Vector3i[] GenerateNeis()
-        {
-            var result = new Vector3i[6];
-
-            result[0] = Position + Neibs[0];
-            result[1] = Position + Neibs[1];
-            result[2] = Position + Neibs[2];
-            result[3] = Position + Neibs[3];
-            result[4] = Position + Neibs[4];
-            result[5] = Position + Neibs[5];
+            Adjacent = new Vector3i[6];
+            Adjacent[0] = Position + Neibs[0];
+            Adjacent[1] = Position + Neibs[1];
+            Adjacent[2] = Position + Neibs[2];
+            Adjacent[3] = Position + Neibs[3];
+            Adjacent[4] = Position + Neibs[4];
+            Adjacent[5] = Position + Neibs[5];
 
             view = Array.Empty<RenderSurface>();
-            return result;
         }
         public RenderSurface[] GetDrawingMesh(UnitedChunk area)
         {
@@ -55,7 +46,7 @@ namespace Mega.Game
             var localBorder = Adjacent;
             List<RenderSurface> surfaces = new List<RenderSurface>(6);
             var sides = new bool[6];
-            for (int i = 0; i < localBorder.Count(); i++)
+            for (int i = 0; i < 6; i++)
             {
                 var m = area.GetMember(localBorder[i]);
                 if (m)

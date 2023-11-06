@@ -32,6 +32,9 @@ namespace Mega.Game
         }
         public bool IsActed { get; set; } = true;
         bool acts;
+        public bool Fly;
+        public bool Fast;
+
         public void UpdateCamPosition()
         {
             Cam.Position = Position + growthAdd;

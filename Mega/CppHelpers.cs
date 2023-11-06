@@ -19,5 +19,13 @@ namespace Mega
 
         [DllImport(@"C:\Users\Mimm\Projects\VisualStudioProjects\Mega\x64\Release\CppHelper.dll", CallingConvention = CallingConvention.StdCall)]
         public static extern WorldPath ToWorldPath(Vector3i globalPosition);
+
+        [DllImport(@"C:\Users\Mimm\Projects\VisualStudioProjects\Mega\x64\Release\CppHelper.dll", CallingConvention = CallingConvention.StdCall)]
+        public static extern AdjacentBlocks GetAdjacent(Vector3i pos);
+    }
+
+    public struct AdjacentBlocks
+    {
+        public Vector3i[] blocks;
     }
 }

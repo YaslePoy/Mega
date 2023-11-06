@@ -26,7 +26,6 @@ namespace Mega.Game
         {
             x.Limits = x.Limits.Select(i => i + move).ToArray();
             x.UpdateDRatio();
-
             return x;
         }
         public static LimitedPlane operator *(LimitedPlane x, Vector3 mul)
@@ -66,7 +65,7 @@ namespace Mega.Game
             float a = (pts[1].X - pts[0].X) * (pts[2].Y - pts[1].Y) - (pts[2].X - pts[1].X) * (pts[1].Y - pts[0].Y);
             float b = (pts[2].X - pts[0].X) * (pts[3].Y - pts[2].Y) - (pts[3].X - pts[2].X) * (pts[2].Y - pts[0].Y);
             float c = (pts[3].X - pts[0].X) * (pts[1].Y - pts[3].Y) - (pts[1].X - pts[3].X) * (pts[3].Y - pts[0].Y);
-            return (a > 0 && b > 0 && c > 0) || (a < 0 && b < 0 && c < 0);
+            return (a >= 0 && b >= 0 && c >= 0) || (a <= 0 && b <= 0 && c <= 0);
         }
         public override string ToString()
         {

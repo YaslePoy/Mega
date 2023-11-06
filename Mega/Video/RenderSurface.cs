@@ -26,12 +26,12 @@ namespace Mega.Video
         public RenderSurface(Vector3[] vertices, Vector2[] texture, Vector3 move, Vector3 normal, int tx)
         {
             this.move = move;
-            var t = new List<(Vector3, Vector2)>();
+            var t = new (Vector3, Vector2)[vertices.Length];
             for (var i = 0; i < vertices.Length; i++)
             {
-                t.Add((vertices[i], texture[i]));
+                t[i] = (vertices[i], texture[i]);
             }
-            _vts = t.ToArray();
+            _vts = t;
             TextureID = tx;
             this.Normal = normal;
         }
