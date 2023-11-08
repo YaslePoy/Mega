@@ -23,10 +23,9 @@ namespace Mega.Game
             var path = position.ToWorldPath();
             if ((path.InChunk.Y > Chunk.Size.Y))
                 return null;
-            var chunk = GetChunkByLocation(path.Chunk);
-            if (chunk == null)
+            if (!Chunks.TryGetValue(path.Chunk, out var chunk))
                 return null;
-            return chunk.data.Get(path.InChunk);
+            return chunk.data[path.InChunk.X, path.InChunk.Y, path.InChunk.Z];
         }
 
         public void SetBlock(Block block)
@@ -42,9 +41,9 @@ namespace Mega.Game
         }
         public Chunk GetChunkByLocation(Vector2i location)
         {
-            Chunk cn = null;
-            Chunks.TryGetValue(location, out cn);
-            return cn;
+            if (Chunks.TryGetValue(location, out var cn))
+                return cn;
+            return null;
         }
         public bool GetMember(Vector3i position)
         {

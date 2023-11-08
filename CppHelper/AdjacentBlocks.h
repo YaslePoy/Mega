@@ -3,7 +3,7 @@
 class AdjacentBlocks
 {
 public:
-	Vector3i blocks[6];
+	Vector3i blocks[1];
 	AdjacentBlocks(Vector3i startup);
 };
 

@@ -81,13 +81,13 @@ namespace Mega.Game
             var sides = new List<RenderSurface>();
             foreach (var chunk in Area.Chunks.Values)
             {
-                if (chunk is null) continue;
                 sides.AddRange(chunk.Surface);
             }
             uint indOffset = 0;
             verteces = new float[sides.Count * 4 * 8];
             indeces = new Dictionary<int, List<uint>>();
             uint[] adding;
+
             for (int i = 0; i < sides.Count; i++)
             {
                 var side = sides[i];
@@ -97,9 +97,8 @@ namespace Mega.Game
 
                 if (!indeces.ContainsKey(side.TextureID))
                     indeces.Add(side.TextureID, new List<uint>());
-                adding = new uint[] { indOffset, 1 + indOffset, 3 + indOffset, 1 + indOffset, 2 + indOffset, 3 + indOffset };
-                indeces[side.TextureID].AddRange(adding);
-                indOffset += 4;
+                indOffset = (uint)(i * 4);
+                indeces[side.TextureID].AddRange(new[] { indOffset, 1 + indOffset, 3 + indOffset, 1 + indOffset, 2 + indOffset, 3 + indOffset });
             }
         }
         public void Update(float time)

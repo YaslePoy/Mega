@@ -1,4 +1,5 @@
-﻿using Mega.Game;
+﻿using System.Runtime.Intrinsics;
+using Mega.Game;
 using OpenTK.Mathematics;
 using Sys = System.Numerics;
 
@@ -62,5 +63,27 @@ namespace Mega
 
         public static float Sum(this Vector3 vector) => vector.X + vector.Y + vector.Z;
         public static float Sum(this Vector4 vector) => vector.X + vector.Y + vector.Z + vector.W;
+
+        public static Sys.Vector3 ToFastVector(this Vector3 vector)
+        {
+            return new Sys.Vector3(vector.X, vector.Y, vector.Z);
+        }
+
+        public static Vector128<int> ToFastVector(this Vector3i vector)
+        {
+            return Vector128.Create(vector.X, vector.Y, vector.Z, 0);
+        }
+
+        public static Vector3i FastAdd(Vector3i otk, Vector128<int> fast)
+        {
+            var sum = otk.ToFastVector() + fast;
+            return new Vector3i(sum[0], sum[1], sum[2]);
+        }
+
+        public static Vector3 FastAdd(Vector3 otk, Sys.Vector3 fast)
+        {
+            var sum = otk.ToFastVector() + fast;
+            return new Vector3(sum.X, sum.Y, sum.Z);
+        }
     }
 }

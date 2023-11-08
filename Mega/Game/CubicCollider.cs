@@ -13,15 +13,10 @@ namespace Mega.Game
             new LimitedPlane(-Vector3.UnitZ, Block.MeshSides[5], OrderMode.Circle),
         };
         public Vector3 Position;
-
-        public CubicCollider(Vector3 position) : this(position, new bool[] { true, true, true, true, true, true })
-        {
-
-        }
-
         public override void GenerateVertexes()
         {
             Vertexes = new Vector3[8];
+
             Vertexes[0] = Position;
             Vertexes[1] = Position + Vector3.UnitX;
             Vertexes[2] = Position + Vector3.UnitY;
@@ -32,18 +27,17 @@ namespace Mega.Game
             Vertexes[7] = Position + Vector3.One;
         }
 
-        public CubicCollider(Vector3 position, bool[] verify)
+        public CubicCollider(Vector3 position, List<byte> verify)
         {
             Position = position;
             var limits = Block.MeshSides;
             var normals = Block.Neibs;
-            sides = new LimitedPlane[verify.Count(i => i)];
+            sides = new LimitedPlane[verify.Count];
             int j = 0;
-            for (int i = 0; i < 6; i++)
-            {
-                if (verify[i])
-                    sides[j++] = OneCube[i] + position;
-            }
+            foreach (var sideId in verify)
+                sides[j++] = OneCube[sideId] + position;
+
+
             GenerateVertexes();
         }
     }

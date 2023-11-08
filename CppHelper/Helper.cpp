@@ -20,17 +20,3 @@ AdjacentBlocks shared GetAdjacent(Vector3i position)
 {
 	return AdjacentBlocks(position);
 }
-
-void shared XFunc()
-{
-	return void shared();
-}
-
-void shared FillArray(int* x, int n)
-{
-	x = new int[n];
-	for (int i = 0; i < n; i++)
-	{
-		x[i] = i * i;
-	}
-}

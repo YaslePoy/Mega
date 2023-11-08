@@ -24,7 +24,13 @@ namespace Mega.Game
         }
         public static LimitedPlane operator +(LimitedPlane x, Vector3 move)
         {
-            x.Limits = x.Limits.Select(i => i + move).ToArray();
+            var sub = new Vector3[x.Limits.Length];
+            var moveFast = move.ToFastVector();
+            for (int i = 0; i < x.Limits.Length; i++)
+            {
+                sub[i] = Utils.FastAdd( x.Limits[i], moveFast);
+            }
+            x.Limits = sub;
             x.UpdateDRatio();
             return x;
         }

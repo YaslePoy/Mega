@@ -31,30 +31,29 @@ namespace Mega.Game
             IDCode = id;
 
             Adjacent = new Vector3i[6];
-            Adjacent[0] = Position + Neibs[0];
-            Adjacent[1] = Position + Neibs[1];
-            Adjacent[2] = Position + Neibs[2];
-            Adjacent[3] = Position + Neibs[3];
-            Adjacent[4] = Position + Neibs[4];
-            Adjacent[5] = Position + Neibs[5];
+            var fastPosition = Position.ToFastVector();
+            Adjacent[0] = Utils.FastAdd(Neibs[0], fastPosition);
+            Adjacent[1] = Utils.FastAdd(Neibs[1], fastPosition);
+            Adjacent[2] = Utils.FastAdd(Neibs[2], fastPosition);
+            Adjacent[3] = Utils.FastAdd(Neibs[3], fastPosition);
+            Adjacent[4] = Utils.FastAdd(Neibs[4], fastPosition);
+            Adjacent[5] = Utils.FastAdd(Neibs[5], fastPosition);
 
             view = Array.Empty<RenderSurface>();
         }
         public RenderSurface[] GetDrawingMesh(UnitedChunk area)
         {
 
-            var localBorder = Adjacent;
-            List<RenderSurface> surfaces = new List<RenderSurface>(6);
-            var sides = new bool[6];
-            for (int i = 0; i < 6; i++)
+            List<RenderSurface> surfaces = new List<RenderSurface>(3);
+            List<byte> sides = new List<byte>(3);
+            for (byte i = 0; i < 6; i++)
             {
-                var m = area.GetMember(localBorder[i]);
-                if (m)
+                if (area.GetMember(Adjacent[i]))
                     continue;
-                sides[i] = !m;
                 var surface = new RenderSurface(MeshSides[i], TextureHelper.GetTextureCoords(IDCode, i), Position,
                     Neibs[i], IDCode);
                 surfaces.Add(surface);
+                sides.Add(i);
             }
             collider = new CubicCollider(Position, sides);
             view = surfaces.ToArray();

@@ -43,6 +43,7 @@ namespace Mega.Generation
             //double dist = 1 / MathHelper.InverseSqrtFast(central.Item1 * central.Item1 + central.Item2 * central.Item2);
             //var h = (Math.Cos(central.Item2) * Math.Sin(central.Item1) * (2 * dist) + 1) / 2;
             var h = (Math.Sin(central.Item1) * Math.Cos(central.Item2) + 1) / 2;
+            //var h = (Math.Sin(dist)+1)/2;
             //var h = (Math.Sin(central.Item2) * central.Item1 * (2 / MathHelper.InverseSqrtFast(central.Item1 * central.Item1 + central.Item2 * central.Item2)) + 1) / 2;
             //var h = (Math.Cos(Math.Sqrt(central.Item1 * central.Item1 * central.Item2 * central.Item2)) + 1) / 2;
             //h *= (16 - dist) / 16 /** 0.1*/;

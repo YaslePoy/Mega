@@ -26,6 +26,7 @@ namespace Mega
 
     public struct AdjacentBlocks
     {
+        [MarshalAs(UnmanagedType.LPArray)]
         public Vector3i[] blocks;
     }
 }

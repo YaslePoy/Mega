@@ -215,6 +215,15 @@ public class Window : GameWindow
             _camera.Pitch -= deltaY * sensitivity; // Reversed since y-coordinates range from bottom to top
         }
 
+        if (input.IsKeyDown(Keys.Up))
+            _camera.Pitch += 1 * sensitivity / 2;
+        else if (input.IsKeyDown(Keys.Down))
+            _camera.Pitch -= 1 * sensitivity / 2;
+        if (input.IsKeyDown(Keys.Left))
+            _camera.Yaw -= 1 * sensitivity / 2;
+        else if (input.IsKeyDown(Keys.Right))
+            _camera.Yaw += 1 * sensitivity / 2;
+
         pl.Moving = moveVec;
     }
 
