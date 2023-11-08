@@ -85,5 +85,11 @@ namespace Mega
             var sum = otk.ToFastVector() + fast;
             return new Vector3(sum.X, sum.Y, sum.Z);
         }
+
+        public static Vector3 FastMul(Vector3 otk, Sys.Vector3 fast)
+        {
+            var sum = otk.ToFastVector() * fast;
+            return new Vector3(sum.X, sum.Y, sum.Z);
+        }
     }
 }

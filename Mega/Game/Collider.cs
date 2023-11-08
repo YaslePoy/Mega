@@ -140,12 +140,4 @@ public class Collider
                 return true;
         return false;
     }
-
-    //public abstract VolumeMembership GetMembership(Vector3 point);
-    //public abstract bool MoveToPossible(Vector3 startPosition, Vector3 moveVector, out Vector3 nextPosition);
-    //public enum VolumeMembership
-    //{
-    //    Out, Border, Into
-    //}
-    //public abstract SuperCollider ToSuper();
 }

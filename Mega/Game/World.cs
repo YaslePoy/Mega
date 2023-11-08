@@ -1,4 +1,5 @@
-﻿using Mega.Video;
+﻿using System.Threading.Channels;
+using Mega.Video;
 using OpenTK.Mathematics;
 
 namespace Mega.Game
@@ -78,29 +79,33 @@ namespace Mega.Game
 
         public void GenerateMesh(out Dictionary<int, List<uint>> indeces, out float[] verteces)
         {
-            var sides = new List<RenderSurface>();
-            foreach (var chunk in Area.Chunks.Values)
-            {
-                sides.AddRange(chunk.Surface);
-            }
-            uint indOffset = 0;
-            verteces = new float[sides.Count * 4 * 8];
+            var sides = Area.Chunks.Values.Select(i => i.Surface).SumList();
+
+            verteces = new float[sides.Length * 4 * 8];
+            var bufferSize = 2048 * 4 * 8;
+            Span<float> buffer = stackalloc float[bufferSize];
+            float[] arrayed;
             indeces = new Dictionary<int, List<uint>>();
-            uint[] adding;
-
-            for (int i = 0; i < sides.Count; i++)
+            Span<float> raw = stackalloc float[4 * 8];
+            for (int i = 0; i < sides.Length; i++)
             {
+                int inBuffer = i % 2048;
                 var side = sides[i];
-
-                var v = side.GetRawPolygon();
-                v.CopyTo(verteces, 4 * 8 * i);
+                side.GetRawPolygon(raw);
+                raw.CopyTo(buffer.Slice(inBuffer * 4 * 8, 4 * 8));
 
                 if (!indeces.ContainsKey(side.TextureID))
-                    indeces.Add(side.TextureID, new List<uint>());
-                indOffset = (uint)(i * 4);
+                    indeces.Add(side.TextureID, new List<uint>(6));
+                var indOffset = (uint)(i * 4);
                 indeces[side.TextureID].AddRange(new[] { indOffset, 1 + indOffset, 3 + indOffset, 1 + indOffset, 2 + indOffset, 3 + indOffset });
+                if (inBuffer != 0 || i == 0)
+                    continue;
+                arrayed = buffer.ToArray();
+                arrayed.CopyTo(verteces, bufferSize * ((i * 4 * 8) / bufferSize - 1));
+
             }
         }
+
         public void Update(float time)
         {
             if (!Player.IsActed)

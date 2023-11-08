@@ -5,7 +5,7 @@ namespace Mega.Game
 {
     public class Block
     {
-        public RenderSurface[] view;
+        public List<RenderSurface> view;
         public readonly Vector3i[] Adjacent;
         CubicCollider collider;
         public static readonly Vector3i[] Neibs = {
@@ -20,31 +20,25 @@ namespace Mega.Game
             new[] { new (0, 0, 0), new (1, 0, 0), new (1, 0, 1), new Vector3(0, 0, 1) },
             new[] { new (0, 0, 0), new (1, 0, 0), new (1, 1, 0), new Vector3(0, 1, 0) }
         };
-        public virtual string ID => "";
         public int IDCode;
         public Vector3i Position;
-
 
         public Block(Vector3i pos, int id, bool generateSurface = true)
         {
             Position = pos;
             IDCode = id;
-
-            Adjacent = new Vector3i[6];
             var fastPosition = Position.ToFastVector();
+            Adjacent = new Vector3i[6];
             Adjacent[0] = Utils.FastAdd(Neibs[0], fastPosition);
             Adjacent[1] = Utils.FastAdd(Neibs[1], fastPosition);
             Adjacent[2] = Utils.FastAdd(Neibs[2], fastPosition);
             Adjacent[3] = Utils.FastAdd(Neibs[3], fastPosition);
             Adjacent[4] = Utils.FastAdd(Neibs[4], fastPosition);
             Adjacent[5] = Utils.FastAdd(Neibs[5], fastPosition);
-
-            view = Array.Empty<RenderSurface>();
         }
-        public RenderSurface[] GetDrawingMesh(UnitedChunk area)
+        public List<RenderSurface> GetDrawingMesh(UnitedChunk area)
         {
-
-            List<RenderSurface> surfaces = new List<RenderSurface>(3);
+            view = new List<RenderSurface>(3);
             List<byte> sides = new List<byte>(3);
             for (byte i = 0; i < 6; i++)
             {
@@ -52,11 +46,10 @@ namespace Mega.Game
                     continue;
                 var surface = new RenderSurface(MeshSides[i], TextureHelper.GetTextureCoords(IDCode, i), Position,
                     Neibs[i], IDCode);
-                surfaces.Add(surface);
+                view.Add(surface);
                 sides.Add(i);
             }
             collider = new CubicCollider(Position, sides);
-            view = surfaces.ToArray();
             return view;
         }
         public Collider GetCollider()
