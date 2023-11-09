@@ -1,4 +1,5 @@
-﻿using Mega.Video;
+﻿using Mega.Game.Blocks;
+using Mega.Video;
 using OpenTK.Mathematics;
 
 namespace Mega.Game
@@ -45,10 +46,6 @@ namespace Mega.Game
 
                 }
             });
-            //foreach (var borderBlock in BorderMembersList)
-            //{
-            //    sides.AddRange(data.Get(borderBlock).GetDrawingMesh(Root));
-            //}
             Surface = sides.ToArray();
         }
         public Block Get(Vector3i pos)

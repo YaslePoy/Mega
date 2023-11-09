@@ -1,4 +1,5 @@
-﻿using Mega.Video;
+﻿using Mega.Game.Blocks;
+using Mega.Video;
 using OpenTK.Mathematics;
 
 namespace Mega.Game
@@ -53,7 +54,9 @@ namespace Mega.Game
 
         public void UpdateBorder()
         {
-            Chunks.Values.AsParallel().ForAll(cn =>
+
+            var nn = Chunks.Values.ToList().Where(i => remeshRequest.Contains(i.Location));
+            nn.AsParallel().ForAll(cn =>
             {
                 foreach (var blockPos in cn.MembersList)
                 {

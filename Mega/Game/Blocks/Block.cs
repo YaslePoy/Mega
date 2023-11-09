@@ -1,7 +1,7 @@
 ﻿using Mega.Video;
 using OpenTK.Mathematics;
 
-namespace Mega.Game
+namespace Mega.Game.Blocks
 {
     public class Block
     {
@@ -23,7 +23,7 @@ namespace Mega.Game
         public int IDCode;
         public Vector3i Position;
 
-        public Block(Vector3i pos, int id, bool generateSurface = true)
+        public Block(Vector3i pos, int id)
         {
             Position = pos;
             IDCode = id;

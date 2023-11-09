@@ -32,6 +32,7 @@ namespace Mega
         public static void Stop()
         {
             ShowTime();
+            name = null;
         }
     }
 }

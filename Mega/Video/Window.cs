@@ -66,7 +66,7 @@ public class Window : GameWindow
 
         pl = new Player(_camera);
         world = new World(pl, this, 1);
-        var worldSize = 128 * 2;
+        var worldSize = 128 * 8;
         var Autimation = new HeightAutomation(worldSize);
         Console.WriteLine(worldSize);
         Autimation.Scale = 16;
@@ -119,7 +119,11 @@ public class Window : GameWindow
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
         if (world.Redrawing)
+        {
+            TimeMeasurementService.Start("UpdateRenderSurface");
             world.Area.UpdateRenderSurface();
+            TimeMeasurementService.Stop();
+        }
         _meshRender.Run(world);
         _cursor.Run(world);
         _ui.Run(world);

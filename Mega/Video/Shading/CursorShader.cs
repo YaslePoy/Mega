@@ -1,4 +1,5 @@
 ﻿using Mega.Game;
+using Mega.Game.Blocks;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 
@@ -47,11 +48,6 @@ namespace Mega.Video.Shading
                     GL.DrawElements(PrimitiveType.LineLoop, 4, DrawElementsType.UnsignedInt, 4 * i * sizeof(uint));
                 }
             }
-
-
-
-
-
         }
         void UpdateEdges(Block block, World w)
         {
@@ -65,6 +61,8 @@ namespace Mega.Video.Shading
             //if (block.view is null)
             //    sides = block.GetDrawingMesh(w.Area);
             //else
+            if(block.view is null)
+                return;
             sides = block.view.Where(i => Vector3.Dot(i.Normal, w.Player.View) < 0).ToArray();
             uint offset = 0;
             _vertices = new float[sides.Length * 12];
