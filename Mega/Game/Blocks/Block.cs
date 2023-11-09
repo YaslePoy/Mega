@@ -3,11 +3,11 @@ using OpenTK.Mathematics;
 
 namespace Mega.Game.Blocks
 {
-    public class Block
+    public abstract class Block
     {
         public List<RenderSurface> view;
         public readonly Vector3i[] Adjacent;
-        CubicCollider collider;
+        protected CubicCollider collider;
         public static readonly Vector3i[] Neibs = {
             Vector3i.UnitX, Vector3i.UnitY, Vector3i.UnitZ,
             -Vector3i.UnitX, -Vector3i.UnitY, -Vector3i.UnitZ
@@ -20,13 +20,13 @@ namespace Mega.Game.Blocks
             new[] { new (0, 0, 0), new (1, 0, 0), new (1, 0, 1), new Vector3(0, 0, 1) },
             new[] { new (0, 0, 0), new (1, 0, 0), new (1, 1, 0), new Vector3(0, 1, 0) }
         };
-        public int IDCode;
-        public Vector3i Position;
+        public readonly int IDCode;
+        public readonly Vector3i Position;
 
         public Block(Vector3i pos, int id)
         {
-            Position = pos;
             IDCode = id;
+            Position = pos;
             var fastPosition = Position.ToFastVector();
             Adjacent = new Vector3i[6];
             Adjacent[0] = Utils.FastAdd(Neibs[0], fastPosition);
@@ -36,23 +36,9 @@ namespace Mega.Game.Blocks
             Adjacent[4] = Utils.FastAdd(Neibs[4], fastPosition);
             Adjacent[5] = Utils.FastAdd(Neibs[5], fastPosition);
         }
-        public List<RenderSurface> GetDrawingMesh(UnitedChunk area)
-        {
-            view = new List<RenderSurface>(3);
-            List<byte> sides = new List<byte>(3);
-            for (byte i = 0; i < 6; i++)
-            {
-                if (area.GetMember(Adjacent[i]))
-                    continue;
-                var surface = new RenderSurface(MeshSides[i], TextureHelper.GetTextureCoords(IDCode, i), Position,
-                    Neibs[i], IDCode);
-                view.Add(surface);
-                sides.Add(i);
-            }
-            collider = new CubicCollider(Position, sides);
-            return view;
-        }
-        public Collider GetCollider()
+
+        public abstract List<RenderSurface> GetDrawingMesh(UnitedChunk area);
+        public virtual Collider GetCollider()
         {
             return collider;
         }
@@ -60,7 +46,7 @@ namespace Mega.Game.Blocks
         {
             return $"[{Position.X} {Position.Y} {Position.Z}]";
         }
-        public BinaryInt GetSaveData()
+        public virtual BinaryInt GetSaveData()
         {
             return new BinaryInt(IDCode + 2, 4);
         }

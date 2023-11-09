@@ -16,7 +16,7 @@ namespace Mega.Game
                 BitArray ba = new BitArray(5);
                 bool start = true;
                 Block lastBlock = null;
-                var stringed = chunk.data.Cast<Block>().Select(i => i is null ? new Block(OpenTK.Mathematics.Vector3i.One, -1, false) : i).ToArray();
+                var stringed = chunk.data.Cast<Block>().Select(i => i is null ? new AirBlock(OpenTK.Mathematics.Vector3i.One) : i).ToArray();
                 var count = stringed.Length;
                 for (int i = 0; i < count;)
                 {
@@ -92,14 +92,14 @@ namespace Mega.Game
                     for (int i = 0; i < count; i++)
                     {
                         if (id != -1)
-                            chunk.SetBlock(new Block(pos.Zyx + offset, id, generateSurface: true), pos.Zyx);
+                            chunk.SetBlock(new BirchBlock(pos.Zyx + offset), pos.Zyx);
                         nextPos();
                     }
                 }
                 else
                 {
                     if (curID != -1)
-                        chunk.SetBlock(new Block(pos.Zyx + offset, curID, true), pos.Zyx);
+                        chunk.SetBlock(new BirchBlock(pos.Zyx + offset), pos.Zyx);
                     nextPos();
                 }
             }

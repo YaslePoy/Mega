@@ -1,4 +1,5 @@
-﻿using Mega.Video;
+﻿using Mega.Game.Blocks;
+using Mega.Video;
 using OpenTK.Mathematics;
 
 namespace Mega.Game
@@ -50,7 +51,7 @@ namespace Mega.Game
         {
             if (!Cursor.HasValue)
                 return;
-            var newBlock = new Block(Cursor.Value, 1);
+            var newBlock = new BirchBlock(Cursor.Value);
             world.SetBlock(newBlock);
         }
         public RectangularCollider GetCollider()

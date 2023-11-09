@@ -1,4 +1,5 @@
 ﻿using Mega.Game;
+using Mega.Game.Blocks;
 using OpenTK.Mathematics;
 
 namespace Mega.Generation
@@ -83,7 +84,13 @@ namespace Mega.Generation
             var h = (int)Math.Truncate(cell.h / 8) + 1;
             for (int i = 0; i < h; i++)
             {
-                world.SetBlock(new Block(new Vector3i(real.Item1, i, real.Item2), rand.Next(0, 2), true));
+                if(rand.Next(0, 2) == 0)
+                world.SetBlock(new StoneBlock(new Vector3i(real.Item1, i, real.Item2)));
+                else
+                {
+                    world.SetBlock(new BirchBlock(new Vector3i(real.Item1, i, real.Item2)));
+
+                }
             }
             return cell;
         }
