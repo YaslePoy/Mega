@@ -8,7 +8,8 @@ namespace Testing
     {
         static void Main(string[] args)
         {
-            var a = CppHelpers.GetAdjacent(Vector3i.One);
+            var x = new int[]{1, 2, 3, 4, 5};
+            int[] n = CppHelpers.GetAdjacent(Vector3i.One, x, x.Length);
             Console.WriteLine();
 
         }

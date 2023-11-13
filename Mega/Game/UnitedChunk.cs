@@ -7,14 +7,10 @@ namespace Mega.Game
 {
     public class UnitedChunk
     {
-        public Dictionary<Vector2i, Chunk> Chunks;
-        private HashSet<Vector2i> remeshRequest;
+        public Dictionary<Vector2i, Chunk> Chunks = new();
+        private HashSet<Vector2i> remeshRequest = new();
         RenderSurface[] TotalSurface;
-        public UnitedChunk()
-        {
-            Chunks = new();
-            remeshRequest = new HashSet<Vector2i>();
-        }
+
         public void AddChunk(Chunk chunk)
         {
             chunk.Root = this;
