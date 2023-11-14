@@ -121,7 +121,7 @@
       <AdditionalDependencies>vulkan-1.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
-      <Command>build.bat $(TargetDir)shaders</Command>
+      <Command>build.bat $(TargetDir)</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -144,7 +144,7 @@
       <AdditionalDependencies>vulkan-1.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
-      <Command>build.bat $(TargetDir)shaders</Command>
+      <Command>build.bat $(TargetDir)</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -161,7 +161,11 @@
   <ItemGroup>
     <Text Include="shader.vert">
       <DeploymentContent>true</DeploymentContent>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Text>
+  </ItemGroup>
+    <ItemGroup>
+    <Text Include="shader.frag">
+      <DeploymentContent>true</DeploymentContent>
     </Text>
   </ItemGroup>
   <ItemGroup>
