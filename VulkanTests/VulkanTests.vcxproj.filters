@@ -31,10 +31,13 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="shader.vert" />
+    <Text Include="shader.frag" />
   </ItemGroup>
   <ItemGroup>
     <None Include="build.bat">
       <Filter>Исходные файлы</Filter>
     </None>
+    <None Include="shaderAlt.frag" />
+    <None Include="shaderAlt.vert" />
   </ItemGroup>
 </Project>

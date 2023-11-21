@@ -163,7 +163,7 @@
       <DeploymentContent>true</DeploymentContent>
     </Text>
   </ItemGroup>
-    <ItemGroup>
+  <ItemGroup>
     <Text Include="shader.frag">
       <DeploymentContent>true</DeploymentContent>
     </Text>
@@ -172,6 +172,15 @@
     <None Include="build.bat">
       <DeploymentContent>false</DeploymentContent>
     </None>
+    <None Include="shaderAlt.frag">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="shaderAlt.vert">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="beforeStart.bat" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
