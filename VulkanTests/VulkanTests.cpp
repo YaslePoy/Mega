@@ -21,7 +21,10 @@
 #include <limits>
 #include <array>
 #include <optional>
+#include <random>
 #include <set>
+
+#include "Vertex.h"
 
 const uint32_t WIDTH = 800;
 const uint32_t HEIGHT = 600;
@@ -85,44 +88,6 @@ struct SwapChainSupportDetails
     std::vector<VkPresentModeKHR> presentModes;
 };
 
-struct Vertex
-{
-    glm::vec3 pos;
-    glm::vec3 color;
-    glm::vec2 texCoord;
-
-    static VkVertexInputBindingDescription getBindingDescription()
-    {
-        VkVertexInputBindingDescription bindingDescription{};
-        bindingDescription.binding = 0;
-        bindingDescription.stride = sizeof(Vertex);
-        bindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-
-        return bindingDescription;
-    }
-
-    static std::array<VkVertexInputAttributeDescription, 3> getAttributeDescriptions()
-    {
-        std::array<VkVertexInputAttributeDescription, 3> attributeDescriptions{};
-
-        attributeDescriptions[0].binding = 0;
-        attributeDescriptions[0].location = 0;
-        attributeDescriptions[0].format = VK_FORMAT_R32G32B32_SFLOAT;
-        attributeDescriptions[0].offset = offsetof(Vertex, pos);
-
-        attributeDescriptions[1].binding = 0;
-        attributeDescriptions[1].location = 1;
-        attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
-        attributeDescriptions[1].offset = offsetof(Vertex, color);
-
-        attributeDescriptions[2].binding = 0;
-        attributeDescriptions[2].location = 2;
-        attributeDescriptions[2].format = VK_FORMAT_R32G32_SFLOAT;
-        attributeDescriptions[2].offset = offsetof(Vertex, texCoord);
-
-        return attributeDescriptions;
-    }
-};
 
 struct UniformBufferObject
 {
@@ -131,19 +96,15 @@ struct UniformBufferObject
     alignas(16) glm::mat4 proj;
 };
 
-const std::vector<Vertex> vertices = {
+std::vector<Vertex> vertices = {
     {{-0.5f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}, {1.0f, 0.0f}},
     {{0.5f, -0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f}},
     {{0.5f, 0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 1.0f}},
     {{-0.5f, 0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}},
 
-    {{-0.5f, -0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}, {1.0f, 0.0f}},
-    {{0.5f, -0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f}},
-    {{0.5f, 0.5f, -0.5f}, {0.0f, 0.0f, 1.0f}, {0.0f, 1.0f}},
-    {{-0.5f, 0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}}
 };
 
-const std::vector<uint16_t> indices = {
+std::vector<uint16_t> indices = {
     0, 1, 2, 2, 3, 0,
     4, 5, 6, 6, 7, 4
 };
@@ -159,6 +120,7 @@ public:
         cleanup();
     }
 
+    bool open;
     int pipeline;
 
 private:
@@ -203,6 +165,7 @@ private:
     VkDeviceMemory vertexBufferMemory;
     VkBuffer indexBuffer;
     VkDeviceMemory indexBufferMemory;
+    int vertCount = 5;
 
     std::vector<VkBuffer> uniformBuffers;
     std::vector<VkDeviceMemory> uniformBuffersMemory;
@@ -231,12 +194,15 @@ private:
         glfwSetFramebufferSizeCallback(window, framebufferResizeCallback);
 
         glfwSetKeyCallback(window, key_callback);
+
+        glfwSetCursor(window, glfwCreateStandardCursor(GLFW_CROSSHAIR_CURSOR));
     }
 
     static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
     {
         auto app = reinterpret_cast<HelloTriangleApplication*>(glfwGetWindowUserPointer(window));
-        app->framebufferResized = true;
+        if (key == GLFW_KEY_ESCAPE)
+            app->open = false;
         if (key == GLFW_KEY_1 && action == GLFW_PRESS)
         {
             app->pipeline = 0;
@@ -245,8 +211,27 @@ private:
         {
             app->pipeline = 1;
         }
+        if (key == GLFW_KEY_W && action == GLFW_PRESS)
+        {
+            app->addLayer();
+            app->addLayer();
+            app->addLayer();
+            app->addLayer();
+            app->addLayer();
+            app->addLayer();
+            app->addLayer();
+            app->addLayer();
+            app->addLayer();
+            app->addLayer();
+            app->writeBuffers();
+        }
+        if (key == GLFW_KEY_C && action == GLFW_PRESS)
+        {
+            vertices.clear();
+            indices.clear();
+        }
         if (action == GLFW_PRESS)
-            std::cout << app->pipeline << std::endl;
+            std::cout << key << std::endl;
     }
 
     static void framebufferResizeCallback(GLFWwindow* window, int width, int height)
@@ -281,12 +266,14 @@ private:
         createDescriptorSets();
         createCommandBuffers();
         createSyncObjects();
+        writeBuffers();
     }
 
 
     void mainLoop()
     {
-        while (!glfwWindowShouldClose(window))
+        open = true;
+        while (!glfwWindowShouldClose(window) && open)
         {
             glfwPollEvents();
             drawFrame();
@@ -1253,52 +1240,80 @@ private:
         endSingleTimeCommands(commandBuffer);
     }
 
-    void createVertexBuffer()
-    {
-        VkDeviceSize bufferSize = sizeof(vertices[0]) * vertices.size();
 
+    void addLayer()
+    {
+        std::random_device rd; // non-deterministic generator
+        std::mt19937 gen(rd()); // to seed mersenne twister.
+        std::uniform_real_distribution<> dist(-2, 2);
+        vertices.push_back({{dist(gen), dist(gen), dist(gen)}, {1.0f, 0.0f, 0.0f}, {1.0f, 0.0f}});
+        vertices.push_back({{dist(gen), dist(gen), dist(gen)}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f}});
+        vertices.push_back({{dist(gen), dist(gen), dist(gen)}, {0.0f, 0.0f, 1.0f}, {0.0f, 1.0f}});
+        vertices.push_back({{dist(gen), dist(gen), dist(gen)}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}});
+
+        int start = indices.size() / 6 * 4;
+        indices.push_back(start);
+        indices.push_back(start + 1);
+        indices.push_back(start + 2);
+        indices.push_back(start + 2);
+        indices.push_back(start + 3);
+        indices.push_back(start);
+
+    }
+
+    void writeBuffers()
+    {
+        int current = static_cast<int>(vertices.size());
+        std::cout << current << std::endl;
+        if (vertCount < current)
+        {
+            std::cout << "Buffer resize" << std::endl;
+            vertCount *= 2;
+            createVertexBuffer();
+            createIndexBuffer();
+        }
+        VkDeviceSize bufferSize = sizeof(vertices[0]) * vertices.size();
         VkBuffer stagingBuffer;
         VkDeviceMemory stagingBufferMemory;
         createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
                      VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer,
                      stagingBufferMemory);
-
         void* data;
         vkMapMemory(device, stagingBufferMemory, 0, bufferSize, 0, &data);
         memcpy(data, vertices.data(), (size_t)bufferSize);
-        vkUnmapMemory(device, stagingBufferMemory);
-
-        createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
-                     VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, vertexBuffer, vertexBufferMemory);
-
         copyBuffer(stagingBuffer, vertexBuffer, bufferSize);
+        vkUnmapMemory(device, stagingBufferMemory);
+        vkDestroyBuffer(device, stagingBuffer, nullptr);
+        vkFreeMemory(device, stagingBufferMemory, nullptr);
 
+        bufferSize = sizeof(indices[0]) * indices.size();
+
+        createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+                     VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer,
+                     stagingBufferMemory);
+        vkMapMemory(device, stagingBufferMemory, 0, bufferSize, 0, &data);
+        memcpy(data, indices.data(), (size_t)bufferSize);
+        copyBuffer(stagingBuffer, indexBuffer, bufferSize);
+        vkUnmapMemory(device, stagingBufferMemory);
         vkDestroyBuffer(device, stagingBuffer, nullptr);
         vkFreeMemory(device, stagingBufferMemory, nullptr);
     }
 
+    void createVertexBuffer()
+    {
+        VkDeviceSize bufferSize = sizeof(vertices[0]) * vertCount * 4;
+
+        createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+                     VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, vertexBuffer, vertexBufferMemory);
+    }
+
+
     void createIndexBuffer()
     {
-        VkDeviceSize bufferSize = sizeof(indices[0]) * indices.size();
-
-        VkBuffer stagingBuffer;
-        VkDeviceMemory stagingBufferMemory;
-        createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-                     VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer,
-                     stagingBufferMemory);
-
-        void* data;
-        vkMapMemory(device, stagingBufferMemory, 0, bufferSize, 0, &data);
-        memcpy(data, indices.data(), (size_t)bufferSize);
-        vkUnmapMemory(device, stagingBufferMemory);
+        VkDeviceSize bufferSize = sizeof(indices[0]) * vertCount * 6;
 
         createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
                      VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, indexBuffer, indexBufferMemory);
-
-        copyBuffer(stagingBuffer, indexBuffer, bufferSize);
-
-        vkDestroyBuffer(device, stagingBuffer, nullptr);
-        vkFreeMemory(device, stagingBufferMemory, nullptr);
     }
 
     void createUniformBuffers()
@@ -1526,7 +1541,7 @@ private:
         {
             vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipelineAlt);
         }
-        else 
+        else
         {
             vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
         }
@@ -1547,6 +1562,7 @@ private:
 
         VkBuffer vertexBuffers[] = {vertexBuffer};
         VkDeviceSize offsets[] = {0};
+
         vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
 
         vkCmdBindIndexBuffer(commandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT16);
@@ -1557,6 +1573,7 @@ private:
         vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);
 
         vkCmdEndRenderPass(commandBuffer);
+
 
         if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS)
         {
@@ -1593,13 +1610,13 @@ private:
         static auto startTime = std::chrono::high_resolution_clock::now();
 
         auto currentTime = std::chrono::high_resolution_clock::now();
-        float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
+        float time = std::chrono::duration<float>(currentTime - startTime).count();
 
         UniformBufferObject ubo{};
         ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-        ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+        ubo.view = glm::lookAt(glm::vec3(2.0f, 5.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
         ubo.proj = glm::perspective(glm::radians(45.0f), swapChainExtent.width / (float)swapChainExtent.height, 0.1f,
-                                    10.0f);
+                                    500.0f);
         ubo.proj[1][1] *= -1;
 
         memcpy(uniformBuffersMapped[currentImage], &ubo, sizeof(ubo));
@@ -1925,6 +1942,51 @@ private:
 };
 
 HelloTriangleApplication app;
+
+void loadModel()
+{
+    std::vector<glm::vec3> vertices;
+    std::vector<glm::vec2> uvs;
+    std::string line;
+    std::ifstream inBuffer("loadTest.obj");
+    while (std::getline(inBuffer, line))
+    {
+        std::cout << line << std::endl;
+        std::stringstream split(line);
+        std::string scalar;
+        split >> scalar;
+        if (scalar == "v")
+        {
+            glm::vec3 v;
+            split >> scalar;
+            v.x = std::stof(scalar);
+            split >> scalar;
+            v.y = std::stof(scalar);
+            split >> scalar;
+            v.z = std::stof(scalar);
+            vertices.push_back(v);
+        }
+        else if (scalar == "vt")
+        {
+            glm::vec2 v;
+            split >> scalar;
+            v.x = std::stof(scalar);
+            split >> scalar;
+            v.y = std::stof(scalar);
+            uvs.push_back(v);
+        }
+        else if (scalar == "f")
+        {
+            split >> scalar;
+            for (int i = 0; i < 3; i++, split >> scalar)
+            {
+                int pt = std::stof(scalar.substr(0, scalar.find("/")));
+                int t = std::stof(scalar.substr(scalar.find("/")));
+            }
+        }
+    }
+    inBuffer.close();
+}
 
 int main()
 {

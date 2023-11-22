@@ -4,8 +4,6 @@ namespace Mega.Video
 {
     public class RenderSurface
     {
-        //float[] rawPolygon;
-        //float[] rawEdges;
         Vector3 move;
         (Vector3, Vector2)[] _vts;
         public readonly Vector3 Normal;
@@ -15,12 +13,6 @@ namespace Mega.Video
         {
             _vts = vertexes;
             this.move = move;
-        }
-
-        public RenderSurface((Vector3, Vector2)[] vertexes)
-        {
-            _vts = vertexes;
-
         }
 
         public RenderSurface(Vector3[] vertices, Vector2[] texture, Vector3 move, Vector3 normal, int tx)

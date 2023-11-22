@@ -112,7 +112,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>C:\VulkanSDK\1.3.268.0\Include;C:\Users\Mimm\Documents\Visual Studio 2022\Libraries\glfw-3.3.8.bin.WIN64\include;C:\Users\Mimm\Documents\Visual Studio 2022\Libraries\glm;C:\Users\Mimm\Documents\Visual Studio 2022\Libraries\stb</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -133,7 +133,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>C:\VulkanSDK\1.3.268.0\Include;C:\Users\Mimm\Documents\Visual Studio 2022\Libraries\glfw-3.3.8.bin.WIN64\include;C:\Users\Mimm\Documents\Visual Studio 2022\Libraries\glm;C:\Users\Mimm\Documents\Visual Studio 2022\Libraries\stb</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -148,23 +148,30 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="KeyboardInput.cpp" />
+    <ClCompile Include="RenderSurface.cpp" />
+    <ClCompile Include="Vector2.cpp" />
+    <ClCompile Include="Vector3.cpp" />
+    <ClCompile Include="Vertex.cpp" />
+    <ClCompile Include="VertexCs.cpp" />
     <ClCompile Include="VulkanTests.cpp">
       <DeploymentContent>false</DeploymentContent>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="KeyboardInput.h" />
+    <ClInclude Include="RenderSurface.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="Vector2.h" />
+    <ClInclude Include="Vector3.h" />
+    <ClInclude Include="Vertex.h" />
+    <ClInclude Include="VertexCs.h" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="VulkanTests.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="shader.vert">
+    <Text Include="shaders\shader.frag">
       <DeploymentContent>true</DeploymentContent>
     </Text>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="shader.frag">
+    <Text Include="shaders\shader.vert">
       <DeploymentContent>true</DeploymentContent>
     </Text>
   </ItemGroup>
@@ -172,15 +179,18 @@
     <None Include="build.bat">
       <DeploymentContent>false</DeploymentContent>
     </None>
-    <None Include="shaderAlt.frag">
+    <None Include="shaders\shaderAlt.frag">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="shaderAlt.vert">
+    <None Include="shaders\shaderAlt.vert">
       <DeploymentContent>true</DeploymentContent>
     </None>
   </ItemGroup>
   <ItemGroup>
     <Content Include="beforeStart.bat" />
+    <Content Include="loadTest.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
