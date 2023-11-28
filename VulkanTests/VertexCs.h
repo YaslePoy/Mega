@@ -7,8 +7,8 @@ struct VertexCs
 {
     Vector2 uv;
     Vector3 pos;
-    Vertex ToCpp()
+    Vertex ToCpp(Vector3 nor)
     {
-        return {{pos.X, pos.X, pos.Z}, {0, 0, 0}, {uv.X, uv.Y}};
+        return {{pos.X, pos.X, pos.Z}, {nor.X, nor.Y, nor.Z}, {uv.X, uv.Y}};
     }
 };

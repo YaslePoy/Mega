@@ -24,6 +24,7 @@
 #include <random>
 #include <set>
 
+#include "KeyboardInput.h"
 #include "Vertex.h"
 
 const uint32_t WIDTH = 800;
@@ -97,16 +98,16 @@ struct UniformBufferObject
 };
 
 std::vector<Vertex> vertices = {
-    {{-0.5f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}, {1.0f, 0.0f}},
-    {{0.5f, -0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f}},
-    {{0.5f, 0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 1.0f}},
-    {{-0.5f, 0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}},
+    // {{-0.5f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}, {1.0f, 0.0f}},
+    // {{0.5f, -0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f}},
+    // {{0.5f, 0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 1.0f}},
+    // {{-0.5f, 0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}},
 
 };
 
 std::vector<uint16_t> indices = {
-    0, 1, 2, 2, 3, 0,
-    4, 5, 6, 6, 7, 4
+    // 0, 1, 2, 2, 3, 0,
+    // 4, 5, 6, 6, 7, 4
 };
 
 class HelloTriangleApplication
@@ -126,6 +127,9 @@ public:
 private:
     GLFWwindow* window;
 
+
+    KeyboardInput keyboard;
+    
     VkInstance instance;
     VkDebugUtilsMessengerEXT debugMessenger;
     VkSurfaceKHR surface;
@@ -201,6 +205,10 @@ private:
     static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
     {
         auto app = reinterpret_cast<HelloTriangleApplication*>(glfwGetWindowUserPointer(window));
+        if(action == GLFW_PRESS)
+        {
+            app->keyboard.press(key);
+        }
         if (key == GLFW_KEY_ESCAPE)
             app->open = false;
         if (key == GLFW_KEY_1 && action == GLFW_PRESS)
@@ -261,12 +269,14 @@ private:
         createTextureSampler();
         createVertexBuffer();
         createIndexBuffer();
+        
+        writeBuffers();
+
         createUniformBuffers();
         createDescriptorPool();
         createDescriptorSets();
         createCommandBuffers();
         createSyncObjects();
-        writeBuffers();
     }
 
 
@@ -739,7 +749,7 @@ private:
         rasterizer.depthClampEnable = VK_FALSE;
         rasterizer.rasterizerDiscardEnable = VK_FALSE;
         rasterizer.polygonMode = VK_POLYGON_MODE_FILL;
-        rasterizer.lineWidth = 1.0f;
+        rasterizer.lineWidth = 5.0f;
         rasterizer.cullMode = VK_CULL_MODE_BACK_BIT;
         rasterizer.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
         rasterizer.depthBiasEnable = VK_FALSE;
@@ -868,7 +878,7 @@ private:
         rasterizer.depthClampEnable = VK_FALSE;
         rasterizer.rasterizerDiscardEnable = VK_FALSE;
         rasterizer.polygonMode = VK_POLYGON_MODE_FILL;
-        rasterizer.lineWidth = 1.0f;
+        rasterizer.lineWidth = 5.0f;
         rasterizer.cullMode = VK_CULL_MODE_BACK_BIT;
         rasterizer.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
         rasterizer.depthBiasEnable = VK_FALSE;
@@ -1261,18 +1271,25 @@ private:
 
     }
 
+
+    
     void writeBuffers()
     {
+
+        // writeIndices();
+        // writeVertices();
         int current = static_cast<int>(vertices.size());
         std::cout << current << std::endl;
-        if (vertCount < current)
-        {
-            std::cout << "Buffer resize" << std::endl;
-            vertCount *= 2;
-            createVertexBuffer();
-            createIndexBuffer();
-        }
-        VkDeviceSize bufferSize = sizeof(vertices[0]) * vertices.size();
+        // if (vertCount < current)
+        // {
+        //     std::cout << "Buffer resize" << std::endl;
+        //     vertCount = current * 2;
+        //     createVertexBuffer();
+        //     createIndexBuffer();
+        // }
+        int vertexSize = sizeof(vertices[0]);
+        int vertexCount = current;
+        VkDeviceSize bufferSize =  vertexCount * vertexSize;
         VkBuffer stagingBuffer;
         VkDeviceMemory stagingBufferMemory;
         createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
@@ -1286,8 +1303,12 @@ private:
         vkDestroyBuffer(device, stagingBuffer, nullptr);
         vkFreeMemory(device, stagingBufferMemory, nullptr);
 
-        bufferSize = sizeof(indices[0]) * indices.size();
+        vertexSize = sizeof(indices[0]);
+        vertexCount = indices.size();           
+        
+        bufferSize =  vertexCount * vertexSize;
 
+        
         createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
                      VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer,
                      stagingBufferMemory);
@@ -1299,9 +1320,44 @@ private:
         vkFreeMemory(device, stagingBufferMemory, nullptr);
     }
 
+
+    void writeIndices()
+    {
+        VkDeviceSize bufferSize = sizeof(indices[0]) * indices.size();
+        VkBuffer stagingBuffer;
+        VkDeviceMemory stagingBufferMemory;
+        createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+                     VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer,
+                     stagingBufferMemory);
+        void* data;
+        vkMapMemory(device, stagingBufferMemory, 0, bufferSize, 0, &data);
+        memcpy(data, indices.data(), (size_t)bufferSize);
+        copyBuffer(stagingBuffer, indexBuffer, bufferSize);
+        vkUnmapMemory(device, stagingBufferMemory);
+        vkDestroyBuffer(device, stagingBuffer, nullptr);
+        vkFreeMemory(device, stagingBufferMemory, nullptr);
+    }
+
+    void writeVertices()
+    {
+        VkDeviceSize bufferSize = sizeof(vertices[0]) * vertices.size();
+        VkBuffer stagingBuffer;
+        VkDeviceMemory stagingBufferMemory;
+        createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+                     VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer,
+                     stagingBufferMemory);
+        void* data;
+        vkMapMemory(device, stagingBufferMemory, 0, bufferSize, 0, &data);
+        memcpy(data, vertices.data(), (size_t)bufferSize);
+        copyBuffer(stagingBuffer, vertexBuffer, bufferSize);
+        vkUnmapMemory(device, stagingBufferMemory);
+        vkDestroyBuffer(device, stagingBuffer, nullptr);
+        vkFreeMemory(device, stagingBufferMemory, nullptr);
+    }
+    
     void createVertexBuffer()
     {
-        VkDeviceSize bufferSize = sizeof(vertices[0]) * vertCount * 4;
+        VkDeviceSize bufferSize = sizeof(vertices[0]) * vertices.size();
 
         createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
                      VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, vertexBuffer, vertexBufferMemory);
@@ -1310,7 +1366,7 @@ private:
 
     void createIndexBuffer()
     {
-        VkDeviceSize bufferSize = sizeof(indices[0]) * vertCount * 6;
+        VkDeviceSize bufferSize = sizeof(indices[0]) * static_cast<int>(indices.size());
 
         createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
                      VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, indexBuffer, indexBufferMemory);
@@ -1426,8 +1482,10 @@ private:
         allocInfo.allocationSize = memRequirements.size;
         allocInfo.memoryTypeIndex = findMemoryType(memRequirements.memoryTypeBits, properties);
 
-        if (vkAllocateMemory(device, &allocInfo, nullptr, &bufferMemory) != VK_SUCCESS)
+        VkResult allocation = vkAllocateMemory(device, &allocInfo, nullptr, &bufferMemory);
+        if (allocation != VK_SUCCESS)
         {
+            std::cout << size << std::endl;
             throw std::runtime_error("failed to allocate buffer memory!");
         }
 
@@ -1942,46 +2000,39 @@ private:
 };
 
 HelloTriangleApplication app;
-
+ 
 void loadModel()
 {
-    std::vector<glm::vec3> vertices;
-    std::vector<glm::vec2> uvs;
+    // std::vector<glm::vec3> vertices;
+    // std::vector<glm::vec2> uvs;
     std::string line;
-    std::ifstream inBuffer("loadTest.obj");
+    std::ifstream inBuffer("C:\\Users\\Mimm\\Projects\\BlenderProjects\\outs\\anotherTest.obj");
+    // std::ifstream inBuffer("loadTest.obj");
+    std::random_device rd; // non-deterministic generator
+    std::mt19937 gen(rd()); // to seed mersenne twister.
+    std::uniform_real_distribution<> dist(0, 1);
     while (std::getline(inBuffer, line))
     {
-        std::cout << line << std::endl;
         std::stringstream split(line);
         std::string scalar;
         split >> scalar;
         if (scalar == "v")
         {
-            glm::vec3 v;
+            glm::vec3 v; 
             split >> scalar;
             v.x = std::stof(scalar);
             split >> scalar;
             v.y = std::stof(scalar);
             split >> scalar;
             v.z = std::stof(scalar);
-            vertices.push_back(v);
-        }
-        else if (scalar == "vt")
-        {
-            glm::vec2 v;
-            split >> scalar;
-            v.x = std::stof(scalar);
-            split >> scalar;
-            v.y = std::stof(scalar);
-            uvs.push_back(v);
+            vertices.push_back({v, {dist(gen), dist(gen), dist(gen)}, {0, 0}});
         }
         else if (scalar == "f")
         {
             split >> scalar;
             for (int i = 0; i < 3; i++, split >> scalar)
             {
-                int pt = std::stof(scalar.substr(0, scalar.find("/")));
-                int t = std::stof(scalar.substr(scalar.find("/")));
+                indices.push_back(std::stoi(scalar) - 1);
             }
         }
     }
@@ -1990,6 +2041,7 @@ void loadModel()
 
 int main()
 {
+    loadModel();
     try
     {
         app.run();
