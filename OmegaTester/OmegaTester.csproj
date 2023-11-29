@@ -7,7 +7,7 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
-    <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Target Name="PostBuild" AfterTargets="PostBuildEvent">
       <Exec Command="python C:\Users\Mimm\Projects\VisualStudioProjects\Mega\libCopy.py C:\Users\Mimm\Projects\VisualStudioProjects\Mega\x64\Debug\OmegaGE.dll $(TargetDir)" />
     </Target>
 
