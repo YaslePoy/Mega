@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+      <Exec Command="python C:\Users\Mimm\Projects\VisualStudioProjects\Mega\libCopy.py C:\Users\Mimm\Projects\VisualStudioProjects\Mega\x64\Debug\OmegaGE.dll $(TargetDir)" />
+    </Target>
+
+</Project>
