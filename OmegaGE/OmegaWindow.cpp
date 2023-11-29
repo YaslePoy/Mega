@@ -1,15 +1,23 @@
 ﻿#include "OmegaWindow.h"
 
-OmegaWindow::OmegaWindow(uint32_t width, uint32_t height, char* name)
+#include "funcs.h"
+
+OmegaWindow::OmegaWindow(uint32_t width, uint32_t height, std::string name)
+{
+    this->height = height;
+    this->width = width;
+    this->name = const_cast<char*>(name.c_str());
+}
+
+void OmegaWindow::Open()
 {
     glfwInit();
-    
+
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-    
+
     window = glfwCreateWindow(width, height, name, nullptr, nullptr);
     glfwSetWindowUserPointer(window, this);
     glfwSetFramebufferSizeCallback(window, framebufferResizeCallback);
-    mainLoop();
 }
 
 void OmegaWindow::framebufferResizeCallback(GLFWwindow* window, int width, int height)
@@ -20,6 +28,7 @@ void OmegaWindow::framebufferResizeCallback(GLFWwindow* window, int width, int h
 
 void OmegaWindow::mainLoop() const
 {
+    // viewport.Open();
     while (!glfwWindowShouldClose(window))
     {
         glfwPollEvents();

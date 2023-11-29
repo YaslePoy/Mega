@@ -1,13 +1,15 @@
 ﻿using System.Runtime.InteropServices;
+using System.Security.Cryptography.X509Certificates;
 
 namespace OmegaTester;
 
-class Startup
+static class Startup
 {
     public static void Main(string[] args)
     {
-        OmegaGE.OpenWindow(900, 400, "Test");
-        // OmegaGE.Start(win);
+        var x = OmegaGE.Add(5, 10);
+        OmegaGE.OpenWindow(900, 400);
+        OmegaGE.Start();
         Console.ReadKey();
     }
 }
@@ -18,9 +20,9 @@ public static class OmegaGE
     [DllImport(Library, CallingConvention = CallingConvention.StdCall)]
     public static extern int Add(int a, int b);
 
-    [DllImport(Library, CallingConvention = CallingConvention.StdCall)]
-    public static extern void OpenWindow(uint width, uint height, string name);
+    [DllImport(Library, CharSet = CharSet.Ansi)]
+    public static extern void OpenWindow(uint width, uint height/*, string name*/);
 
     [DllImport(Library, CallingConvention = CallingConvention.StdCall)]
-    public static extern void Start(nint window);
+    public static extern void Start();
 }
