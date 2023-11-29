@@ -17,7 +17,7 @@ void OmegaWindow::framebufferResizeCallback(GLFWwindow* window, int width, int h
     app->framebufferResized = true;
 }
 
-void OmegaWindow::mainLoop()
+void OmegaWindow::mainLoop() const
 {
     while (!glfwWindowShouldClose(window))
     {
