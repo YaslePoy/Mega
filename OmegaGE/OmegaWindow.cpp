@@ -28,7 +28,6 @@ void OmegaWindow::framebufferResizeCallback(GLFWwindow* window, int width, int h
 
 void OmegaWindow::mainLoop() const
 {
-    // viewport.Open();
     while (!glfwWindowShouldClose(window))
     {
         glfwPollEvents();

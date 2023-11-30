@@ -19,4 +19,4 @@ private:
     bool framebufferResized;
 };
 
-// inline OmegaWindow viewport{1024, 1024, "TestWindow"};
+inline OmegaWindow viewport{1024, 1024, "TestWindow"};
