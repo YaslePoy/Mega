@@ -15,6 +15,24 @@
       <PlatformTarget>x64</PlatformTarget>
     </PropertyGroup>
 
+    <ItemGroup>
+      <Text Include="shaders\shader.frag">
+        <DeploymentContent>true</DeploymentContent>
+      </Text>
+      <Text Include="shaders\shader.vert">
+        <DeploymentContent>true</DeploymentContent>
+      </Text>
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="shaders\shaderAlt.frag">
+        <DeploymentContent>true</DeploymentContent>
+      </None>
+      <None Update="shaders\shaderAlt.vert">
+        <DeploymentContent>true</DeploymentContent>
+      </None>
+    </ItemGroup>
+
     <Target Name="PostBuild" AfterTargets="PostBuildEvent">
       <Exec Command="python C:\Users\Mimm\Projects\VisualStudioProjects\Mega\libCopy.py C:\Users\Mimm\Projects\VisualStudioProjects\Mega\OmegaGE\bin\x64\Release\OmegaGE.dll $(TargetDir)" />
     </Target>

@@ -26,6 +26,7 @@
 
 #include "KeyboardInput.h"
 #include "Vertex.h"
+#include "../CppHelper/framework.h"
 
 const uint32_t WIDTH = 800;
 const uint32_t HEIGHT = 600;
@@ -153,7 +154,7 @@ private:
     VkPipeline graphicsPipeline;
     VkPipeline graphicsPipelineAlt;
 
-
+    
     VkCommandPool commandPool;
 
     VkImage depthImage;
@@ -277,9 +278,9 @@ private:
         createDescriptorSets();
         createCommandBuffers();
         createSyncObjects();
+        
     }
-
-
+    
     void mainLoop()
     {
         open = true;
@@ -290,8 +291,7 @@ private:
         }
         vkDeviceWaitIdle(device);
     }
-
-
+    
     void cleanupSwapChain()
     {
         vkDestroyImageView(device, depthImageView, nullptr);
@@ -797,6 +797,7 @@ private:
         pipelineLayoutInfo.setLayoutCount = 1;
         pipelineLayoutInfo.pSetLayouts = &descriptorSetLayout;
 
+        
         if (vkCreatePipelineLayout(device, &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS)
         {
             throw std::runtime_error("failed to create pipeline layout!");
@@ -1622,12 +1623,13 @@ private:
         VkDeviceSize offsets[] = {0};
 
         vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
-
+        
         vkCmdBindIndexBuffer(commandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT16);
 
         vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1,
                                 &descriptorSets[currentFrame], 0, nullptr);
 
+        
         vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);
 
         vkCmdEndRenderPass(commandBuffer);
