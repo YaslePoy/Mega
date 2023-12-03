@@ -43,7 +43,7 @@ namespace Mega.Game
                 return cn;
             return null;
         }
-        public bool GetMember(Vector3i position)
+        public bool IsMember(Vector3i position)
         {
 
             return GetBlock(position) is { } block;
@@ -63,7 +63,7 @@ namespace Mega.Game
                     var nbs = block.Adjacent;
                     foreach (var verifyAdjacent in nbs)
                     {
-                        if (!GetMember(verifyAdjacent))
+                        if (!IsMember(verifyAdjacent))
                         {
                             cn.BorderMembersList.Add(blockPos);
                             break;

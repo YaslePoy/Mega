@@ -130,7 +130,7 @@ private:
 
 
     KeyboardInput keyboard;
-    
+
     VkInstance instance;
     VkDebugUtilsMessengerEXT debugMessenger;
     VkSurfaceKHR surface;
@@ -154,7 +154,7 @@ private:
     VkPipeline graphicsPipeline;
     VkPipeline graphicsPipelineAlt;
 
-    
+
     VkCommandPool commandPool;
 
     VkImage depthImage;
@@ -206,7 +206,7 @@ private:
     static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
     {
         auto app = reinterpret_cast<HelloTriangleApplication*>(glfwGetWindowUserPointer(window));
-        if(action == GLFW_PRESS)
+        if (action == GLFW_PRESS)
         {
             app->keyboard.press(key);
         }
@@ -270,7 +270,7 @@ private:
         createTextureSampler();
         createVertexBuffer();
         createIndexBuffer();
-        
+
         writeBuffers();
 
         createUniformBuffers();
@@ -278,9 +278,8 @@ private:
         createDescriptorSets();
         createCommandBuffers();
         createSyncObjects();
-        
     }
-    
+
     void mainLoop()
     {
         open = true;
@@ -291,7 +290,7 @@ private:
         }
         vkDeviceWaitIdle(device);
     }
-    
+
     void cleanupSwapChain()
     {
         vkDestroyImageView(device, depthImageView, nullptr);
@@ -797,7 +796,7 @@ private:
         pipelineLayoutInfo.setLayoutCount = 1;
         pipelineLayoutInfo.pSetLayouts = &descriptorSetLayout;
 
-        
+
         if (vkCreatePipelineLayout(device, &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS)
         {
             throw std::runtime_error("failed to create pipeline layout!");
@@ -1269,14 +1268,11 @@ private:
         indices.push_back(start + 2);
         indices.push_back(start + 3);
         indices.push_back(start);
-
     }
 
 
-    
     void writeBuffers()
     {
-
         // writeIndices();
         // writeVertices();
         int current = static_cast<int>(vertices.size());
@@ -1290,7 +1286,7 @@ private:
         // }
         int vertexSize = sizeof(vertices[0]);
         int vertexCount = current;
-        VkDeviceSize bufferSize =  vertexCount * vertexSize;
+        VkDeviceSize bufferSize = vertexCount * vertexSize;
         VkBuffer stagingBuffer;
         VkDeviceMemory stagingBufferMemory;
         createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
@@ -1305,11 +1301,11 @@ private:
         vkFreeMemory(device, stagingBufferMemory, nullptr);
 
         vertexSize = sizeof(indices[0]);
-        vertexCount = indices.size();           
-        
-        bufferSize =  vertexCount * vertexSize;
+        vertexCount = indices.size();
 
-        
+        bufferSize = vertexCount * vertexSize;
+
+
         createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
                      VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer,
                      stagingBufferMemory);
@@ -1355,7 +1351,7 @@ private:
         vkDestroyBuffer(device, stagingBuffer, nullptr);
         vkFreeMemory(device, stagingBufferMemory, nullptr);
     }
-    
+
     void createVertexBuffer()
     {
         VkDeviceSize bufferSize = sizeof(vertices[0]) * vertices.size();
@@ -1623,13 +1619,13 @@ private:
         VkDeviceSize offsets[] = {0};
 
         vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
-        
+
         vkCmdBindIndexBuffer(commandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT16);
 
         vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1,
                                 &descriptorSets[currentFrame], 0, nullptr);
 
-        
+
         vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);
 
         vkCmdEndRenderPass(commandBuffer);
@@ -1722,7 +1718,7 @@ private:
         VkSemaphore signalSemaphores[] = {renderFinishedSemaphores[currentFrame]};
         submitInfo.signalSemaphoreCount = 1;
         submitInfo.pSignalSemaphores = signalSemaphores;
-
+        
         if (vkQueueSubmit(graphicsQueue, 1, &submitInfo, inFlightFences[currentFrame]) != VK_SUCCESS)
         {
             throw std::runtime_error("failed to submit draw command buffer!");
@@ -1800,7 +1796,8 @@ private:
 
     VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities)
     {
-        if (capabilities.currentExtent.width != std::numeric_limits<uint32_t>::max())
+        if (capabilities.currentExtent.width != std::numeric_limits<uint32_t>::max()
+        )
         {
             return capabilities.currentExtent;
         }
@@ -2002,7 +1999,7 @@ private:
 };
 
 HelloTriangleApplication app;
- 
+
 void loadModel()
 {
     // std::vector<glm::vec3> vertices;
@@ -2020,7 +2017,7 @@ void loadModel()
         split >> scalar;
         if (scalar == "v")
         {
-            glm::vec3 v; 
+            glm::vec3 v;
             split >> scalar;
             v.x = std::stof(scalar);
             split >> scalar;

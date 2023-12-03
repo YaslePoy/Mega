@@ -35,18 +35,21 @@ namespace Mega.Game
         }
         public void RebuildMesh()
         {
-            var sides = new List<RenderSurface>();
-            object l = false;
-            Parallel.ForEach(BorderMembersList, i =>
+            int id = 0;
+            var chunked = BorderMembersList.Chunk(1024).ToList().Select(j => (id++, j)).ToList();
+            var ready = new List<RenderSurface>[chunked.Count];
+            Parallel.ForEach(chunked, chunk =>
             {
-                var s = data.Get(i).GetDrawingMesh(Root);
-                lock (l)
+                List<RenderSurface> surfaces = new List<RenderSurface>(chunk.j.Length * 3);
+                foreach (var member in chunk.j)
                 {
-                    sides.AddRange(s);
-
+                    surfaces.AddRange(data.Get(member).GetDrawingMesh(Root));
                 }
+
+                ready[chunk.Item1] = surfaces;
             });
-            Surface = sides.ToArray();
+            
+            Surface = ready.SumList();
         }
         public Block Get(Vector3i pos)
         {

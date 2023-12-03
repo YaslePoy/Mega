@@ -234,7 +234,7 @@ namespace Mega.Game
             Player.Cursor = null;
             foreach (var block in viewRay.GetCrossBlocks(5))
             {
-                if (!Area.GetMember(block.block))
+                if (!Area.IsMember(block.block))
                     continue;
                 if (Player.SelectedBlock != block.block)
                     Player.SelectedBlock = block.block;

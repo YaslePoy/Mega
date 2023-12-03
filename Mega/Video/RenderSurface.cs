@@ -23,6 +23,7 @@ namespace Mega.Video
             {
                 t[i] = (vertices[i], texture[i]);
             }
+
             _vts = t;
             TextureID = tx;
             this.Normal = normal;
@@ -30,20 +31,6 @@ namespace Mega.Video
 
         public unsafe void GetRawPolygon(Span<float> span)
         {
-            //if(rawPolygon != null) 
-            //    return rawPolygon;
-            //int offset = 0;
-            //for (int i = 0; i < _vts.Length; i++)
-            //{
-            //    span[offset++] = _vts[i].Item1.X + move.X;
-            //    span[offset++] = _vts[i].Item1.Y + move.Y;
-            //    span[offset++] = _vts[i].Item1.Z + move.Z;
-            //    span[offset++] = _vts[i].Item2.X;
-            //    span[offset++] = _vts[i].Item2.Y;
-            //    span[offset++] = Normal.X;
-            //    span[offset++] = Normal.Y;
-            //    span[offset++] = Normal.Z;
-            //}
             System.Numerics.Vector3 fastMove = move.ToFastVector();
             fixed ((Vector3, Vector2)* v = _vts)
             {
@@ -88,14 +75,10 @@ namespace Mega.Video
                 span[30] = Normal.Y;
                 span[31] = Normal.Z;
             }
-
-            //rawPolygon = ret;
-            //return rawPolygon;
         }
+
         public float[] GetRawEdges()
         {
-            //if (rawEdges != null)
-            //    return rawEdges;
             var ret = new float[_vts.Length * 3];
             int offset = 0;
             for (int i = 0; i < _vts.Length; i++)
@@ -104,10 +87,8 @@ namespace Mega.Video
                 ret[offset++] = _vts[i].Item1.Y + move.Y;
                 ret[offset++] = _vts[i].Item1.Z + move.Z;
             }
-            //rawEdges = ret;
-            //return rawEdges;
+
             return ret;
         }
-
     }
 }

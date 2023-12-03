@@ -9,6 +9,7 @@ namespace Mega
     {
         static void Main(string[] args)
         {
+            
             var nativeWindowSettings = new NativeWindowSettings()
             {
                 Size = new Vector2i(1920, 1080),

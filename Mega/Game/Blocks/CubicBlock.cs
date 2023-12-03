@@ -15,22 +15,21 @@ namespace Mega.Game.Blocks
         }
 
         public override List<RenderSurface> GetDrawingMesh(UnitedChunk area)
-        
+        {
+            view = new List<RenderSurface>(3);
+            List<byte> sides = new List<byte>(3);
+            for (byte i = 0; i < 6; i++)
             {
-                view = new List<RenderSurface>(3);
-                List<byte> sides = new List<byte>(3);
-                for (byte i = 0; i < 6; i++)
-                {
-                    if (area.GetMember(Adjacent[i]))
-                        continue;
-                    var surface = new RenderSurface(MeshSides[i], TextureHelper.GetTextureCoords(IDCode, i), Position,
-                        Neibs[i], IDCode);
-                    view.Add(surface);
-                    sides.Add(i);
-                }
-                collider = new CubicCollider(Position, sides);
-                return view;
+                if (area.IsMember(Adjacent[i]))
+                    continue;
+                var surface = new RenderSurface(MeshSides[i], TextureHelper.GetTextureCoords(IDCode, i), Position,
+                    Neibs[i], IDCode);
+                view.Add(surface);
+                sides.Add(i);
             }
-        
+
+            collider = new CubicCollider(Position, sides);
+            return view;
+        }
     }
 }
