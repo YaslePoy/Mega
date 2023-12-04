@@ -1,4 +1,5 @@
-﻿using System.Threading.Channels;
+﻿using System.Diagnostics;
+using System.Threading.Channels;
 using Mega.Game.Blocks;
 using Mega.Game.Blocks;
 using Mega.Video;
@@ -89,6 +90,7 @@ namespace Mega.Game
             float[] arrayed;
             indeces = new Dictionary<int, List<uint>>();
             Span<float> raw = stackalloc float[4 * 8];
+            Stopwatch loop = Stopwatch.StartNew();
             for (int i = 0; i < sides.Length; i++)
             {
                 int inBuffer = i % 2048;
@@ -103,9 +105,10 @@ namespace Mega.Game
                 if (inBuffer != 0 || i == 0)
                     continue;
                 arrayed = buffer.ToArray();
-                arrayed.CopyTo(verteces, bufferSize * ((i * 4 * 8) / bufferSize - 1));
-
+                arrayed.CopyTo(verteces, bufferSize * (i * 4 * 8 / bufferSize - 1));
             }
+            loop.Stop();
+            Console.WriteLine($"Loop time: {loop.Elapsed}");
         }
 
         public void Update(float time)

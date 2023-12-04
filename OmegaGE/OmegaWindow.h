@@ -226,6 +226,7 @@ private:
     QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
     std::vector<const char*> getRequiredExtensions();
     VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
+    void drawFrame();
 };
 
 inline OmegaWindow viewport{1024, 1024, "TestWindow"};

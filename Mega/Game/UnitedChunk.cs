@@ -57,7 +57,6 @@ namespace Mega.Game
             {
                 foreach (var blockPos in cn.MembersList)
                 {
-
                     bool skip = false;
                     var block = cn.Get(blockPos);
                     var nbs = block.Adjacent;

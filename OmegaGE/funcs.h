@@ -11,4 +11,5 @@ void lib Start();
 void lib Close();
 int lib GetWindowCloseState();
 void lib PollWindowEvents();
+void lib SetMeshShaderData();
 }
