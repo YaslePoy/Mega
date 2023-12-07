@@ -74,11 +74,11 @@ void OmegaWindow::Open()
     createTextureImageView();
 
     createTextureSampler();
-    
+
     createVertexBuffer();
 
     createIndexBuffer();
-    
+
     createUniformBuffers();
 
     createDescriptorPool();
@@ -1096,11 +1096,12 @@ void OmegaWindow::copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t wid
 
 void OmegaWindow::createVertexBuffer()
 {
-    std::cout << "Started creation ff vb" << std::endl;
+    std::cout << "Started creation vb" << std::endl;
     VkDeviceSize bufferSize = sizeof(mainMesh.vertices[0]) * mainMesh.vertices_count;
+    std::cout << "VSize: " << bufferSize << std::endl;
+
     if (bufferSize == 0)
         bufferSize = 1;
-    // VkDeviceSize bufferSize = 1;
     createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
                  VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, vertexBuffer, vertexBufferMemory);
 }
@@ -1109,6 +1110,8 @@ void OmegaWindow::createVertexBuffer()
 void OmegaWindow::createIndexBuffer()
 {
     VkDeviceSize bufferSize = sizeof(mainMesh.indices[0]) * mainMesh.indices_count;
+    std::cout << "ISize: " << bufferSize << std::endl;
+
     if (bufferSize == 0)
         bufferSize = 1;
     createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
@@ -1207,7 +1210,6 @@ void OmegaWindow::createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMe
                                VkBuffer& buffer,
                                VkDeviceMemory& bufferMemory)
 {
-
     VkBufferCreateInfo bufferInfo{};
     bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
     bufferInfo.size = size;
@@ -1340,7 +1342,8 @@ void OmegaWindow::recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t im
     renderPassInfo.pClearValues = clearValues.data();
 
     vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
-    vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipelineAlt);
+
+    vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
 
 
     VkViewport viewport{};
@@ -1451,6 +1454,8 @@ VkSurfaceFormatKHR OmegaWindow::chooseSwapSurfaceFormat(const std::vector<VkSurf
 
 void OmegaWindow::WriteMainVIBuffers()
 {
+    createVertexBuffer();
+    createIndexBuffer();
     int vertexSize = sizeof(mainMesh.vertices[0]);
     int vertexCount = mainMesh.vertices_count;
 
@@ -1465,7 +1470,7 @@ void OmegaWindow::WriteMainVIBuffers()
     void* data;
 
     vkMapMemory(device, stagingBufferMemory, 0, bufferSize, 0, &data);
-    memcpy(data, mainMesh.vertices, (size_t)bufferSize);
+    memcpy(data, mainMesh.vertices, bufferSize);
     copyBuffer(stagingBuffer, vertexBuffer, bufferSize);
 
     vkUnmapMemory(device, stagingBufferMemory);
@@ -1490,6 +1495,14 @@ void OmegaWindow::WriteMainVIBuffers()
 
     vkDestroyBuffer(device, stagingBuffer, nullptr);
     vkFreeMemory(device, stagingBufferMemory, nullptr);
+    for (int i = 0; i < mainMesh.vertices_count; ++i)
+    {
+        mainMesh.vertices[i].Show();
+    }
+    for (int i = 0; i < mainMesh.indices_count; ++i)
+    {
+        std::cout << mainMesh.indices[i] << " ";
+    }
 }
 
 VkPresentModeKHR OmegaWindow::chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes)
@@ -1724,15 +1737,15 @@ void OmegaWindow::SetMainMesh(RenderSurface* polygons, int count)
 {
     mainMesh.vertices_count = 4 * count;
     mainMesh.vertices = new VertexRaw[mainMesh.vertices_count];
-
+    
     mainMesh.indices_count = 6 * count;
     mainMesh.indices = new uint32_t[mainMesh.indices_count];
-
+    
     for (int i = 0; i < count; i++)
     {
         polygons[i].CopyToArray(mainMesh.vertices, mainMesh.indices, i);
     }
-
+    
     for (int i = 0; i < mainMesh.vertices_count; ++i)
     {
         mainMesh.vertices[i].Show();
@@ -1741,6 +1754,7 @@ void OmegaWindow::SetMainMesh(RenderSurface* polygons, int count)
     {
         std::cout << mainMesh.indices[i] << " ";
     }
-    std::cout << endl; 
+    std::cout << endl;
+
     WriteMainVIBuffers();
 }

@@ -17,8 +17,6 @@ struct RenderSurface
     {
         int localOffset = offset * 4;
         const int startIndex = localOffset;
-        VertexRaw raw = v1.ToRaw(normal, move);
-        raw.Show();
         vertices[localOffset++] = v1.ToRaw(normal, move);
         vertices[localOffset++] = v2.ToRaw(normal, move);
         vertices[localOffset++] = v3.ToRaw(normal, move);
