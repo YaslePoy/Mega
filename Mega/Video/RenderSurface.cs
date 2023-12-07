@@ -2,9 +2,10 @@
 
 namespace Mega.Video
 {
-    public class RenderSurface(Vector3[] vertices, Vector2[] texture, Vector3 move, Vector3 normal, int tx)
+    public struct RenderSurface(Vector3[] vertices, Vector2[] texture, Vector3 move, Vector3 normal, int tx)
     {
         // (Vector3, Vector2)[] _vts;
+        Vector3 move = move;
         Vertex v1 = new() { pos = vertices[0], uv = texture[0] },
             v2 = new() { pos = vertices[1], uv = texture[1] },
             v3 = new() { pos = vertices[2], uv = texture[2] },

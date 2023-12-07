@@ -9,7 +9,10 @@
 #include <glm/fwd.hpp>
 #include <vulkan/vulkan_core.h>
 
+#include "Image.h"
 #include "KeyboardInput.h"
+#include "MeshArray.h"
+#include "RenderSurface.h"
 
 static std::vector<char> readFile(const std::string& filename)
 {
@@ -34,8 +37,8 @@ static std::vector<char> readFile(const std::string& filename)
 const int MAX_FRAMES_IN_FLIGHT = 2;
 
 static VkResult CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo,
-                                      const VkAllocationCallbacks* pAllocator,
-                                      VkDebugUtilsMessengerEXT* pDebugMessenger)
+                                             const VkAllocationCallbacks* pAllocator,
+                                             VkDebugUtilsMessengerEXT* pDebugMessenger)
 {
     auto func = (PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");
     if (func != nullptr)
@@ -48,8 +51,8 @@ static VkResult CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugU
     }
 }
 
-static  void DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger,
-                                   const VkAllocationCallbacks* pAllocator)
+static void DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger,
+                                          const VkAllocationCallbacks* pAllocator)
 {
     auto func = (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT");
     if (func != nullptr)
@@ -106,9 +109,13 @@ public:
     char* name;
     OmegaWindow(uint32_t width, uint32_t height, std::string name);
     void Open();
-    void mainLoop() const;
     void Close() const;
     GLFWwindow* window;
+    void SetMainMesh(RenderSurface* polygons, int count);
+    void drawFrame();
+    
+    Image mainTexture;
+    MeshArray mainMesh;
 
 private:
     static void framebufferResizeCallback(GLFWwindow* window, int width, int height);
@@ -137,8 +144,7 @@ private:
     VkPipelineLayout pipelineLayout;
     VkPipeline graphicsPipeline;
     VkPipeline graphicsPipelineAlt;
-
-
+    
     VkCommandPool commandPool;
 
     VkImage depthImage;
@@ -172,7 +178,7 @@ private:
 
 
     void createInstance();
-    bool checkValidationLayerSupport();
+    static bool checkValidationLayerSupport();
     void cleanupSwapChain();
     void cleanup();
     void recreateSwapChain();
@@ -226,7 +232,7 @@ private:
     QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
     std::vector<const char*> getRequiredExtensions();
     VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
-    void drawFrame();
+    void WriteMainVIBuffers();
 };
 
 inline OmegaWindow viewport{1024, 1024, "TestWindow"};

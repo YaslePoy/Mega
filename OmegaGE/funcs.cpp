@@ -33,3 +33,18 @@ void PollWindowEvents()
 {
     glfwPollEvents();
 }
+
+void SetMeshShaderData(RenderSurface* surfaces, uint32_t count)
+{
+    viewport.SetMainMesh(surfaces, count);
+}
+
+void Draw()
+{
+    viewport.drawFrame();
+}
+
+void SetMainRenderTexture(stbi_uc* data, int x, int y)
+{
+    viewport.mainTexture = {data, x, y};
+}

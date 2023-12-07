@@ -8,8 +8,11 @@ namespace Testing
     {
         static void Main(string[] args)
         {
-            var x = new int[]{1, 2, 3, 4, 5};
-            int n = CppHelpers.Add(1, 2);
+            Span<int> x = stackalloc int[]{1, 2, 3, 4, 5};
+            var ls = new List<int>();
+            ls.AddRange(x);
+            x[0] = 5;
+            ls.AddRange(x);
 
         }
     }

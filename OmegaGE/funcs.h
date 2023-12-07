@@ -1,8 +1,11 @@
 ﻿#pragma once
 
-#define lib __declspec(dllexport)
+
+#include <stb_image.h>
 
 #include "OmegaWindow.h"
+#include "RenderSurface.h"
+#define lib __declspec(dllexport)
 
 extern "C" {
 int lib Add(int a, int b);
@@ -11,5 +14,7 @@ void lib Start();
 void lib Close();
 int lib GetWindowCloseState();
 void lib PollWindowEvents();
-void lib SetMeshShaderData();
+void lib SetMeshShaderData(RenderSurface* surfaces, uint32_t count);
+void lib Draw();
+void lib SetMainRenderTexture(stbi_uc* data, int x, int y);
 }

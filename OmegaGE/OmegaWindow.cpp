@@ -14,7 +14,7 @@
 #include <glm/ext/matrix_transform.hpp>
 #include <vulkan/vulkan_core.h>
 
-#include "Vertex.h"
+#include "VertexRaw.h"
 
 
 struct UniformBufferObject
@@ -41,81 +41,53 @@ void OmegaWindow::Open()
     glfwSetWindowUserPointer(window, this);
     glfwSetFramebufferSizeCallback(window, framebufferResizeCallback);
 
-    std::cout << "1" << std::endl;
     createInstance();
-    std::cout << "2" << std::endl;
 
     setupDebugMessenger();
-    std::cout << "3" << std::endl;
 
     createSurface();
-    std::cout << "4" << std::endl;
 
     pickPhysicalDevice();
-    std::cout << "5" << std::endl;
 
     createLogicalDevice();
-    std::cout << "6" << std::endl;
 
     createSwapChain();
-    std::cout << "7" << std::endl;
 
     createImageViews();
-    std::cout << "8" << std::endl;
 
     createRenderPass();
-    std::cout << "9" << std::endl;
 
     createDescriptorSetLayout();
-    std::cout << "10" << std::endl;
 
     createGraphicsPipeline();
-    std::cout << "11" << std::endl;
 
     createAltGraphicsPipeline();
-    std::cout << "12" << std::endl;
 
     createCommandPool();
-    std::cout << "13" << std::endl;
 
     createDepthResources();
-    std::cout << "14" << std::endl;
 
     createFramebuffers();
-    std::cout << "15" << std::endl;
 
     createTextureImage();
-    std::cout << "16" << std::endl;
 
     createTextureImageView();
-    std::cout << "17" << std::endl;
 
     createTextureSampler();
-    std::cout << "18" << std::endl;
-
-
+    
     createVertexBuffer();
-    std::cout << "19" << std::endl;
 
     createIndexBuffer();
-    std::cout << "21" << std::endl;
-
     
     createUniformBuffers();
-    std::cout << "22" << std::endl;
 
     createDescriptorPool();
-    std::cout << "23" << std::endl;
 
     createDescriptorSets();
-    std::cout << "24" << std::endl;
 
     createCommandBuffers();
-    std::cout << "25" << std::endl;
 
     createSyncObjects();
-    std::cout << "26" << std::endl;
-
 }
 
 void OmegaWindow::framebufferResizeCallback(GLFWwindow* window, int width, int height)
@@ -124,20 +96,12 @@ void OmegaWindow::framebufferResizeCallback(GLFWwindow* window, int width, int h
     app->framebufferResized = true;
 }
 
-void OmegaWindow::mainLoop() const
-{
-    while (!glfwWindowShouldClose(window))
-    {
-        glfwPollEvents();
-    }
-}
-
 void OmegaWindow::Close() const
 {
     glfwSetWindowShouldClose(window, GLFW_FALSE);
 }
 
-bool checkValidationLayerSupport()
+bool OmegaWindow::checkValidationLayerSupport()
 {
     uint32_t layerCount;
     vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
@@ -602,8 +566,8 @@ void OmegaWindow::createGraphicsPipeline()
     VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
     vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 
-    auto bindingDescription = Vertex::getBindingDescription();
-    auto attributeDescriptions = Vertex::getAttributeDescriptions();
+    auto bindingDescription = VertexRaw::getBindingDescription();
+    auto attributeDescriptions = VertexRaw::getAttributeDescriptions();
 
     vertexInputInfo.vertexBindingDescriptionCount = 1;
     vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
@@ -732,8 +696,8 @@ void OmegaWindow::createAltGraphicsPipeline()
     VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
     vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 
-    auto bindingDescription = Vertex::getBindingDescription();
-    auto attributeDescriptions = Vertex::getAttributeDescriptions();
+    auto bindingDescription = VertexRaw::getBindingDescription();
+    auto attributeDescriptions = VertexRaw::getAttributeDescriptions();
 
     vertexInputInfo.vertexBindingDescriptionCount = 1;
     vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
@@ -921,8 +885,9 @@ void OmegaWindow::createTextureImage()
 {
     int texWidth, texHeight, texChannels;
     stbi_uc* pixels = stbi_load("textures/texture.png", &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+    std::cout << texChannels << std::endl;
     VkDeviceSize imageSize = texWidth * texHeight * 4;
-    
+
     if (!pixels)
     {
         throw std::runtime_error("failed to load texture image!");
@@ -1131,8 +1096,11 @@ void OmegaWindow::copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t wid
 
 void OmegaWindow::createVertexBuffer()
 {
-    // VkDeviceSize bufferSize = sizeof(/*vertices[0]*/0) * /*vertices.size()*/0;
-    VkDeviceSize bufferSize = 1;
+    std::cout << "Started creation ff vb" << std::endl;
+    VkDeviceSize bufferSize = sizeof(mainMesh.vertices[0]) * mainMesh.vertices_count;
+    if (bufferSize == 0)
+        bufferSize = 1;
+    // VkDeviceSize bufferSize = 1;
     createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
                  VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, vertexBuffer, vertexBufferMemory);
 }
@@ -1140,9 +1108,9 @@ void OmegaWindow::createVertexBuffer()
 
 void OmegaWindow::createIndexBuffer()
 {
-    //VkDeviceSize bufferSize = sizeof(/*indices[0]*/0) * static_cast<int>(/*indices.size()*/0);
-    VkDeviceSize bufferSize = 1;
-
+    VkDeviceSize bufferSize = sizeof(mainMesh.indices[0]) * mainMesh.indices_count;
+    if (bufferSize == 0)
+        bufferSize = 1;
     createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
                  VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, indexBuffer, indexBufferMemory);
 }
@@ -1239,6 +1207,7 @@ void OmegaWindow::createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMe
                                VkBuffer& buffer,
                                VkDeviceMemory& bufferMemory)
 {
+
     VkBufferCreateInfo bufferInfo{};
     bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
     bufferInfo.size = size;
@@ -1393,13 +1362,13 @@ void OmegaWindow::recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t im
 
     vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
 
-    vkCmdBindIndexBuffer(commandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT16);
+    vkCmdBindIndexBuffer(commandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT32);
 
     vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1,
                             &descriptorSets[currentFrame], 0, nullptr);
 
 
-    vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(/*indices.size()*/0), 1, 0, 0, 0);
+    vkCmdDrawIndexed(commandBuffer, mainMesh.indices_count, 1, 0, 0, 0);
 
     vkCmdEndRenderPass(commandBuffer);
 
@@ -1478,6 +1447,49 @@ VkSurfaceFormatKHR OmegaWindow::chooseSwapSurfaceFormat(const std::vector<VkSurf
     }
 
     return availableFormats[0];
+}
+
+void OmegaWindow::WriteMainVIBuffers()
+{
+    int vertexSize = sizeof(mainMesh.vertices[0]);
+    int vertexCount = mainMesh.vertices_count;
+
+    VkDeviceSize bufferSize = vertexCount * vertexSize;
+    VkBuffer stagingBuffer;
+
+    VkDeviceMemory stagingBufferMemory;
+
+    createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+                 VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer,
+                 stagingBufferMemory);
+    void* data;
+
+    vkMapMemory(device, stagingBufferMemory, 0, bufferSize, 0, &data);
+    memcpy(data, mainMesh.vertices, (size_t)bufferSize);
+    copyBuffer(stagingBuffer, vertexBuffer, bufferSize);
+
+    vkUnmapMemory(device, stagingBufferMemory);
+    vkDestroyBuffer(device, stagingBuffer, nullptr);
+    vkFreeMemory(device, stagingBufferMemory, nullptr);
+
+
+    vertexSize = sizeof(mainMesh.indices[0]);
+    vertexCount = mainMesh.indices_count;
+
+    bufferSize = vertexCount * vertexSize;
+
+
+    createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+                 VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer,
+                 stagingBufferMemory);
+    vkMapMemory(device, stagingBufferMemory, 0, bufferSize, 0, &data);
+    memcpy(data, mainMesh.indices, (size_t)bufferSize);
+
+    copyBuffer(stagingBuffer, indexBuffer, bufferSize);
+    vkUnmapMemory(device, stagingBufferMemory);
+
+    vkDestroyBuffer(device, stagingBuffer, nullptr);
+    vkFreeMemory(device, stagingBufferMemory, nullptr);
 }
 
 VkPresentModeKHR OmegaWindow::chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes)
@@ -1636,74 +1648,99 @@ std::vector<const char*> OmegaWindow::getRequiredExtensions()
 }
 
 void OmegaWindow::drawFrame()
+{
+    vkWaitForFences(device, 1, &inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
+
+    uint32_t imageIndex;
+    VkResult result = vkAcquireNextImageKHR(device, swapChain, UINT64_MAX, imageAvailableSemaphores[currentFrame],
+                                            VK_NULL_HANDLE, &imageIndex);
+
+    if (result == VK_ERROR_OUT_OF_DATE_KHR)
     {
-        vkWaitForFences(device, 1, &inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
-
-        uint32_t imageIndex;
-        VkResult result = vkAcquireNextImageKHR(device, swapChain, UINT64_MAX, imageAvailableSemaphores[currentFrame],
-                                                VK_NULL_HANDLE, &imageIndex);
-
-        if (result == VK_ERROR_OUT_OF_DATE_KHR)
-        {
-            recreateSwapChain();
-            return;
-        }
-        else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR)
-        {
-            throw std::runtime_error("failed to acquire swap chain image!");
-        }
-
-        updateUniformBuffer(currentFrame);
-
-        vkResetFences(device, 1, &inFlightFences[currentFrame]);
-
-        vkResetCommandBuffer(commandBuffers[currentFrame], /*VkCommandBufferResetFlagBits*/ 0);
-        recordCommandBuffer(commandBuffers[currentFrame], imageIndex);
-
-        VkSubmitInfo submitInfo{};
-        submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-
-        VkSemaphore waitSemaphores[] = {imageAvailableSemaphores[currentFrame]};
-        VkPipelineStageFlags waitStages[] = {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
-        submitInfo.waitSemaphoreCount = 1;
-        submitInfo.pWaitSemaphores = waitSemaphores;
-        submitInfo.pWaitDstStageMask = waitStages;
-
-        submitInfo.commandBufferCount = 1;
-        submitInfo.pCommandBuffers = &commandBuffers[currentFrame];
-
-        VkSemaphore signalSemaphores[] = {renderFinishedSemaphores[currentFrame]};
-        submitInfo.signalSemaphoreCount = 1;
-        submitInfo.pSignalSemaphores = signalSemaphores;
-        
-        if (vkQueueSubmit(graphicsQueue, 1, &submitInfo, inFlightFences[currentFrame]) != VK_SUCCESS)
-        {
-            throw std::runtime_error("failed to submit draw command buffer!");
-        }
-
-        VkPresentInfoKHR presentInfo{};
-        presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
-
-        presentInfo.waitSemaphoreCount = 1;
-        presentInfo.pWaitSemaphores = signalSemaphores;
-
-        VkSwapchainKHR swapChains[] = {swapChain};
-        presentInfo.swapchainCount = 1;
-        presentInfo.pSwapchains = swapChains;
-
-        presentInfo.pImageIndices = &imageIndex;
-
-        result = vkQueuePresentKHR(presentQueue, &presentInfo);
-
-        if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || framebufferResized)
-        {
-            framebufferResized = false;
-            recreateSwapChain();
-        }
-        else if (result != VK_SUCCESS)
-        {
-            throw std::runtime_error("failed to present swap chain image!");
-        }
-
-        currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
+        recreateSwapChain();
+        return;
     }
+    else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR)
+    {
+        throw std::runtime_error("failed to acquire swap chain image!");
+    }
+
+    updateUniformBuffer(currentFrame);
+
+    vkResetFences(device, 1, &inFlightFences[currentFrame]);
+
+    vkResetCommandBuffer(commandBuffers[currentFrame], /*VkCommandBufferResetFlagBits*/ 0);
+    recordCommandBuffer(commandBuffers[currentFrame], imageIndex);
+
+    VkSubmitInfo submitInfo{};
+    submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+
+    VkSemaphore waitSemaphores[] = {imageAvailableSemaphores[currentFrame]};
+    VkPipelineStageFlags waitStages[] = {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
+    submitInfo.waitSemaphoreCount = 1;
+    submitInfo.pWaitSemaphores = waitSemaphores;
+    submitInfo.pWaitDstStageMask = waitStages;
+
+    submitInfo.commandBufferCount = 1;
+    submitInfo.pCommandBuffers = &commandBuffers[currentFrame];
+
+    VkSemaphore signalSemaphores[] = {renderFinishedSemaphores[currentFrame]};
+    submitInfo.signalSemaphoreCount = 1;
+    submitInfo.pSignalSemaphores = signalSemaphores;
+
+    if (vkQueueSubmit(graphicsQueue, 1, &submitInfo, inFlightFences[currentFrame]) != VK_SUCCESS)
+    {
+        throw std::runtime_error("failed to submit draw command buffer!");
+    }
+
+    VkPresentInfoKHR presentInfo{};
+    presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+
+    presentInfo.waitSemaphoreCount = 1;
+    presentInfo.pWaitSemaphores = signalSemaphores;
+
+    VkSwapchainKHR swapChains[] = {swapChain};
+    presentInfo.swapchainCount = 1;
+    presentInfo.pSwapchains = swapChains;
+
+    presentInfo.pImageIndices = &imageIndex;
+
+    result = vkQueuePresentKHR(presentQueue, &presentInfo);
+
+    if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || framebufferResized)
+    {
+        framebufferResized = false;
+        recreateSwapChain();
+    }
+    else if (result != VK_SUCCESS)
+    {
+        throw std::runtime_error("failed to present swap chain image!");
+    }
+
+    currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
+}
+
+void OmegaWindow::SetMainMesh(RenderSurface* polygons, int count)
+{
+    mainMesh.vertices_count = 4 * count;
+    mainMesh.vertices = new VertexRaw[mainMesh.vertices_count];
+
+    mainMesh.indices_count = 6 * count;
+    mainMesh.indices = new uint32_t[mainMesh.indices_count];
+
+    for (int i = 0; i < count; i++)
+    {
+        polygons[i].CopyToArray(mainMesh.vertices, mainMesh.indices, i);
+    }
+
+    for (int i = 0; i < mainMesh.vertices_count; ++i)
+    {
+        mainMesh.vertices[i].Show();
+    }
+    for (int i = 0; i < mainMesh.indices_count; ++i)
+    {
+        std::cout << mainMesh.indices[i] << " ";
+    }
+    std::cout << endl; 
+    WriteMainVIBuffers();
+}

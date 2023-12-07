@@ -91,6 +91,7 @@ namespace Mega.Game
             indeces = new Dictionary<int, List<uint>>();
             Span<float> raw = stackalloc float[4 * 8];
             Stopwatch loop = Stopwatch.StartNew();
+            Span<uint> perSideOrder = stackalloc uint[6];
             for (int i = 0; i < sides.Length; i++)
             {
                 int inBuffer = i % 2048;
@@ -101,7 +102,14 @@ namespace Mega.Game
                 if (!indeces.ContainsKey(side.TextureID))
                     indeces.Add(side.TextureID, new List<uint>(6));
                 var indOffset = (uint)(i * 4);
-                indeces[side.TextureID].AddRange(new[] { indOffset, 1 + indOffset, 3 + indOffset, 1 + indOffset, 2 + indOffset, 3 + indOffset });
+                perSideOrder[0] = indOffset;
+                perSideOrder[1] = 1 + indOffset;
+                perSideOrder[2] = 3 + indOffset;
+                perSideOrder[3] = 1 + indOffset;
+                perSideOrder[4] = 2 + indOffset;
+                perSideOrder[5] = 3 + indOffset;
+
+                indeces[side.TextureID].AddRange(perSideOrder);
                 if (inBuffer != 0 || i == 0)
                     continue;
                 arrayed = buffer.ToArray();

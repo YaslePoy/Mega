@@ -152,8 +152,8 @@
     <ClCompile Include="RenderSurface.cpp" />
     <ClCompile Include="Vector2.cpp" />
     <ClCompile Include="Vector3.cpp" />
+    <ClCompile Include="VertexRaw.cpp" />
     <ClCompile Include="Vertex.cpp" />
-    <ClCompile Include="VertexCs.cpp" />
     <ClCompile Include="VulkanTests.cpp">
       <DeploymentContent>false</DeploymentContent>
     </ClCompile>
@@ -164,8 +164,8 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="Vector2.h" />
     <ClInclude Include="Vector3.h" />
+    <ClInclude Include="VertexRaw.h" />
     <ClInclude Include="Vertex.h" />
-    <ClInclude Include="VertexCs.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="shaders\shader.frag">

@@ -1,8 +1,7 @@
 ﻿#pragma once
 
-class Vector2
+struct Vector2
 {
-public:
     float X, Y;
 
     Vector2 operator+(Vector2& other)

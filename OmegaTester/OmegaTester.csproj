@@ -33,6 +33,10 @@
       </None>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Mega\Mega.csproj" />
+    </ItemGroup>
+
     <Target Name="PostBuild" AfterTargets="PostBuildEvent">
       <Exec Command="python C:\Users\Mimm\Projects\VisualStudioProjects\Mega\libCopy.py C:\Users\Mimm\Projects\VisualStudioProjects\Mega\OmegaGE\bin\x64\Release\OmegaGE.dll $(TargetDir)" />
     </Target>

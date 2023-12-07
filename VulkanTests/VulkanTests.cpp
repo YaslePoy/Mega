@@ -25,7 +25,7 @@
 #include <set>
 
 #include "KeyboardInput.h"
-#include "Vertex.h"
+#include "VertexRaw.h"
 #include "../CppHelper/framework.h"
 
 const uint32_t WIDTH = 800;
@@ -98,7 +98,7 @@ struct UniformBufferObject
     alignas(16) glm::mat4 proj;
 };
 
-std::vector<Vertex> vertices = {
+std::vector<VertexRaw> vertices = {
     // {{-0.5f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}, {1.0f, 0.0f}},
     // {{0.5f, -0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f}},
     // {{0.5f, 0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 1.0f}},
@@ -725,8 +725,8 @@ private:
         VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
         vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 
-        auto bindingDescription = Vertex::getBindingDescription();
-        auto attributeDescriptions = Vertex::getAttributeDescriptions();
+        auto bindingDescription = VertexRaw::getBindingDescription();
+        auto attributeDescriptions = VertexRaw::getAttributeDescriptions();
 
         vertexInputInfo.vertexBindingDescriptionCount = 1;
         vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
@@ -855,8 +855,8 @@ private:
         VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
         vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 
-        auto bindingDescription = Vertex::getBindingDescription();
-        auto attributeDescriptions = Vertex::getAttributeDescriptions();
+        auto bindingDescription = VertexRaw::getBindingDescription();
+        auto attributeDescriptions = VertexRaw::getAttributeDescriptions();
 
         vertexInputInfo.vertexBindingDescriptionCount = 1;
         vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
@@ -1275,7 +1275,7 @@ private:
     {
         // writeIndices();
         // writeVertices();
-        int current = static_cast<int>(vertices.size());
+        int current = vertices.size();
         std::cout << current << std::endl;
         // if (vertCount < current)
         // {
@@ -1594,7 +1594,7 @@ private:
         vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
         if (pipeline == 0)
         {
-            vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipelineAlt);
+            vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
         }
         else
         {
@@ -1750,7 +1750,7 @@ private:
 
         currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
     }
-
+ 
     VkShaderModule createShaderModule(const std::vector<char>& code)
     {
         VkShaderModuleCreateInfo createInfo{};
@@ -1796,8 +1796,11 @@ private:
 
     VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities)
     {
-        if (capabilities.currentExtent.width != std::numeric_limits<uint32_t>::max()
-        )
+        if(capabilities.currentExtent.width != std::numeric_limits<uint32_t>::max())
+        {
+            
+        }
+        if (capabilities.currentExtent.width != std::numeric_limits<uint32_t>::max())
         {
             return capabilities.currentExtent;
         }
