@@ -1495,14 +1495,7 @@ void OmegaWindow::WriteMainVIBuffers()
 
     vkDestroyBuffer(device, stagingBuffer, nullptr);
     vkFreeMemory(device, stagingBufferMemory, nullptr);
-    for (int i = 0; i < mainMesh.vertices_count; ++i)
-    {
-        mainMesh.vertices[i].Show();
-    }
-    for (int i = 0; i < mainMesh.indices_count; ++i)
-    {
-        std::cout << mainMesh.indices[i] << " ";
-    }
+
 }
 
 VkPresentModeKHR OmegaWindow::chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes)
@@ -1750,11 +1743,6 @@ void OmegaWindow::SetMainMesh(RenderSurface* polygons, int count)
     {
         mainMesh.vertices[i].Show();
     }
-    for (int i = 0; i < mainMesh.indices_count; ++i)
-    {
-        std::cout << mainMesh.indices[i] << " ";
-    }
-    std::cout << endl;
-
+    
     WriteMainVIBuffers();
 }
