@@ -27,13 +27,14 @@ static class Startup
         while (state == 0)
         {
             OmegaGE.PollWindowEvents();
-            if (iters++ % 10_000 == 0)
+            if (iters++ % 3_000 == 0)
             {
+                float level = RandomNumberGenerator.GetInt32(-100, 100) / 50f;
                 arr.Add(new RenderSurface(Block.MeshSides[5],
                     new[] { Vector2.Zero, new(0, 1), new(1, 1), new(1, 0) },
-                    Vector3.UnitZ * RandomNumberGenerator.GetInt32(-100, 100) / 10f, Vector3.UnitZ, 1));
+                    Vector3.UnitZ * level, Vector3.UnitZ, 1));
+                Console.WriteLine($"Added new {level}");
                 OmegaGE.SetMeshShaderData(arr.ToArray(), (uint)arr.Count);
-
             }
 
             OmegaGE.Draw();

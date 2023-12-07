@@ -12,7 +12,7 @@ namespace Mega.Video
             v4 = new() { pos = vertices[3], uv = texture[3] };
 
         public readonly Vector3 Normal = normal;
-        public readonly int TextureID = tx;
+        // public readonly int TextureID = tx;
 
         public unsafe void GetRawPolygon(Span<float> span)
         {

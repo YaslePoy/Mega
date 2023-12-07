@@ -1739,10 +1739,5 @@ void OmegaWindow::SetMainMesh(RenderSurface* polygons, int count)
         polygons[i].CopyToArray(mainMesh.vertices, mainMesh.indices, i);
     }
     
-    for (int i = 0; i < mainMesh.vertices_count; ++i)
-    {
-        mainMesh.vertices[i].Show();
-    }
-    
     WriteMainVIBuffers();
 }

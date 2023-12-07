@@ -99,8 +99,8 @@ namespace Mega.Game
                 side.GetRawPolygon(raw);
                 raw.CopyTo(buffer.Slice(inBuffer * 4 * 8, 4 * 8));
 
-                if (!indeces.ContainsKey(side.TextureID))
-                    indeces.Add(side.TextureID, new List<uint>(6));
+                if (!indeces.ContainsKey(/*side.TextureID*/0))
+                    indeces.Add(/*side.TextureID*/0, new List<uint>(6));
                 var indOffset = (uint)(i * 4);
                 perSideOrder[0] = indOffset;
                 perSideOrder[1] = 1 + indOffset;
@@ -109,7 +109,7 @@ namespace Mega.Game
                 perSideOrder[4] = 2 + indOffset;
                 perSideOrder[5] = 3 + indOffset;
 
-                indeces[side.TextureID].AddRange(perSideOrder);
+                indeces[/*side.TextureID*/0].AddRange(perSideOrder);
                 if (inBuffer != 0 || i == 0)
                     continue;
                 arrayed = buffer.ToArray();
