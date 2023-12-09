@@ -22,7 +22,7 @@ namespace Mega.Game.Blocks
             {
                 if (area.IsMember(Adjacent[i]))
                     continue;
-                var surface = new RenderSurface(MeshSides[i], TextureHelper.GetTextureCoords(IDCode, i), Position,
+                var surface = new RenderSurface(MeshSides[i], TextureHelper.GetTextureCoords(/*IDCode*/0, i), Position,
                     Neibs[i], IDCode);
                 view.Add(surface);
                 sides.Add(i);

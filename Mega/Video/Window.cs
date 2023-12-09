@@ -66,7 +66,7 @@ public class Window : GameWindow
 
         pl = new Player(_camera);
         world = new World(pl, this, 1);
-        var worldSize = 128 * 8;
+        var worldSize = 128 * 4;
         var Autimation = new HeightAutomation(worldSize);
         Console.WriteLine(worldSize);
         Autimation.Scale = 16;

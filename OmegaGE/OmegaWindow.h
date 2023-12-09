@@ -116,6 +116,7 @@ public:
     GLFWwindow* window;
     void SetMainMesh(RenderSurface* polygons, int count);
     void drawFrame();
+    KeyboardInput keyboard;
 
     Image mainTexture;
     MeshArray mainMesh;
@@ -123,7 +124,6 @@ public:
 private:
     static void framebufferResizeCallback(GLFWwindow* window, int width, int height);
     bool framebufferResized;
-    KeyboardInput keyboard;
 
     VkInstance instance;
     VkDebugUtilsMessengerEXT debugMessenger;

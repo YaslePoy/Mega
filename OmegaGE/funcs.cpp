@@ -46,5 +46,6 @@ void Draw()
 
 void SetMainRenderTexture(stbi_uc* data, int x, int y)
 {
+    cout << x << " " << y << endl;
     viewport.mainTexture = {data, x, y};
 }
