@@ -40,7 +40,7 @@ void OmegaWindow::Open()
     window = glfwCreateWindow(width, height, name, nullptr, nullptr);
     glfwSetWindowUserPointer(window, this);
     glfwSetFramebufferSizeCallback(window, framebufferResizeCallback);
-
+    glfwSetKeyCallback(window, keyboard_handler);
     createInstance();
 
     setupDebugMessenger();
@@ -1498,6 +1498,15 @@ void OmegaWindow::WriteMainVIBuffers()
     vkDestroyBuffer(device, stagingBuffer, nullptr);
     vkFreeMemory(device, stagingBufferMemory, nullptr);
 
+}
+
+void OmegaWindow::keyboard_handler(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+    viewport.keyboard.next_frame();
+    if(action == GLFW_PRESS)
+        viewport.keyboard.press(key);
+    else if(action == GLFW_RELEASE)
+        viewport.keyboard.release(key);
 }
 
 VkPresentModeKHR OmegaWindow::chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes)

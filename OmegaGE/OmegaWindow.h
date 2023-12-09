@@ -236,6 +236,7 @@ private:
     std::vector<const char*> getRequiredExtensions();
     VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
     void WriteMainVIBuffers();
+    static void keyboard_handler(GLFWwindow* window, int key, int scancode, int action, int mods);
 };
 
 inline OmegaWindow viewport{1024, 1024, "TestWindow"};

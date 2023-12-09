@@ -1,6 +1,10 @@
 ﻿#pragma once
+#include <iostream>
 #include <map>
 #include <vector>
+#include <GLFW/glfw3.h>
+
+using namespace std;
 
 enum class KeyState
 {
@@ -31,12 +35,15 @@ public:
     void press(int key)
     {
         keys[key] = frame;
+        cout << key << " pressed" << endl;
+        int a = GLFW_KEY_0
     }
 
     void release(int key)
     {
         keys.erase(key);
         released.push_back(key);
+        cout << key << " released" << endl;
     }
 
     void next_frame()
