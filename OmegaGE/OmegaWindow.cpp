@@ -1166,19 +1166,15 @@ void OmegaWindow::createDescriptorPool()
 void OmegaWindow::createDescriptorSets()
 {
     int startupLen = static_cast<int>(descriptorSets.size());
-    cout << "descs: " << startupLen << "\n";
 
-    cout << "1";
     std::vector<VkDescriptorSetLayout> layouts(MAX_FRAMES_IN_FLIGHT, descriptorSetLayout);
     VkDescriptorSetAllocateInfo allocInfo{};
     allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
     allocInfo.descriptorPool = descriptorPool;
     allocInfo.descriptorSetCount = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
     allocInfo.pSetLayouts = layouts.data();
-    cout << "1";
 
     descriptorSets.resize(MAX_FRAMES_IN_FLIGHT);
-    cout << "1";
 
     if (startupLen == 0)
     {
@@ -1189,9 +1185,7 @@ void OmegaWindow::createDescriptorSets()
     }
     else
     {
-        cout << "Here(not 0)\n";
         vkFreeDescriptorSets(device, descriptorPool, startupLen, descriptorSets.data());
-        cout << "Freed ok\n";
         if (vkAllocateDescriptorSets(device, &allocInfo, descriptorSets.data()) != VK_SUCCESS)
         {
             throw std::runtime_error("failed to allocate descriptor sets!");
