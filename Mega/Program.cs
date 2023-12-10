@@ -9,21 +9,27 @@ namespace Mega
     {
         static void Main(string[] args)
         {
+            // Mega game startup code |
+            //                        |
+            //                        V
             
-            var nativeWindowSettings = new NativeWindowSettings()
-            {
-                Size = new Vector2i(1920, 1080),
-                Title = "Mega Game",
-                // This is needed to run on macos
-                Flags = ContextFlags.ForwardCompatible,
-                WindowBorder = WindowBorder.Hidden,
-
-                //WindowState = WindowState.Fullscreen
-            };
-            using (var window = new Window(new GameWindowSettings() /*{ UpdateFrequency = 100 }*/, nativeWindowSettings) { })
-            {
-                window.Run();
-            }
+            // var nativeWindowSettings = new NativeWindowSettings()
+            // {
+            //     Size = new Vector2i(1920, 1080),
+            //     Title = "Mega Game",
+            //     // This is needed to run on macos
+            //     Flags = ContextFlags.ForwardCompatible,
+            //     WindowBorder = WindowBorder.Hidden,
+            //
+            //     //WindowState = WindowState.Fullscreen
+            // };
+            // using (var window = new Window(new GameWindowSettings() /*{ UpdateFrequency = 100 }*/, nativeWindowSettings) { })
+            // {
+            //     window.Run();
+            // }
+            
+            
+            
         }
     }
 }

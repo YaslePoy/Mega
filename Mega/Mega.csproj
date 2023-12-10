@@ -257,4 +257,10 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="build.bat">
+      <DeploymentContent>false</DeploymentContent>
+    </Content>
+  </ItemGroup>
+
 </Project>
