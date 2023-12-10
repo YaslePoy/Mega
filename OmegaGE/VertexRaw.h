@@ -48,4 +48,7 @@ struct VertexRaw
     {
         cout << pos.x << " " << pos.y << " " << pos.z << " " << texCoord.x << " " << texCoord.y << std::endl;
     }
+    bool operator==(const VertexRaw& other) const {
+        return pos == other.pos && color == other.color && texCoord == other.texCoord;
+    }
 };
