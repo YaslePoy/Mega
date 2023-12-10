@@ -6,7 +6,6 @@
 #include <vector>
 #include <cvt/wstring>
 #include <GLFW/glfw3.h>
-#include <glm/fwd.hpp>
 #include <vulkan/vulkan_core.h>
 
 #include "Image.h"
@@ -69,7 +68,7 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugUtilsMessageSeverityF
                                                     const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
                                                     void* pUserData)
 {
-    std::cerr << "validation layer: " << pCallbackData->pMessage << std::endl;
+    std::cerr << "validation layer: " << pCallbackData->pMessage << '\n';
 
     return VK_FALSE;
 }
@@ -113,8 +112,9 @@ public:
     OmegaWindow(uint32_t width, uint32_t height, std::string name);
     void Open();
     void Close() const;
+    void UpdateMainTexture();
     GLFWwindow* window;
-    void SetMainMesh(RenderSurface* polygons, int count);
+    void SetMainMesh(RenderSurface* polygons, uint32_t count);
     void drawFrame();
     KeyboardInput keyboard;
 

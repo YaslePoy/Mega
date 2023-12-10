@@ -41,6 +41,7 @@ void OmegaWindow::Open()
     glfwSetWindowUserPointer(window, this);
     glfwSetFramebufferSizeCallback(window, framebufferResizeCallback);
     glfwSetKeyCallback(window, keyboard_handler);
+
     createInstance();
 
     setupDebugMessenger();
@@ -69,7 +70,7 @@ void OmegaWindow::Open()
 
     createFramebuffers();
 
-    
+
     createTextureImage();
 
     createTextureImageView();
@@ -100,6 +101,14 @@ void OmegaWindow::framebufferResizeCallback(GLFWwindow* window, int width, int h
 void OmegaWindow::Close() const
 {
     glfwSetWindowShouldClose(window, GLFW_FALSE);
+}
+
+void OmegaWindow::UpdateMainTexture()
+{
+    createTextureImage();
+    createTextureImageView();
+    createTextureSampler();
+    createDescriptorSets();
 }
 
 bool OmegaWindow::checkValidationLayerSupport()
@@ -884,30 +893,26 @@ bool OmegaWindow::hasStencilComponent(VkFormat format)
 
 void OmegaWindow::createTextureImage()
 {
-    cout << "1";
-    int texWidth = mainTexture.width, texHeight =mainTexture.height, texChannels = 4;
+    int texWidth = mainTexture.width, texHeight = mainTexture.height, texChannels = 4;
     stbi_uc* pixels = mainTexture.pixels;
     VkDeviceSize imageSize = texWidth * texHeight * texChannels;
-    cout << "1";
 
     if (!pixels)
     {
         throw std::runtime_error("failed to load texture image!");
     }
-    cout << "1";
 
     VkBuffer stagingBuffer;
     VkDeviceMemory stagingBufferMemory;
     createBuffer(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
                  VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer,
                  stagingBufferMemory);
-    cout << "1";
 
     void* data;
     vkMapMemory(device, stagingBufferMemory, 0, imageSize, 0, &data);
     memcpy(data, pixels, static_cast<size_t>(imageSize));
     vkUnmapMemory(device, stagingBufferMemory);
-    
+
     createImage(texWidth, texHeight, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_TILING_OPTIMAL,
                 VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
                 textureImage, textureImageMemory);
@@ -935,9 +940,9 @@ void OmegaWindow::createTextureSampler()
 
     VkSamplerCreateInfo samplerInfo{};
     samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
-    VkFilter f = VK_FILTER_NEAREST;
-    samplerInfo.magFilter = f;
-    samplerInfo.minFilter = f;
+    constexpr VkFilter filter = VK_FILTER_NEAREST;
+    samplerInfo.magFilter = filter;
+    samplerInfo.minFilter = filter;
     samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
     samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
     samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
@@ -1160,21 +1165,44 @@ void OmegaWindow::createDescriptorPool()
 
 void OmegaWindow::createDescriptorSets()
 {
+    int startupLen = static_cast<int>(descriptorSets.size());
+    cout << "descs: " << startupLen << "\n";
+
+    cout << "1";
     std::vector<VkDescriptorSetLayout> layouts(MAX_FRAMES_IN_FLIGHT, descriptorSetLayout);
     VkDescriptorSetAllocateInfo allocInfo{};
     allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
     allocInfo.descriptorPool = descriptorPool;
     allocInfo.descriptorSetCount = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
     allocInfo.pSetLayouts = layouts.data();
+    cout << "1";
 
     descriptorSets.resize(MAX_FRAMES_IN_FLIGHT);
-    if (vkAllocateDescriptorSets(device, &allocInfo, descriptorSets.data()) != VK_SUCCESS)
+    cout << "1";
+
+    if (startupLen == 0)
     {
-        throw std::runtime_error("failed to allocate descriptor sets!");
+        if (vkAllocateDescriptorSets(device, &allocInfo, descriptorSets.data()) != VK_SUCCESS)
+        {
+            throw std::runtime_error("failed to allocate descriptor sets!");
+        }
     }
+    else
+    {
+        cout << "Here(not 0)\n";
+        vkFreeDescriptorSets(device, descriptorPool, startupLen, descriptorSets.data());
+        cout << "Freed ok\n";
+        if (vkAllocateDescriptorSets(device, &allocInfo, descriptorSets.data()) != VK_SUCCESS)
+        {
+            throw std::runtime_error("failed to allocate descriptor sets!");
+        }
+    }
+    cout << "1";
 
     for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
     {
+        cout << "1";
+
         VkDescriptorBufferInfo bufferInfo{};
         bufferInfo.buffer = uniformBuffers[i];
         bufferInfo.offset = 0;
@@ -1497,15 +1525,13 @@ void OmegaWindow::WriteMainVIBuffers()
 
     vkDestroyBuffer(device, stagingBuffer, nullptr);
     vkFreeMemory(device, stagingBufferMemory, nullptr);
-
 }
 
 void OmegaWindow::keyboard_handler(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-    viewport.keyboard.next_frame();
-    if(action == GLFW_PRESS)
+    if (action == GLFW_PRESS)
         viewport.keyboard.press(key);
-    else if(action == GLFW_RELEASE)
+    else if (action == GLFW_RELEASE)
         viewport.keyboard.release(key);
 }
 
@@ -1737,18 +1763,18 @@ void OmegaWindow::drawFrame()
     currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
 }
 
-void OmegaWindow::SetMainMesh(RenderSurface* polygons, int count)
+void OmegaWindow::SetMainMesh(RenderSurface* polygons, uint32_t count)
 {
     mainMesh.vertices_count = 4 * count;
     mainMesh.vertices = new VertexRaw[mainMesh.vertices_count];
-    
+
     mainMesh.indices_count = 6 * count;
     mainMesh.indices = new uint32_t[mainMesh.indices_count];
-    
+
     for (int i = 0; i < count; i++)
     {
         polygons[i].CopyToArray(mainMesh.vertices, mainMesh.indices, i);
     }
-    
+
     WriteMainVIBuffers();
 }

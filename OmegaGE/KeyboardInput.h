@@ -4,15 +4,12 @@
 #include <vector>
 #include <GLFW/glfw3.h>
 
-using namespace std;
 
-enum class KeyState
-{
-    Pressed,
-    Released,
-    Down,
-    Up
-};
+#define Released 0;
+#define Up 1;
+#define Down 2;
+#define Pressed 0;
+using namespace std;
 
 class KeyboardInput
 {
@@ -20,30 +17,29 @@ public:
     std::map<int, int> keys;
     std::vector<int> released;
 
-    KeyState get_key(int key)
+    int get_key(int key)
     {
-        if (std::find(released.begin(), released.end(), key) != released.end())
-            return KeyState::Released;
+        if (ranges::find(released, key) != released.end())
+            return Released
         if (!keys.contains(key))
-            return KeyState::Up;
-        if (keys[key] == frame)
-            return KeyState::Pressed;
+            return Up
+        if (keys[key] == frame && keys[key] != -1)
+            return Pressed
         if (keys[key] < frame)
-            return KeyState::Down;
+            return Down
+        return -1;
     }
 
     void press(int key)
     {
         keys[key] = frame;
-        cout << key << " pressed" << endl;
-        int a = GLFW_KEY_0
     }
 
     void release(int key)
     {
+        keys[key] = -1;
         keys.erase(key);
         released.push_back(key);
-        cout << key << " released" << endl;
     }
 
     void next_frame()
