@@ -109,7 +109,7 @@ class OmegaWindow
 public:
     uint32_t width, height;
     char* name;
-    OmegaWindow(uint32_t width, uint32_t height, std::string name);
+    OmegaWindow(uint32_t width, uint32_t height);
     void Open();
     void Close() const;
     void UpdateMainTexture();
@@ -151,7 +151,7 @@ private:
     VkDescriptorSetLayout descriptorSetLayout;
     VkPipelineLayout pipelineLayout;
     VkPipeline graphicsPipeline;
-    VkPipeline graphicsPipelineAlt;
+    // VkPipeline graphicsPipelineAlt;
 
     VkCommandPool commandPool;
 
@@ -201,7 +201,7 @@ private:
     void createRenderPass();
     void createDescriptorSetLayout();
     void createGraphicsPipeline();
-    void createAltGraphicsPipeline();
+    // void createAltGraphicsPipeline();
     void createFramebuffers();
     void createCommandPool();
     void createDepthResources();
@@ -248,4 +248,4 @@ private:
 
 };
 
-inline OmegaWindow viewport{1024, 1024, "TestWindow"};
+inline OmegaWindow viewport{1024, 1024};

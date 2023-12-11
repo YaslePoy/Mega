@@ -10,8 +10,8 @@ public static class OmegaEngine
     [DllImport(Library)]
     public static extern int Add(int a, int b);
 
-    [DllImport(Library, CharSet = CharSet.Ansi)]
-    public static extern void InitWindow(uint width, uint height, string name);
+    [DllImport(Library)]
+    public static extern void InitWindow(uint width, uint height);
 
     [DllImport(Library)]
     public static extern void Start();

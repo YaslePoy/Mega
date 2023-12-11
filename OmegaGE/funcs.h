@@ -9,7 +9,7 @@
 
 extern "C" {
 int lib Add(int a, int b);
-void lib InitWindow(uint32_t width, uint32_t height, char* name);
+void lib InitWindow(uint32_t width, uint32_t height);
 void lib Start();
 void lib Close();
 int lib GetWindowCloseState();

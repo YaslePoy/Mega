@@ -234,26 +234,11 @@
     <None Update="Shaders\crist.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Shaders\cursor.vert">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <None Update="Shaders\shaderAltVk.frag">
+      <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Update="Shaders\cursor.frag">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Shaders\shaderDeb.frag">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Shaders\shader.frag">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Shaders\shader.vert">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Shaders\ui.frag">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Shaders\ui.vert">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <None Update="Shaders\shaderAltVk.vert">
+      <DeploymentContent>true</DeploymentContent>
     </None>
   </ItemGroup>
 
@@ -262,5 +247,18 @@
       <DeploymentContent>false</DeploymentContent>
     </Content>
   </ItemGroup>
+
+  <ItemGroup>
+    <Text Include="Shaders\main.frag">
+      <DeploymentContent>true</DeploymentContent>
+    </Text>
+    <Text Include="Shaders\main.vert">
+      <DeploymentContent>true</DeploymentContent>
+    </Text>
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="python ShaderPrepair.py $(TargetDir)" />
+  </Target>
 
 </Project>

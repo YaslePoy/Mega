@@ -7,11 +7,10 @@ int Add(int a, int b)
     return a + b + 3;
 }
 
-void InitWindow(uint32_t width, uint32_t height, char* name)
+void InitWindow(uint32_t width, uint32_t height)
 {
     viewport.width = width;
     viewport.height = height;
-    viewport.name = name;
 }
 
 void Start()

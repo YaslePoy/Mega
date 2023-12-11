@@ -16,19 +16,19 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Text Include="shaders\shader.frag">
+      <Text Include="shaders\shaderVk.frag">
         <DeploymentContent>true</DeploymentContent>
       </Text>
-      <Text Include="shaders\shader.vert">
+      <Text Include="shaders\shaderVk.vert">
         <DeploymentContent>true</DeploymentContent>
       </Text>
     </ItemGroup>
 
     <ItemGroup>
-      <None Update="shaders\shaderAlt.frag">
+      <None Update="shaders\shaderAltVk.frag">
         <DeploymentContent>true</DeploymentContent>
       </None>
-      <None Update="shaders\shaderAlt.vert">
+      <None Update="shaders\shaderAltVk.vert">
         <DeploymentContent>true</DeploymentContent>
       </None>
       <None Update="0.png">
