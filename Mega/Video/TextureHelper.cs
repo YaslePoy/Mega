@@ -4,8 +4,8 @@ namespace Mega.Video
 {
     public static class TextureHelper
     {
-        public static Dictionary<string,UVMap> Maps = new ();
-        public static List<Texture> Textures = new ();
+        public static Dictionary<string, UVMap> Maps = new();
+        public static List<Texture> Textures = new();
 
         public static void Load()
         {
@@ -77,7 +77,7 @@ namespace Mega.Video
                     var config = new Vector2i(int.Parse(size[0]), int.Parse(size[1]));
                     Maps.Add($"{packId}:{key}", Maps[map]);
                     Textures.Add(new Texture($"{string.Join('/', packPath.Split('/')[..^1])}/{img}",
-                        Maps[map]){ Size = config});
+                        Maps[map]) { Size = config });
                 }
             }
         }
@@ -85,7 +85,7 @@ namespace Mega.Video
         public static byte[,][] AssemblevaАtlas()
         {
             var placedUnits = new List<Vector2i>();
-            
+
             var sorted = Textures.OrderBy(i => i.Size.X * i.Size.Y).Reverse().ToList();
 
             foreach (var tex in sorted)
@@ -93,6 +93,7 @@ namespace Mega.Video
                 int maxSq = int.MaxValue;
                 var selectedPos = new Vector2i();
                 var currentSize = GetOutSize(placedUnits);
+
                 void trySet(int i, int j)
                 {
                     var tempTexture = new List<Vector2i>(placedUnits);
@@ -119,26 +120,47 @@ namespace Mega.Video
                     maxSq = curSize.X * curSize.Y;
                     selectedPos = (i, j);
                 }
-                
+
+                bool outsidePlace(int x, int y)
+                {
+                    tex.Location.X = x;
+                    tex.Location.Y = y;
+                    var moved = tex.GetUnits();
+                    selectedPos = (x, y);
+                    return moved.Any(i => placedUnits.Contains(i));
+
+                }
+
                 if (placedUnits.Count != 0)
                 {
-                    if (currentSize.X > currentSize.Y)
-                        for (int i = 0; i < currentSize.X + 1; i++)
-                        {
-                            for (int j = 0; j < currentSize.Y + 1; j++)
-                            {
-                                trySet(i, j);
-                            }
-                        }
-                    else
-                        for (int j = 0; j < currentSize.Y + 1; j++)
-                        {
+                    if (placedUnits.Count != currentSize.X * currentSize.Y)
+                        if (currentSize.X > currentSize.Y)
                             for (int i = 0; i < currentSize.X + 1; i++)
                             {
-                                trySet(i, j);
+                                for (int j = 0; j < currentSize.Y + 1; j++)
+                                {
+                                    trySet(i, j);
+                                }
                             }
-                        }
+                        else
+                            for (int j = 0; j < currentSize.Y + 1; j++)
+                            {
+                                for (int i = 0; i < currentSize.X + 1; i++)
+                                {
+                                    trySet(i, j);
+                                }
+                            }
+                    else
+                    {
+                        if (currentSize.X > currentSize.Y)
+                            for (int i = 0; outsidePlace(0, i); i++)
+                                ;
+                        else
+                            for (int i = 0; outsidePlace(i, 0); i++)
+                                ;
+                    }
                 }
+
                 tex.Location.X = selectedPos.X;
                 tex.Location.Y = selectedPos.Y;
 
@@ -155,6 +177,7 @@ namespace Mega.Video
 
             return rawAtlas;
         }
+
         static Vector2i GetOutSize(List<Vector2i> outTexture)
         {
             var res = new Vector2i();
@@ -168,6 +191,7 @@ namespace Mega.Video
 
             return res + Vector2i.One;
         }
+
         public static Vector2[] GetTextureCoords(int id, int side)
         {
             // var map = TotalUVMaps[id];
@@ -183,7 +207,7 @@ namespace Mega.Video
         public Vector2[][] Sides;
         public Vector2[] this[int side] => Sides[side];
     }
-    
+
     public static class UVParser
     {
         static Vector2 parseVec(string vec)

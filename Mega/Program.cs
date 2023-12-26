@@ -33,7 +33,8 @@ namespace Mega
 
             TextureHelper.Load();
             var atlas = TextureHelper.AssemblevaАtlas();
-            var toSend = atlas.Cast<byte[]>().SumList();
+            
+            var toSend = atlas.Cast<byte[]>().ToList().ReplaceNulls([0, 0 ,0 ,255]).SumList();
 
             var rs = new RenderSurface(Block.MeshSides[1],
                 [new(1, 1), new(1, 0), Vector2.Zero, new(0, 1)],

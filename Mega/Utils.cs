@@ -30,6 +30,19 @@ namespace Mega
             }
             return ret;
         }
+        
+        public static T[] ReplaceNulls<T>(this IEnumerable<T> list, T replace)
+        {
+            var enumerable = list.ToArray();
+            for (int i = 0; i < enumerable.Count(); i++)
+            {
+                if (enumerable[i] is null)
+                    enumerable[i] = replace;
+            }
+
+            return enumerable;
+        }
+        
         public const float G = 30f;
         public static WorldPath ToWorldPath(this Vector3i globalPosition)
         {
