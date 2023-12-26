@@ -1,4 +1,5 @@
-﻿using Mega.Video;
+﻿using System.Reflection;
+using Mega.Video;
 using OpenTK.Mathematics;
 
 namespace Mega.Game.Blocks
@@ -20,12 +21,13 @@ namespace Mega.Game.Blocks
             new[] { new (0, 0, 0), new (1, 0, 0), new (1, 0, 1), new Vector3(0, 0, 1) },
             new[] { new (0, 0, 0), new (1, 0, 0), new (1, 1, 0), new Vector3(0, 1, 0) }
         };
-        public readonly int IDCode;
+        public readonly int Id;
+        public readonly string Code;
         public readonly Vector3i Position;
 
-        public Block(Vector3i pos, int id)
+        public Block(Vector3i pos, int id, string code)
         {
-            IDCode = id;
+            Id = id;
             Position = pos;
             var fastPosition = Position.ToFastVector();
             Adjacent = new Vector3i[6];
@@ -35,6 +37,7 @@ namespace Mega.Game.Blocks
             Adjacent[3] = Utils.FastAdd(Neibs[3], fastPosition);
             Adjacent[4] = Utils.FastAdd(Neibs[4], fastPosition);
             Adjacent[5] = Utils.FastAdd(Neibs[5], fastPosition);
+            Code = Assembly.GetCallingAssembly().GetName().Name + ":" + code;
         }
 
         public abstract List<RenderSurface> GetDrawingMesh(UnitedChunk area);
@@ -48,7 +51,7 @@ namespace Mega.Game.Blocks
         }
         public virtual BinaryInt GetSaveData()
         {
-            return new BinaryInt(IDCode + 2, 4);
+            return new BinaryInt(Id + 2, 4);
         }
     }
 }

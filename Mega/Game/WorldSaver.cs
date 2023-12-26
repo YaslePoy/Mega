@@ -21,7 +21,7 @@ namespace Mega.Game
                 for (int i = 0; i < count;)
                 {
                     var block = stringed[i++];
-                    while (i < count && stringed[i].IDCode == block.IDCode && streak != byte.MaxValue)
+                    while (i < count && stringed[i].Id == block.Id && streak != byte.MaxValue)
                     {
                         streak++;
                         i++;

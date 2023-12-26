@@ -27,31 +27,34 @@ namespace Mega
             // {
             //     window.Run();
             // }
-            
-            
+
+
             Console.WriteLine("Hello Vulkan!");
 
-            
-            var rs = new RenderSurface(Block.MeshSides[4].Reverse().Select(i => i - Vector3.One / 2).ToArray(), new[] { Vector2.Zero, new(0, 1), new(1, 1), new(1, 0) },
-                Vector3.Zero, Vector3.UnitZ, 1);
+            TextureHelper.Load();
+            var atlas = TextureHelper.AssemblevaАtlas();
+            var toSend = atlas.Cast<byte[]>().SumList();
+
+            var rs = new RenderSurface(Block.MeshSides[1],
+                [new(1, 1), new(1, 0), Vector2.Zero, new(0, 1)],
+                new Vector3(-0.5f, -1, -0.5f), Vector3.UnitY, 1);
 
 
+            StoneBlock sb = new StoneBlock(Vector3i.Zero);
             var arr = new List<RenderSurface> { rs };
+
+
+             // for set first pixel red
+            toSend[1] = toSend[2] = 0;
             
-            ImageResult image;
-            using (Stream stream = File.OpenRead("Resources/0.png"))
-            {
-                image = ImageResult.FromStream(stream, ColorComponents.RedGreenBlueAlpha);
-            }
-
-            OmegaEngine.SetMainRenderTexture(image.Data, image.Width, image.Height);
-
+            OmegaEngine.SetMainRenderTexture(toSend, atlas.GetLength(1), atlas.GetLength(0));
+            
             OmegaEngine.InitWindow(1000, 700);
             OmegaEngine.Start();
 
             OmegaEngine.SetMeshShaderData(arr.ToArray(), 1);
 
-            
+
             while (OmegaEngine.GetWindowCloseState() == 0)
             {
                 OmegaEngine.UpdateKeyboardState();

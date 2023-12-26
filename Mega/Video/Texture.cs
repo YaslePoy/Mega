@@ -1,5 +1,6 @@
 ﻿using Mega.Video.Shading;
 using OpenTK.Graphics.OpenGL;
+using OpenTK.Mathematics;
 using StbImageSharp;
 using PixelFormat = OpenTK.Graphics.OpenGL.PixelFormat;
 
@@ -8,9 +9,30 @@ namespace Mega.Video
     // A helper class, much like Shader, meant to simplify loading textures.
     public class Texture
     {
+        public const int UnitSize = 16;
         public readonly int Handle;
         public int width, height;
         public byte[] pixels;
+        public readonly string FilePath;
+        private UVMap map;
+        public Vector2i Size;
+        public Vector2i Location;
+
+        public Vector2i[] GetUnits()
+        {
+            var result = new Vector2i[Size.X * Size.Y];
+            int offset = 0;
+            for (int i = 0; i < Size.X; i++)
+            {
+                for (int j = 0; j < Size.Y; j++)
+                {
+                    result[offset++] = new Vector2i(i, j) + Location;
+                }
+            }
+
+            return result;
+        }
+
         public static Texture LoadFromFile(string path)
         {
             // Generate handle
@@ -25,12 +47,14 @@ namespace Mega.Video
             // OpenGL has it's texture origin in the lower left corner instead of the top left corner,
             // so we tell StbImageSharp to flip the image when loading.
             StbImage.stbi_set_flip_vertically_on_load(1);
+
             // Here we open a stream to the file and pass it to StbImageSharp to load.
             ImageResult i = null;
             using (Stream stream = File.OpenRead(path))
             {
                 ImageResult image = ImageResult.FromStream(stream, ColorComponents.RedGreenBlueAlpha);
                 i = image;
+
                 // Now that our pixels are prepared, it's time to generate a texture. We do this with GL.TexImage2D.
                 // Arguments:
                 //   The type of texture we're generating. There are various different types of textures, but the only one we need right now is Texture2D.
@@ -42,7 +66,8 @@ namespace Mega.Video
                 //   The format of the pixels, explained above. Since we loaded the pixels as RGBA earlier, we need to use PixelFormat.Rgba.
                 //   Data type of the pixels.
                 //   And finally, the actual pixels.
-                GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, image.Width, image.Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, image.Data);
+                GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, image.Width, image.Height, 0,
+                    PixelFormat.Rgba, PixelType.UnsignedByte, image.Data);
             }
 
             // Now that our texture is loaded, we can set a few settings to affect how the image appears on rendering.
@@ -52,8 +77,11 @@ namespace Mega.Video
             // You could also use (amongst other options) Nearest, which just grabs the nearest pixel, which makes the texture look pixelated if scaled too far.
             // NOTE: The default settings for both of these are LinearMipmap. If you leave these as default but don't generate mipmaps,
             // your image will fail to render at all (usually resulting in pure black instead).
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.NearestMipmapNearest);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter,
+                (int)TextureMinFilter.NearestMipmapNearest);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter,
+                (int)TextureMagFilter.Nearest);
+
             // Now, set the wrapping mode. S is for the X axis, and T is for the Y axis.
             // We set this to Repeat so that textures will repeat when wrapped. Not demonstrated here since the texture coordinates exactly match
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
@@ -77,31 +105,56 @@ namespace Mega.Video
             GL.ActiveTexture(TextureUnit.Texture0);
             GL.BindTexture(TextureTarget.Texture2D, Handle);
 
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.NearestMipmapNearest);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter,
+                (int)TextureMinFilter.NearestMipmapNearest);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter,
+                (int)TextureMagFilter.Nearest);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
-            //GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
 
+            //GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
         }
+
         public Texture(Image img)
         {
             Handle = GL.GenTexture();
             GL.ActiveTexture(TextureUnit.Texture0);
             GL.BindTexture(TextureTarget.Texture2D, Handle);
 
-            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, img.Width, img.Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, img.Data);
+            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, img.Width, img.Height, 0,
+                PixelFormat.Rgba, PixelType.UnsignedByte, img.Data);
 
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.NearestMipmapNearest);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter,
+                (int)TextureMinFilter.NearestMipmapNearest);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter,
+                (int)TextureMagFilter.Nearest);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
             GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
-
         }
+
         public Texture(int glHandle)
         {
             Handle = glHandle;
+        }
+
+        public void Load()
+        {
+            ImageResult image;
+            using (Stream stream = File.OpenRead(FilePath))
+            {
+                image = ImageResult.FromStream(stream, ColorComponents.RedGreenBlueAlpha);
+            }
+
+            pixels = image.Data;
+            width = image.Width;
+            height = image.Height;
+        }
+
+        public Texture(string path, UVMap map)
+        {
+            FilePath = path;
+            this.map = map;
         }
 
         // Activate texture
@@ -113,10 +166,26 @@ namespace Mega.Video
             GL.ActiveTexture(unit);
             GL.BindTexture(TextureTarget.Texture2D, Handle);
         }
+
         public void Update()
         {
             Use(TextureUnit.Texture0);
-            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, width, height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, pixels);
+            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, width, height, 0, PixelFormat.Rgba,
+                PixelType.UnsignedByte, pixels);
+        }
+
+        public void PlacePixels(byte[,][] rawImg)
+        {
+            var startPosition = Location * UnitSize;
+            var chunked = pixels.Chunk(4).ToList();
+            for (int h = 0, c = 0; h < height; h++)
+            {
+                for (int w = 0; w < width; w++, c++)
+                {
+                    var coords = (new Vector2i(w, h) + startPosition).Yx;
+                    rawImg[coords.X, coords.Y] = chunked[c];
+                }
+            }
         }
     }
 }

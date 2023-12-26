@@ -1,0 +1,20 @@
+﻿uvTemplate all
+0*0 1*0 1*1 0*1
+link 0
+link 0
+link 0
+link 0
+link 0
+uvTemplateEnd
+
+uvTemplate verticalHorizontal
+0,5*0 1*0 1*1 0,5*1
+0*0 0,5*0 0,5*1 0*1
+link 0
+link 0
+link 1
+link 0
+uvTemplateEnd
+
+bind stoneBlock all stone.png 1*1
+bind birchBlock verticalHorizontal birch.png 2*1

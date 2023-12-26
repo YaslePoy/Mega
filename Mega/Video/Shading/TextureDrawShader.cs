@@ -61,13 +61,13 @@ namespace Mega.Video.Shading
             Projection = world.Player.Cam.GetProjectionMatrix();
             View = world.Player.Cam.GetViewMatrix();
             int offset = 0;
-            foreach (var tex in _drawOrder)
-            {
-                RenderTexture = TextureHelper.TotalUVMaps[tex.Key].tex;
-                var currentDrawArray = tex.Value;
-                GL.DrawElements(PrimitiveType.Triangles, currentDrawArray, DrawElementsType.UnsignedInt, offset * sizeof(uint));
-                offset += currentDrawArray;
-            }
+            // foreach (var tex in _drawOrder)
+            // {
+            //     RenderTexture = TextureHelper.TotalUVMaps[tex.Key].tex;
+            //     var currentDrawArray = tex.Value;
+            //     GL.DrawElements(PrimitiveType.Triangles, currentDrawArray, DrawElementsType.UnsignedInt, offset * sizeof(uint));
+            //     offset += currentDrawArray;
+            // }
             frames++;
         }
     }

@@ -4,144 +4,195 @@ namespace Mega.Video
 {
     public static class TextureHelper
     {
-        public static Vector2[][][] TextureCoordiantes;
-        public static Dictionary<string, UVMap> BaseMaps;
-        public static List<(Texture tex, UVMap uv)> TotalUVMaps;
-        public static void LoadUV()
+        public static Dictionary<string,UVMap> Maps = new ();
+        public static List<Texture> Textures = new ();
+
+        public static void Load()
         {
-            //TextureCoordiantes = new Vector2[2][][];
-            //var cubeCoords = new Vector2[2][];
-            //var vertical = new Vector2[] { Vector2.Zero, new Vector2(0.5f, 0), new Vector2(0.5f, 1), new Vector2(0, 1) };
-            //var horizontal = vertical.Select(i => i + Vector2.UnitX / 2).ToArray();
-            //cubeCoords[0] = vertical;
-            //cubeCoords[1] = horizontal;
-            //TextureCoordiantes[0] = cubeCoords;
-            //TextureCoordiantes[1] = new Vector2[][]{ vertical };
-            BaseMaps = new Dictionary<string, UVMap>();
-            var dir = Directory.GetFiles("Resources");
-            List<string> textureFiles = new List<string>();
-            foreach (var f in dir)
+            LoadResoucePack("Resources/Mega.rp");
+
+            // BaseMaps = new Dictionary<string, UVMap>();
+            // var dir = Directory.GetFiles("Resources");
+            // List<string> textureFiles = new List<string>();
+            // foreach (var f in dir)
+            // {
+            //     var name = f.Substring(10);
+            //     if (name.EndsWith(".png"))
+            //     {
+            //         textureFiles.Add(f);
+            //         continue;
+            //     }
+            //
+            //     if (!char.IsDigit(name[0]))
+            //     {
+            //         var currentMap = UVParser.ParseFile(f);
+            //         BaseMaps.Add(name.Substring(5, name.Length - 8), currentMap);
+            //     }
+            // }
+            //
+            // TotalUVMaps = new List<(Texture, UVMap)>();
+            // foreach (var texture in textureFiles)
+            // {
+            //     var loadTexture = Texture.LoadFromFile(texture);
+            //     var map = UVParser.ParseFile(texture.Replace(".png", ".uv"));
+            //     TotalUVMaps.Add((loadTexture, map));
+            // }
+        }
+
+        static void LoadResoucePack(string packPath)
+        {
+            var text = File.ReadAllLines(packPath);
+            var packId = packPath.Split(new[] { '/', '.' })[^2];
+            for (int i = 0; i < text.Length;)
             {
-                var name = f.Substring(10);
-                if (name.EndsWith(".png"))
+                string line = text[i++];
+                if (line.StartsWith("uvTemplate"))
                 {
-                    textureFiles.Add(f);
-                    continue;
+                    var splited = line.Split(' ');
+                    var localMap = new UVMap() { Name = splited[1] };
+
+                    line = text[i++];
+                    List<Vector2[]> sides = new List<Vector2[]>();
+                    while (line != "uvTemplateEnd")
+                    {
+                        Vector2[] points;
+                        if (!line.StartsWith("link"))
+                            points = UVParser.parseArray(line);
+                        else
+                            points = sides[int.Parse(line.Substring(5))];
+                        sides.Add(points);
+                        line = text[i++];
+                    }
+
+                    localMap.Sides = sides.ToArray();
+                    Maps.Add(localMap.Name, localMap);
                 }
-                if (!char.IsDigit(name[0]))
+                else if (line.StartsWith("bind"))
                 {
-                    var currentMap = UVParser.ParseFile(f);
-                    BaseMaps.Add(name.Substring(5, name.Length - 8), currentMap);
+                    var splited = line.Split(' ');
+                    var key = splited[1];
+                    var map = splited[2];
+                    var img = splited[3];
+                    var size = splited[4].Split('*');
+                    var config = new Vector2i(int.Parse(size[0]), int.Parse(size[1]));
+                    Maps.Add($"{packId}:{key}", Maps[map]);
+                    Textures.Add(new Texture($"{string.Join('/', packPath.Split('/')[..^1])}/{img}",
+                        Maps[map]){ Size = config});
                 }
-            }
-            TotalUVMaps = new List<(Texture, UVMap)>();
-            foreach (var texture in textureFiles)
-            {
-                var loadTexture = Texture.LoadFromFile(texture);
-                var map = UVParser.ParseFile(texture.Replace(".png", ".uv"));
-                TotalUVMaps.Add((loadTexture, map));
             }
         }
 
+        public static byte[,][] AssemblevaАtlas()
+        {
+            var placedUnits = new List<Vector2i>();
+            
+            var sorted = Textures.OrderBy(i => i.Size.X * i.Size.Y).Reverse().ToList();
+
+            foreach (var tex in sorted)
+            {
+                int maxSq = int.MaxValue;
+                var selectedPos = new Vector2i();
+                var currentSize = GetOutSize(placedUnits);
+                void trySet(int i, int j)
+                {
+                    var tempTexture = new List<Vector2i>(placedUnits);
+                    tex.Location.X = i;
+                    tex.Location.Y = j;
+                    var moved = tex.GetUnits();
+                    bool next = false;
+                    foreach (var unit in moved)
+                    {
+                        if (tempTexture.Contains(unit))
+                        {
+                            next = true;
+                            break;
+                        }
+                    }
+
+                    if (next)
+                        return;
+
+                    tempTexture.AddRange(moved);
+                    var curSize = GetOutSize(tempTexture);
+                    if (curSize.X * curSize.Y >= maxSq)
+                        return;
+                    maxSq = curSize.X * curSize.Y;
+                    selectedPos = (i, j);
+                }
+                
+                if (placedUnits.Count != 0)
+                {
+                    if (currentSize.X > currentSize.Y)
+                        for (int i = 0; i < currentSize.X + 1; i++)
+                        {
+                            for (int j = 0; j < currentSize.Y + 1; j++)
+                            {
+                                trySet(i, j);
+                            }
+                        }
+                    else
+                        for (int j = 0; j < currentSize.Y + 1; j++)
+                        {
+                            for (int i = 0; i < currentSize.X + 1; i++)
+                            {
+                                trySet(i, j);
+                            }
+                        }
+                }
+                tex.Location.X = selectedPos.X;
+                tex.Location.Y = selectedPos.Y;
+
+                placedUnits.AddRange(tex.GetUnits());
+            }
+
+            var size = (GetOutSize(placedUnits) * Texture.UnitSize).Yx;
+            var rawAtlas = new byte[size.X, size.Y][];
+            foreach (var tex in Textures)
+            {
+                tex.Load();
+                tex.PlacePixels(rawAtlas);
+            }
+
+            return rawAtlas;
+        }
+        static Vector2i GetOutSize(List<Vector2i> outTexture)
+        {
+            var res = new Vector2i();
+            foreach (var unit in outTexture)
+            {
+                if (res.X < unit.X)
+                    res.X = unit.X;
+                if (res.Y < unit.Y)
+                    res.Y = unit.Y;
+            }
+
+            return res + Vector2i.One;
+        }
         public static Vector2[] GetTextureCoords(int id, int side)
         {
-            var map = TotalUVMaps[id];
-            var pts = map.uv.GetSide(side);
-            return pts;
+            // var map = TotalUVMaps[id];
+            // var pts = map.uv.GetSide(side);
+            // return pts;
+            return new Vector2[0];
         }
     }
+
     public class UVMap
     {
-        UVSide[] sides;
-        public void SetSides(UVSide[] sides) => this.sides = sides;
-        public virtual Vector2[] GetSide(int side)
-        {
-            return sides[side].Get();
-        }
+        public string Name;
+        public Vector2[][] Sides;
+        public Vector2[] this[int side] => Sides[side];
     }
-
-    public class LinkMap : UVMap
-    {
-        string link;
-        public LinkMap() : base()
-        {
-            link = "all";
-        }
-        public LinkMap(string link) : base()
-        {
-            this.link = link;
-        }
-        public override Vector2[] GetSide(int side)
-        {
-            return TextureHelper.BaseMaps[link].GetSide(side);
-        }
-    }
-    public class UVSide
-    {
-        public UVSide(UVMap map)
-        {
-            this.map = map;
-        }
-        public void SetPoints(Vector2[] points)
-        {
-            Points = points;
-        }
-        public Vector2[] Points;
-        protected UVMap map;
-        public virtual Vector2[] Get()
-        {
-            return Points;
-        }
-    }
-
-    public class LinkSide : UVSide
-    {
-        int link;
-        public LinkSide(UVMap map) : base(map)
-        {
-        }
-
-        public LinkSide(UVMap map, int link) : base(map)
-        {
-            this.link = link;
-        }
-
-        public override Vector2[] Get()
-        {
-            return map.GetSide(link);
-        }
-    }
+    
     public static class UVParser
     {
-        public static UVMap ParseFile(string path)
-        {
-            var map = new UVMap();
-            var text = File.ReadAllLines(path);
-            if (text.Length == 1 && text[0].StartsWith("use"))
-                return new LinkMap(text[0].Substring(4));
-            var sides = new List<UVSide>();
-            foreach (var line in text)
-            {
-                if (line.StartsWith("link"))
-                {
-                    sides.Add(new LinkSide(map, int.Parse(line.Substring(5))));
-                }
-                else
-                {
-                    var pts = parseArray(line);
-                    sides.Add(new UVSide(map) { Points = pts });
-                }
-            }
-            map.SetSides(sides.ToArray());
-            return map;
-        }
         static Vector2 parseVec(string vec)
         {
             var sp = vec.Split('*');
             return new Vector2(float.Parse(sp[0]), float.Parse(sp[1]));
         }
 
-        static Vector2[] parseArray(string array)
+        public static Vector2[] parseArray(string array)
         {
             var sp = array.Split(" ");
             return sp.Select(parseVec).ToArray();

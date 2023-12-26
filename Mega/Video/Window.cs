@@ -52,7 +52,7 @@ public class Window : GameWindow
     protected override void OnLoad()
     {
         base.OnLoad();
-        TextureHelper.LoadUV();
+        TextureHelper.Load();
 
         //this.Location = new Vector2i(100, 100);
         GLInit();

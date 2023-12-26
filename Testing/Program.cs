@@ -1,6 +1,7 @@
 ﻿using System.Runtime.Intrinsics;
 using Mega;
 using OpenTK.Mathematics;
+using StbImageSharp;
 
 namespace Testing
 {
@@ -8,12 +9,13 @@ namespace Testing
     {
         static void Main(string[] args)
         {
-            Span<int> x = stackalloc int[]{1, 2, 3, 4, 5};
-            var ls = new List<int>();
-            ls.AddRange(x);
-            x[0] = 5;
-            ls.AddRange(x);
+            ImageResult image;
+            using (Stream stream = File.OpenRead(@"C:\Users\Mimm\Downloads\readTest.png"))
+            {
+                image = ImageResult.FromStream(stream, ColorComponents.RedGreenBlueAlpha);
+            }
 
+            Console.WriteLine(image.Data);
         }
     }
 }

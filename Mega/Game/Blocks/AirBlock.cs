@@ -10,7 +10,7 @@ namespace Mega.Game.Blocks
 {
     internal class AirBlock : Block
     {
-        public AirBlock(Vector3i pos) : base(pos, -1)
+        public AirBlock(Vector3i pos) : base(pos, -1, "air")
         {
 
         }

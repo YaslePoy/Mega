@@ -10,7 +10,7 @@ namespace Mega.Game.Blocks
 {
     public abstract class CubicBlock : Block
     {
-        public CubicBlock(Vector3i pos, int id) : base(pos, id)
+        public CubicBlock(Vector3i pos, int id, string code) : base(pos, id, code)
         {
         }
 
@@ -23,7 +23,7 @@ namespace Mega.Game.Blocks
                 if (area.IsMember(Adjacent[i]))
                     continue;
                 var surface = new RenderSurface(MeshSides[i], TextureHelper.GetTextureCoords(/*IDCode*/0, i), Position,
-                    Neibs[i], IDCode);
+                    Neibs[i], Id);
                 view.Add(surface);
                 sides.Add(i);
             }
