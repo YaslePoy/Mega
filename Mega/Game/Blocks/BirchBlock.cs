@@ -9,7 +9,7 @@ namespace Mega.Game.Blocks
 {
     internal class BirchBlock : CubicBlock
     {
-        public BirchBlock(Vector3i pos) : base(pos, 1, "birch")
+        public BirchBlock(Vector3i pos) : base(pos, 1, "birchBlock")
         {
         }
     }

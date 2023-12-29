@@ -1,4 +1,5 @@
-﻿using Mega.Game.Blocks;
+﻿using Mega.Game;
+using Mega.Game.Blocks;
 using Mega.Video;
 using OpenTK.Mathematics;
 using StbImageSharp;
@@ -33,30 +34,25 @@ namespace Mega
 
             TextureHelper.Load();
             Atlas.Main.Assemble();
+ 
 
-            var maps = Atlas.Main["Mega:stoneBlock", 0];
-
-            var b = maps;
-            Console.WriteLine(b[0]);
-            var rs = new RenderSurface(Block.MeshSides[1],
-                /*[new(1, 1), new(1, 0), Vector2.Zero, new(0, 1)]*/Atlas.Main["Mega:birchBlock", 1],
+            var p1 = new RenderSurface(Block.MeshSides[1], Atlas.Main["Mega:birchBlock", 0],
+                new Vector3(-0.5f, -1, -0.5f), Vector3.UnitY, 1);
+            var p2 = new RenderSurface(Block.MeshSides[1], Atlas.Main["Mega:birchBlock", 0],
                 new Vector3(-0.5f, -1, -0.5f), Vector3.UnitY, 1);
 
-
-            StoneBlock sb = new StoneBlock(Vector3i.Zero);
-            var arr = new List<RenderSurface> { rs };
-
-
+            var sb = new BirchBlock(Vector3i.Zero);
+            var arr = new List<RenderSurface> { p1, p2};
+            arr = sb.GetDrawingMesh(new UnitedChunk());
+            
             var mainTex = Atlas.Main.Image;
-             // for set first pixel red
-            mainTex.data[1] = mainTex.data[2] = 0;
             
             OmegaEngine.SetMainRenderTexture(mainTex.data, mainTex.X, mainTex.Y);
             
             OmegaEngine.InitWindow(1000, 700);
             OmegaEngine.Start();
 
-            OmegaEngine.SetMeshShaderData(arr.ToArray(), 1);
+            OmegaEngine.SetMeshShaderData(arr.ToArray(), (uint)arr.Count);
 
 
             while (OmegaEngine.GetWindowCloseState() == 0)

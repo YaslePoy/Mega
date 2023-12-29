@@ -14,7 +14,7 @@ namespace Mega.Game.Blocks
             -Vector3i.UnitX, -Vector3i.UnitY, -Vector3i.UnitZ
         };
         public static readonly Vector3[][] MeshSides = {
-            new[] { new (1, 0, 0), new (1, 0, 1), new (1, 1, 1), new Vector3(1, 1, 0) },
+            new[] { new (1, 1, 0), new (1, 1, 1), new (1, 0, 1), new Vector3(1, 0, 0) },
             new[] { new (0, 1, 0), new (0, 1, 1), new (1, 1, 1), new Vector3(1, 1, 0) },
             new[] { new (0, 0, 1), new (1, 0, 1), new (1, 1, 1), new Vector3(0, 1, 1) },
             new[] { new (0, 0, 0), new (0, 0, 1), new (0, 1, 1), new Vector3(0, 1, 0) },
