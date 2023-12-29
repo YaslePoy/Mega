@@ -69,7 +69,7 @@ namespace Mega.Video.Shading
             GL.VertexAttribPointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
             GL.BufferData(BufferTarget.ArrayBuffer, _vertices.Length * sizeof(float), _vertices, BufferUsageHint.DynamicDraw);
             GL.BufferData(BufferTarget.ElementArrayBuffer, _indices.Length * sizeof(float), _indices, BufferUsageHint.DynamicDraw);
-            tx = /*Texture.LoadFromFile("Shaders\\crist.png")*/new Texture(img);
+            // tx = /*Texture.LoadFromFile("Shaders\\crist.png")*/new Texture(img);
         }
         public override void Run(World world)
         {

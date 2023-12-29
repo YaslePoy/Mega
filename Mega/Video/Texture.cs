@@ -14,9 +14,10 @@ namespace Mega.Video
         public int width, height;
         public byte[] pixels;
         public readonly string FilePath;
-        private UVMap map;
+        public UVMap map;
         public Vector2i Size;
         public Vector2i Location;
+        public readonly string Id;
 
         public Vector2i[] GetUnits()
         {
@@ -121,8 +122,8 @@ namespace Mega.Video
             GL.ActiveTexture(TextureUnit.Texture0);
             GL.BindTexture(TextureTarget.Texture2D, Handle);
 
-            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, img.Width, img.Height, 0,
-                PixelFormat.Rgba, PixelType.UnsignedByte, img.Data);
+            // GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, img.Width, img.Height, 0,
+            //     PixelFormat.Rgba, PixelType.UnsignedByte, img.Data);
 
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter,
                 (int)TextureMinFilter.NearestMipmapNearest);
@@ -151,10 +152,11 @@ namespace Mega.Video
             height = image.Height;
         }
 
-        public Texture(string path, UVMap map)
+        public Texture(string path, UVMap map, string id)
         {
             FilePath = path;
             this.map = map;
+            this.Id = id;
         }
 
         // Activate texture
@@ -186,6 +188,11 @@ namespace Mega.Video
                     rawImg[coords.X, coords.Y] = chunked[c];
                 }
             }
+        }
+
+        public UVMap GetTransformed(Vector2i total)
+        {
+            return map.Transform(Location, Size, total);
         }
     }
 }

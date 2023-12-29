@@ -32,12 +32,14 @@ namespace Mega
             Console.WriteLine("Hello Vulkan!");
 
             TextureHelper.Load();
-            var atlas = TextureHelper.AssemblevaАtlas();
-            
-            var toSend = atlas.Cast<byte[]>().ToList().ReplaceNulls([0, 0 ,0 ,255]).SumList();
+            Atlas.Main.Assemble();
 
+            var maps = Atlas.Main["Mega:stoneBlock", 0];
+
+            var b = maps;
+            Console.WriteLine(b[0]);
             var rs = new RenderSurface(Block.MeshSides[1],
-                [new(1, 1), new(1, 0), Vector2.Zero, new(0, 1)],
+                /*[new(1, 1), new(1, 0), Vector2.Zero, new(0, 1)]*/Atlas.Main["Mega:birchBlock", 1],
                 new Vector3(-0.5f, -1, -0.5f), Vector3.UnitY, 1);
 
 
@@ -45,10 +47,11 @@ namespace Mega
             var arr = new List<RenderSurface> { rs };
 
 
+            var mainTex = Atlas.Main.Image;
              // for set first pixel red
-            toSend[1] = toSend[2] = 0;
+            mainTex.data[1] = mainTex.data[2] = 0;
             
-            OmegaEngine.SetMainRenderTexture(toSend, atlas.GetLength(1), atlas.GetLength(0));
+            OmegaEngine.SetMainRenderTexture(mainTex.data, mainTex.X, mainTex.Y);
             
             OmegaEngine.InitWindow(1000, 700);
             OmegaEngine.Start();

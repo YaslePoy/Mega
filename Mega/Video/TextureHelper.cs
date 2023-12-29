@@ -5,7 +5,7 @@ namespace Mega.Video
     public static class TextureHelper
     {
         public static Dictionary<string, UVMap> Maps = new();
-        public static List<Texture> Textures = new();
+        public static List<Texture> _textures = new();
 
         public static void Load()
         {
@@ -37,6 +37,8 @@ namespace Mega.Video
             //     var map = UVParser.ParseFile(texture.Replace(".png", ".uv"));
             //     TotalUVMaps.Add((loadTexture, map));
             // }
+
+            Atlas.Main = new Atlas(_textures);
         }
 
         static void LoadResoucePack(string packPath)
@@ -76,121 +78,12 @@ namespace Mega.Video
                     var size = splited[4].Split('*');
                     var config = new Vector2i(int.Parse(size[0]), int.Parse(size[1]));
                     Maps.Add($"{packId}:{key}", Maps[map]);
-                    Textures.Add(new Texture($"{string.Join('/', packPath.Split('/')[..^1])}/{img}",
-                        Maps[map]) { Size = config });
+                    _textures.Add(new Texture($"{string.Join('/', packPath.Split('/')[..^1])}/{img}",
+                        Maps[map], $"{packId}:{key}") { Size = config });
                 }
             }
         }
-
-        public static byte[,][] AssemblevaАtlas()
-        {
-            var placedUnits = new List<Vector2i>();
-
-            var sorted = Textures.OrderBy(i => i.Size.X * i.Size.Y).Reverse().ToList();
-
-            foreach (var tex in sorted)
-            {
-                int maxSq = int.MaxValue;
-                var selectedPos = new Vector2i();
-                var currentSize = GetOutSize(placedUnits);
-
-                void trySet(int i, int j)
-                {
-                    var tempTexture = new List<Vector2i>(placedUnits);
-                    tex.Location.X = i;
-                    tex.Location.Y = j;
-                    var moved = tex.GetUnits();
-                    bool next = false;
-                    foreach (var unit in moved)
-                    {
-                        if (tempTexture.Contains(unit))
-                        {
-                            next = true;
-                            break;
-                        }
-                    }
-
-                    if (next)
-                        return;
-
-                    tempTexture.AddRange(moved);
-                    var curSize = GetOutSize(tempTexture);
-                    if (curSize.X * curSize.Y >= maxSq)
-                        return;
-                    maxSq = curSize.X * curSize.Y;
-                    selectedPos = (i, j);
-                }
-
-                bool outsidePlace(int x, int y)
-                {
-                    tex.Location.X = x;
-                    tex.Location.Y = y;
-                    var moved = tex.GetUnits();
-                    selectedPos = (x, y);
-                    return moved.Any(i => placedUnits.Contains(i));
-
-                }
-
-                if (placedUnits.Count != 0)
-                {
-                    if (placedUnits.Count != currentSize.X * currentSize.Y)
-                        if (currentSize.X > currentSize.Y)
-                            for (int i = 0; i < currentSize.X + 1; i++)
-                            {
-                                for (int j = 0; j < currentSize.Y + 1; j++)
-                                {
-                                    trySet(i, j);
-                                }
-                            }
-                        else
-                            for (int j = 0; j < currentSize.Y + 1; j++)
-                            {
-                                for (int i = 0; i < currentSize.X + 1; i++)
-                                {
-                                    trySet(i, j);
-                                }
-                            }
-                    else
-                    {
-                        if (currentSize.X > currentSize.Y)
-                            for (int i = 0; outsidePlace(0, i); i++)
-                                ;
-                        else
-                            for (int i = 0; outsidePlace(i, 0); i++)
-                                ;
-                    }
-                }
-
-                tex.Location.X = selectedPos.X;
-                tex.Location.Y = selectedPos.Y;
-
-                placedUnits.AddRange(tex.GetUnits());
-            }
-
-            var size = (GetOutSize(placedUnits) * Texture.UnitSize).Yx;
-            var rawAtlas = new byte[size.X, size.Y][];
-            foreach (var tex in Textures)
-            {
-                tex.Load();
-                tex.PlacePixels(rawAtlas);
-            }
-
-            return rawAtlas;
-        }
-
-        static Vector2i GetOutSize(List<Vector2i> outTexture)
-        {
-            var res = new Vector2i();
-            foreach (var unit in outTexture)
-            {
-                if (res.X < unit.X)
-                    res.X = unit.X;
-                if (res.Y < unit.Y)
-                    res.Y = unit.Y;
-            }
-
-            return res + Vector2i.One;
-        }
+        
 
         public static Vector2[] GetTextureCoords(int id, int side)
         {
@@ -206,6 +99,23 @@ namespace Mega.Video
         public string Name;
         public Vector2[][] Sides;
         public Vector2[] this[int side] => Sides[side];
+
+        public UVMap Transform(Vector2i location, Vector2i size, Vector2i total)
+        {
+            Vector2 temp;
+            Vector2[][] data = new Vector2[Sides.Length][];
+            for (int i = 0; i < Sides.Length; i++)
+            {
+                data[i] = new Vector2[Sides[i].Length]; 
+                for (int j = 0; j < Sides[i].Length; j++)
+                {
+                    temp = (Sides[i][j] * size + location) / total;
+                    data[i][j] = temp;
+                }
+            }
+
+            return new UVMap() { Sides = data };
+        }
     }
 
     public static class UVParser
