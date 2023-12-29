@@ -7,14 +7,14 @@ ChunkLocation::ChunkLocation(Vector3i globalPosition)
 		X = globalPosition.X % 32;
 	else
 		X = 32 + ((globalPosition.X + 1) % 32) - 1;
-	if (globalPosition.Z >= 0)
-		Z = globalPosition.Z % 32;
+	if (globalPosition.Y >= 0)
+		Z = globalPosition.Y % 32;
 	else
-		Z = 32 + ((globalPosition.Z + 1) % 32) - 1;
-	Y = globalPosition.Y;
+		Z = 32 + ((globalPosition.Y + 1) % 32) - 1;
+	Z = globalPosition.Z;
 }
 
-ChunkLocation::ChunkLocation(uint8_t x, uint16_t y, uint8_t z)
+ChunkLocation::ChunkLocation(uint8_t x, uint8_t y, uint16_t z)
 {
 	X = x;
 	Y = y;

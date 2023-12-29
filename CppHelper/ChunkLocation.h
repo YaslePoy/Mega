@@ -5,10 +5,10 @@
 class ChunkLocation
 {
 public:
-	uint8_t X, Z;
-	uint16_t Y;
+	uint8_t X, Y;
+	uint16_t Z;
 	ChunkLocation(Vector3i position);
-	ChunkLocation(uint8_t x, uint16_t y, uint8_t z);
+	ChunkLocation(uint8_t x, uint8_t y, uint16_t z);
 	ChunkLocation();
 };
 

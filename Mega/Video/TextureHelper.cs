@@ -43,14 +43,14 @@ namespace Mega.Video
 
         static void LoadResoucePack(string packPath)
         {
-            var text = File.ReadAllLines(packPath);
+            var text = File.ReadAllLines(packPath).Where(i => !string.IsNullOrWhiteSpace(i)).ToArray();
             var packId = packPath.Split(new[] { '/', '.' })[^2];
             for (int i = 0; i < text.Length;)
             {
                 string line = text[i++];
                 if (line.StartsWith("uvTemplate"))
                 {
-                    var splited = line.Split(' ');
+                    var splited = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
                     var localMap = new UVMap() { Name = splited[1] };
 
                     line = text[i++];
@@ -71,14 +71,14 @@ namespace Mega.Video
                 }
                 else if (line.StartsWith("bind"))
                 {
-                    var splited = line.Split(' ');
+                    var splited = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
                     var key = splited[1];
                     var map = splited[2];
                     var img = splited[3];
-                    var size = splited[4].Split('*');
+                    var size = splited[4].Split('*', StringSplitOptions.RemoveEmptyEntries);
                     var config = new Vector2i(int.Parse(size[0]), int.Parse(size[1]));
                     Maps.Add($"{packId}:{key}", Maps[map]);
-                    _textures.Add(new Texture($"{string.Join('/', packPath.Split('/')[..^1])}/{img}",
+                    _textures.Add(new Texture($"{string.Join('/', packPath.Split('/', StringSplitOptions.RemoveEmptyEntries)[..^1])}/{img}",
                         Maps[map], $"{packId}:{key}") { Size = config });
                 }
             }
@@ -122,13 +122,13 @@ namespace Mega.Video
     {
         static Vector2 parseVec(string vec)
         {
-            var sp = vec.Split('*');
+            var sp = vec.Split('*', StringSplitOptions.RemoveEmptyEntries);
             return new Vector2(float.Parse(sp[0]), float.Parse(sp[1]));
         }
 
         public static Vector2[] parseArray(string array)
         {
-            var sp = array.Split(" ");
+            var sp = array.Split(" ", StringSplitOptions.RemoveEmptyEntries);
             return sp.Select(parseVec).ToArray();
         }
     }

@@ -23,12 +23,12 @@ WorldPath::WorldPath(Vector3i globalPosition)
     {
         Chunk.X = -(int)fabs(floor(((double)globalPosition.X) / 32));
     }
-    if (globalPosition.Z > 0)
+    if (globalPosition.Y > 0)
     {
-        Chunk.Y = (int)floor((double)globalPosition.Z / 32);
+        Chunk.Y = (int)floor((double)globalPosition.Y / 32);
     }
     else
     {
-        Chunk.Y = -(int)fabs(floor(((double)globalPosition.Z) / 32));
+        Chunk.Y = -(int)fabs(floor(((double)globalPosition.Y) / 32));
     }
 }

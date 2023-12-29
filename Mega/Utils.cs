@@ -50,7 +50,7 @@ namespace Mega
         }
         public static ChunkLocation InChunk(this Vector3i globalPosition)
         {
-            ChunkLocation ret = new ChunkLocation(0, (ushort)globalPosition.Y, 0);
+            ChunkLocation ret = new ChunkLocation(0, 0, (ushort)globalPosition.Z);
             if (globalPosition.X >= 0)
             {
                 ret.X = (byte)(globalPosition.X % Chunk.Size.X);
@@ -59,13 +59,13 @@ namespace Mega
             {
                 ret.X = (byte)(Chunk.Size.X + ((globalPosition.X + 1) % Chunk.Size.X) - 1);
             }
-            if (globalPosition.Z >= 0)
+            if (globalPosition.Y >= 0)
             {
-                ret.Z = (byte)(globalPosition.Z % Chunk.Size.Z);
+                ret.Y = (byte)(globalPosition.Y % Chunk.Size.Y);
             }
             else
             {
-                ret.Z = (byte)(Chunk.Size.Z + ((globalPosition.Z + 1) % Chunk.Size.Z) - 1);
+                ret.Y = (byte)(Chunk.Size.Y + ((globalPosition.Y + 1) % Chunk.Size.Y) - 1);
             }
             return ret;
         }

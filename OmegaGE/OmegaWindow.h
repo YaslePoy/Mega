@@ -12,6 +12,7 @@
 #include "KeyboardInput.h"
 #include "MeshArray.h"
 #include "RenderSurface.h"
+#include "ViewSettings.h"
 
 using namespace std;
 
@@ -120,6 +121,7 @@ public:
 
     Image mainTexture;
     MeshArray mainMesh;
+    ViewSettings view;
 
 private:
     static void framebufferResizeCallback(GLFWwindow* window, int width, int height);
@@ -159,7 +161,7 @@ private:
     VkDeviceMemory depthImageMemory;
     VkImageView depthImageView;
     
-    uint32_t mipLevels;
+    uint32_t mipLevels = 3;
     VkImage textureImage;
     VkDeviceMemory textureImageMemory;
     VkImageView textureImageView;

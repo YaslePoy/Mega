@@ -12,9 +12,9 @@ namespace Mega.Video
     public class Camera
     {
         // Those vectors are directions pointing outwards from the camera to define how it rotated.
-        private Vector3 _front = -Vector3.UnitZ;
+        private Vector3 _front = Vector3.UnitY;
 
-        private Vector3 _up = Vector3.UnitY;
+        private Vector3 _up = Vector3.UnitZ;
 
         private Vector3 _right = Vector3.UnitX;
 
@@ -22,7 +22,7 @@ namespace Mega.Video
         private float _pitch;
 
         // Rotation around the Y axis (radians)
-        private float _yaw = -MathHelper.PiOver2; // Without this, you would be started rotated 90 degrees right.
+        private float _yaw = MathHelper.PiOver2; // Without this, you would be started rotated 90 degrees right.
 
         // The field of view of the camera (radians)
         private float _fov = MathHelper.PiOver2;
@@ -34,7 +34,7 @@ namespace Mega.Video
         }
 
         // The position of the camera
-        public Vector3 Position { get; set; }
+        public Vector3 Position;
 
         // This is simply the aspect ratio of the viewport, used for the projection matrix.
         public float AspectRatio { private get; set; }
@@ -102,8 +102,8 @@ namespace Mega.Video
         {
             // First, the front matrix is calculated using some basic trigonometry.
             _front.X = MathF.Cos(_pitch) * MathF.Cos(_yaw);
-            _front.Y = MathF.Sin(_pitch);
-            _front.Z = MathF.Cos(_pitch) * MathF.Sin(_yaw);
+            _front.Y = MathF.Cos(_pitch) * MathF.Sin(_yaw);
+            _front.Z = MathF.Sin(_pitch);
 
             // We need to make sure the vectors are all normalized, as otherwise we would get some funky results.
             _front = Vector3.Normalize(_front);
@@ -111,8 +111,13 @@ namespace Mega.Video
             // Calculate both the right and the up vector using cross product.
             // Note that we are calculating the right from the global up; this behaviour might
             // not be what you need for all cameras so keep this in mind if you do not want a FPS camera.
-            _right = Vector3.Normalize(Vector3.Cross(_front, Vector3.UnitY));
+            _right = Vector3.Normalize(Vector3.Cross(_front, Vector3.UnitZ));
             _up = Vector3.Normalize(Vector3.Cross(_right, _front));
+        }
+
+        public void Apply()
+        {
+            OmegaEngine.SetViewSettings(Position, Position + _front, _up);
         }
     }
 }

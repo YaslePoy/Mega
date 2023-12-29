@@ -28,25 +28,20 @@ namespace Mega
             // {
             //     window.Run();
             // }
-
-
+            
             Console.WriteLine("Hello Vulkan!");
 
             TextureHelper.Load();
             Atlas.Main.Assemble();
- 
-
-            var p1 = new RenderSurface(Block.MeshSides[1], Atlas.Main["Mega:birchBlock", 0],
-                new Vector3(-0.5f, -1, -0.5f), Vector3.UnitY, 1);
-            var p2 = new RenderSurface(Block.MeshSides[1], Atlas.Main["Mega:birchBlock", 0],
-                new Vector3(-0.5f, -1, -0.5f), Vector3.UnitY, 1);
 
             var sb = new BirchBlock(Vector3i.Zero);
-            var arr = new List<RenderSurface> { p1, p2};
-            arr = sb.GetDrawingMesh(new UnitedChunk());
-            
+            var arr = sb.GetDrawingMesh(new UnitedChunk());
+            sb.Position.X = 1;
+            arr.AddRange(sb.GetDrawingMesh(new UnitedChunk()));
             var mainTex = Atlas.Main.Image;
-            
+
+            var cam = new Camera(new Vector3(0, -3, 0), 1);
+            cam.Apply();
             OmegaEngine.SetMainRenderTexture(mainTex.data, mainTex.X, mainTex.Y);
             
             OmegaEngine.InitWindow(1000, 700);
@@ -59,6 +54,28 @@ namespace Mega
             {
                 OmegaEngine.UpdateKeyboardState();
                 OmegaEngine.PollWindowEvents();
+
+                if (OmegaEngine.IsKeyDown((int)GLFWKeys.D))
+                    cam.Position.X += 0.0005f;
+                if (OmegaEngine.IsKeyDown((int)GLFWKeys.A))
+                    cam.Position.X -= 0.0005f;
+                if (OmegaEngine.IsKeyDown((int)GLFWKeys.W))
+                    cam.Position.Y += 0.0005f;
+                if (OmegaEngine.IsKeyDown((int)GLFWKeys.S))
+                    cam.Position.Y -= 0.0005f;
+                if (OmegaEngine.IsKeyDown((int)GLFWKeys.E))
+                    cam.Position.Z += 0.0005f;
+                if (OmegaEngine.IsKeyDown((int)GLFWKeys.Q))
+                    cam.Position.Z -= 0.0005f;
+                if (OmegaEngine.IsKeyDown((int)GLFWKeys.Right))
+                    cam.Yaw -= 0.01f;
+                if (OmegaEngine.IsKeyDown((int)GLFWKeys.Left))
+                    cam.Yaw += 0.01f;
+                if (OmegaEngine.IsKeyDown((int)GLFWKeys.Up))
+                    cam.Pitch += 0.01f;
+                if (OmegaEngine.IsKeyDown((int)GLFWKeys.Down))
+                    cam.Pitch -= 0.01f;
+                cam.Apply();
                 OmegaEngine.Draw();
             }
         }

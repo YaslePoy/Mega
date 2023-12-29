@@ -18,7 +18,9 @@ void lib SetMeshShaderData(RenderSurface* surfaces, uint32_t count);
 void lib Draw();
 void lib SetMainRenderTexture(stbi_uc* data, int x, int y);
 void lib UpdateMainRenderTexture(stbi_uc* data, int x, int y);
+void lib SetViewSettings(Vector3 from, Vector3 to, Vector3 up);
 
+    
 void lib UpdateKeyboardState();
 bool lib IsKeyPressed(int key);
 bool lib IsKeyReleased(int key);

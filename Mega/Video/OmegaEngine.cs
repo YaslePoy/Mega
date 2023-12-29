@@ -1,4 +1,5 @@
 ﻿using System.Runtime.InteropServices;
+using OpenTK.Mathematics;
 
 namespace Mega.Video;
 
@@ -30,6 +31,9 @@ public static class OmegaEngine
 
     [DllImport(Library)]
     public static extern void SetMainRenderTexture([In] [Out] byte[] data, int width, int height);
+
+    [DllImport(Library)]
+    public static extern void SetViewSettings(Vector3 from, Vector3 to, Vector3 up);
 
     [DllImport(Library)]
     public static extern void UpdateMainRenderTexture([In] [Out] byte[] data, int width, int height);

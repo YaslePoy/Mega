@@ -4,17 +4,17 @@ namespace Mega.Game
 {
     public struct ChunkLocation
     {
-        public byte X, Z;
-        public ushort Y;
+        public byte X, Y;
+        public ushort Z;
 
-        public ChunkLocation(byte x, ushort y, byte z)
+        public ChunkLocation(byte x, byte y, ushort z)
         {
             X = x; Y = y; Z = z;
         }
 
         public static implicit operator ChunkLocation(Vector3i from)
         {
-            return new ChunkLocation() { X = (byte)from.X, Y = (ushort)from.Y, Z = (byte)from.Z };
+            return new ChunkLocation() { X = (byte)from.X, Y = (byte)from.Y, Z = (ushort)from.Z };
         }
         public static implicit operator Vector3i(ChunkLocation from)
         {

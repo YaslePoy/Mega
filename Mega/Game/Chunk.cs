@@ -6,7 +6,7 @@ namespace Mega.Game
 {
     public class Chunk
     {
-        public static readonly Vector3i Size = new Vector3i(32, 256, 32);
+        public static readonly Vector3i Size = new Vector3i(32, 32, 256);
         public Block[,,] data;
         public List<ChunkLocation> MembersList;
         public List<ChunkLocation> BorderMembersList;
@@ -77,11 +77,11 @@ namespace Mega.Game
             }
             if (Location.Y >= 0)
             {
-                yOffset = Location.Y * Size.Z;
+                yOffset = Location.Y * Size.Y;
             }
             else
             {
-                yOffset = (Location.Y * Size.Z);
+                yOffset = (Location.Y * Size.Y);
             }
             return new Vector3i(xOffset, 0, yOffset);
         }

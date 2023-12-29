@@ -27,13 +27,13 @@ Vector3i Vector3i::InChunk()
     {
         ret.X = 32 + ((X + 1) % 32) - 1;
     }
-    if (Z >= 0)
+    if (Y >= 0)
     {
-        ret.Z %= 32;
+        ret.Y %= 32;
     }
     else
     {
-        ret.Z = 32 + ((Z + 1) % 32) - 1;
+        ret.Y = 32 + ((Y + 1) % 32) - 1;
     }
     return ret;
 }
