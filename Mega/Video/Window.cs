@@ -140,25 +140,13 @@ public class Window : GameWindow
         const float sensitivity = 0.2f;
         var moveVec = new Vector2();
         if (input.IsKeyDown(Keys.W))
-
-            //_camera.Position += _camera.Front * cameraSpeed * (float)e.Time; // Forward
             moveVec.X = 1;
         if (input.IsKeyDown(Keys.S))
-
-            //_camera.Position -= _camera.Front * cameraSpeed * (float)e.Time; // Backwards
             moveVec.X = -1;
         if (input.IsKeyDown(Keys.A))
-
-            //_camera.Position -= _camera.Right * cameraSpeed * (float)e.Time; // Left
             moveVec.Y = 1;
         if (input.IsKeyDown(Keys.D))
-
-            //_camera.Position += _camera.Right * cameraSpeed * (float)e.Time; // Right
             moveVec.Y = -1;
-        if (input.IsKeyDown(Keys.LeftShift))
-        {
-            //_camera.Position -= _camera.Up * cameraSpeed * (float)e.Time; // Down
-        }
 
         if (input.IsKeyPressed(Keys.KeyPad0))
         {

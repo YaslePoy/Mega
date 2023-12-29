@@ -4,6 +4,7 @@ using Mega.Game.Blocks;
 using Mega.Generation;
 using Mega.Video.Shading;
 using OpenTK.Mathematics;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace Mega.Video;
 
@@ -129,26 +130,77 @@ public static class OmegaEngine
 
     private static void OnUpdate()
     {
-        if (IsKeyDown((int)GLFWKeys.D))
-            _camera.Position.X += 0.0005f;
-        if (IsKeyDown((int)GLFWKeys.A))
-            _camera.Position.X -= 0.0005f;
+        // if (IsKeyDown((int)GLFWKeys.D))
+        //     _camera.Position.X += 0.0005f;
+        // if (IsKeyDown((int)GLFWKeys.A))
+        //     _camera.Position.X -= 0.0005f;
+        // if (IsKeyDown((int)GLFWKeys.W))
+        //     _camera.Position.Y += 0.0005f;
+        // if (IsKeyDown((int)GLFWKeys.S))
+        //     _camera.Position.Y -= 0.0005f;
+        // if (IsKeyDown((int)GLFWKeys.E))
+        //     _camera.Position.Z += 0.0005f;
+        // if (IsKeyDown((int)GLFWKeys.Q))
+        //     _camera.Position.Z -= 0.0005f;
+        // if (IsKeyDown((int)GLFWKeys.Right))
+        //     _camera.Yaw -= 0.01f;
+        // if (IsKeyDown((int)GLFWKeys.Left))
+        //     _camera.Yaw += 0.01f;
+        // if (IsKeyDown((int)GLFWKeys.Up))
+        //     _camera.Pitch += 0.01f;
+        // if (IsKeyDown((int)GLFWKeys.Down))
+        //     _camera.Pitch -= 0.01f;d
+        
+        const float sensitivity = 0.2f;
+
+        
+        var moveVec = new Vector2();
         if (IsKeyDown((int)GLFWKeys.W))
-            _camera.Position.Y += 0.0005f;
+            moveVec.X = 1;
         if (IsKeyDown((int)GLFWKeys.S))
-            _camera.Position.Y -= 0.0005f;
-        if (IsKeyDown((int)GLFWKeys.E))
-            _camera.Position.Z += 0.0005f;
-        if (IsKeyDown((int)GLFWKeys.Q))
-            _camera.Position.Z -= 0.0005f;
-        if (IsKeyDown((int)GLFWKeys.Right))
-            _camera.Yaw -= 0.01f;
-        if (IsKeyDown((int)GLFWKeys.Left))
-            _camera.Yaw += 0.01f;
+            moveVec.X = -1;
+        if (IsKeyDown((int)GLFWKeys.A))
+            moveVec.Y = 1;
+        if (IsKeyDown((int)GLFWKeys.D))
+            moveVec.Y = -1;
+
+        if (IsKeyPressed((int)GLFWKeys.Num0))
+        {
+            DemoWriter.SaveDemo();
+        }
+        if (IsKeyPressed((int)GLFWKeys.Num1))
+        {
+            DemoWriter.Write = !DemoWriter.Write;
+        }
+        if (IsKeyPressed((int)GLFWKeys.Num2))
+        {
+            DemoWriter.Read = !DemoWriter.Read;
+        }
+        if (IsKeyPressed((int)GLFWKeys.Num3))
+        {
+            DemoWriter.LoadDemo();
+        }
+
+        if (IsKeyPressed((int)GLFWKeys.F))
+            pl.Fly = !pl.Fly;
+        pl.Fast = IsKeyDown((int)GLFWKeys.LeftShift);
+        DemoWriter.Nexting = IsKeyDown((int)GLFWKeys.Num5);
+        if (IsKeyReleased((int)GLFWKeys.R)) Debug.SaveEnable = !Debug.SaveEnable;
+
+        if (IsKeyReleased((int)GLFWKeys.T)) Debug.SaveLogs();
+        pl.Jumping = IsKeyDown((int)GLFWKeys.Space);
+
         if (IsKeyDown((int)GLFWKeys.Up))
-            _camera.Pitch += 0.01f;
-        if (IsKeyDown((int)GLFWKeys.Down))
-            _camera.Pitch -= 0.01f;
+            _camera.Pitch += 1 * sensitivity / 2;
+        else if (IsKeyDown((int)GLFWKeys.Down))
+            _camera.Pitch -= 1 * sensitivity / 2;
+        if (IsKeyDown((int)GLFWKeys.Left))
+            _camera.Yaw += 1 * sensitivity / 2;
+        else if (IsKeyDown((int)GLFWKeys.Right))
+            _camera.Yaw -= 1 * sensitivity / 2;
+        
+        pl.Moving = moveVec;
+        
         if(IsKeyDown((int)GLFWKeys.Escape))
             Close();
         _camera.Apply();

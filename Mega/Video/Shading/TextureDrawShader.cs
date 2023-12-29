@@ -11,6 +11,7 @@ namespace Mega.Video.Shading
         
         public override void Run()
         {
+            OmegaEngine.world.Player.Cam.Apply();
             if (OmegaEngine.world.Redrawing)
             {
                 Stopwatch sw = Stopwatch.StartNew();

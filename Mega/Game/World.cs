@@ -113,35 +113,35 @@ namespace Mega.Game
                     var clearMove = Player.Moving * (float)(t * Player.WalkSpeed) * (Player.Fast ? 2 : 1);
                     var move2d = new Vector2();
                     var localFront = Player.Cam.Front;
-                    localFront.Y = 0;
+                    localFront.Z = 0;
                     localFront.Normalize();
-                    move2d += localFront.Xz * clearMove.X;
-                    move2d += -Player.Cam.Right.Xz * clearMove.Y;
+                    move2d += localFront.Xy * clearMove.X;
+                    move2d += -Player.Cam.Right.Xy * clearMove.Y;
 
 
                     var playerPosition = Player.Position;
 
                     //is player standing?
                     var playerBlock = (Vector3i)playerPosition;
-                    var nearBlocks = GetHorisontalBlocks(playerBlock - Vector3i.UnitY);
+                    var nearBlocks = GetHorisontalBlocks(playerBlock - Vector3i.UnitZ);
                     var colliderList = nearBlocks.Select(i => i.GetCollider()).ToList().Where(i => i is not null)
                         .ToList();
                     var united = Collider.CreateUnitedCollider(colliderList);
                     var playerCollider = Player.GetCollider();
-                    float vertical = (float)(Player.VerticalSpeed * t);
+                    float vertical = Player.VerticalSpeed * t;
                     if (united.IsContact(playerCollider))
                     {
                         vertical = Player.Jumping ? 5f * t : 0;
                     }
 
                     //creating global player's move
-                    var move = new Vector3(move2d.X, vertical, move2d.Y);
+                    var move = new Vector3(move2d.X, move2d.Y, vertical);
 
                     //reading adjistment colliders
 
                     nearBlocks.AddRange(GetHorisontalBlocks(playerBlock));
-                    nearBlocks.AddRange(GetHorisontalBlocks(playerBlock + Vector3i.UnitY));
-                    nearBlocks.AddRange(GetHorisontalBlocks(playerBlock + 2 * Vector3i.UnitY));
+                    nearBlocks.AddRange(GetHorisontalBlocks(playerBlock + Vector3i.UnitZ));
+                    nearBlocks.AddRange(GetHorisontalBlocks(playerBlock + 2 * Vector3i.UnitZ));
                     colliderList = nearBlocks.Select(i => i.GetCollider()).ToList().Where(i => i is not null).ToList();
                     united = Collider.CreateUnitedCollider(colliderList);
 
@@ -164,7 +164,7 @@ namespace Mega.Game
                         Player.MoveTo(move);
                     }
 
-                    Player.VerticalSpeed = (Player.Position.Y - playerPosition.Y) / t;
+                    Player.VerticalSpeed = (Player.Position.Z - playerPosition.Z) / t;
                 }
                 else
                 {
