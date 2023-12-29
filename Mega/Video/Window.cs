@@ -59,13 +59,13 @@ public class Window : GameWindow
 
         // We initialize the camera so that it is 3 units back from where the rectangle is.
         // We also give it the proper aspect ratio.
-        _camera = new Camera(new Vector3(0f, 50, 0f), Size.X / (float)Size.Y);
+        _camera = new Camera(new Vector3(0f, 50, 0f));
 
         // We make the mouse cursor invisible and captured so we can have proper FPS-camera movement.
         CursorState = CursorState.Grabbed;
 
         pl = new Player(_camera);
-        world = new World(pl, this, 1);
+        world = new World(pl, 1);
         var worldSize = 128 * 4;
         var Autimation = new HeightAutomation(worldSize);
         Console.WriteLine(worldSize);
@@ -102,15 +102,8 @@ public class Window : GameWindow
         GL.ClearColor(0f, 0.5f, 0.5f, 1.0f);
         GL.Enable(EnableCap.DepthTest);
         _meshRender = new TextureDrawShader();
-        _meshRender.Load();
         _cursor = new CursorShader();
-        _cursor.Load();
         _ui = new UIShader();
-        _ui.Load();
-
-        //_cursor = new CursorShader();
-        //_cursor.Use();
-        //_cursor.Load();
     }
 
     protected override void OnRenderFrame(FrameEventArgs e)
@@ -124,9 +117,9 @@ public class Window : GameWindow
             world.Area.UpdateRenderSurface();
             TimeMeasurementService.Stop();
         }
-        _meshRender.Run(world);
-        _cursor.Run(world);
-        _ui.Run(world);
+        _meshRender.Run();
+        _cursor.Run();
+        _ui.Run();
         world.Redrawing = false;
         SwapBuffers();
     }
@@ -141,8 +134,6 @@ public class Window : GameWindow
         var input = KeyboardState;
 
         if (input.IsKeyDown(Keys.Escape))
-
-            //Close();
             Process.GetCurrentProcess().Kill();
 
         const float cameraSpeed = 5f;
@@ -245,9 +236,6 @@ public class Window : GameWindow
         base.OnResize(e);
 
         GL.Viewport(0, 0, Size.X, Size.Y);
-
-        // We need to update the aspect ratio once the window has been resized.
-        _camera.AspectRatio = Size.X / (float)Size.Y;
     }
 
     protected override void OnClosing(CancelEventArgs e)

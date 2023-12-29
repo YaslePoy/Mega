@@ -8,9 +8,9 @@ ChunkLocation::ChunkLocation(Vector3i globalPosition)
 	else
 		X = 32 + ((globalPosition.X + 1) % 32) - 1;
 	if (globalPosition.Y >= 0)
-		Z = globalPosition.Y % 32;
+		Y = globalPosition.Y % 32;
 	else
-		Z = 32 + ((globalPosition.Y + 1) % 32) - 1;
+		Y = 32 + ((globalPosition.Y + 1) % 32) - 1;
 	Z = globalPosition.Z;
 }
 

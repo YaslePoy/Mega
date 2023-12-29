@@ -1,4 +1,8 @@
 ﻿using System.Runtime.InteropServices;
+using Mega.Game;
+using Mega.Game.Blocks;
+using Mega.Generation;
+using Mega.Video.Shading;
 using OpenTK.Mathematics;
 
 namespace Mega.Video;
@@ -55,4 +59,111 @@ public static class OmegaEngine
 
     [DllImport(Library)]
     public static extern bool IsKeyUp(int key);
+
+    //import end 
+
+    private static Camera _camera;
+    private static Player pl;
+    public static World world;
+    
+    
+    private static TextureDrawShader _meshRender;
+
+    public static void Launch()
+    {
+        OnLoad();
+        while (GetWindowCloseState() == 0)
+        {
+            UpdateKeyboardState();
+            PollWindowEvents();
+            OnUpdate();
+            OnDraw();
+            Draw();
+        }
+    }
+
+    private static void OnLoad()
+    {
+        //Base load
+        TextureHelper.Load();
+        Atlas.Main.Assemble();
+        var mainTex = Atlas.Main.Image;
+        SetMainRenderTexture(mainTex.data, mainTex.X, mainTex.Y);
+
+        _camera = new Camera(new Vector3(0, 0, 50));
+        _camera.Apply();
+        
+        InitWindow(1000, 700);
+        Start();
+         //Mega load
+         
+         pl = new Player(_camera);
+         world = new World(pl, 1);
+
+         _meshRender = new TextureDrawShader();
+         
+         var worldSize = 128 * 1;
+         var Autimation = new HeightAutomation(worldSize);
+         Console.WriteLine(worldSize);
+         Autimation.Scale = 16;
+
+         Autimation.SetRandom(30);
+         TimeMeasurementService.Start("Base generation");
+         Autimation.Next();
+         TimeMeasurementService.Start("To image");
+         Autimation.ToImage();
+         TimeMeasurementService.Start("Hill");
+         //Autimation.CreateHill();
+         TimeMeasurementService.Start("Saving");
+         Autimation.SaveTo(ref world.Area);
+         
+         TimeMeasurementService.Start("UpdateBorder");
+         world.Area.UpdateBorder();
+
+         TimeMeasurementService.Start("UpdateRenderSurface");
+         world.Area.UpdateRenderSurface();
+         TimeMeasurementService.Stop();
+
+         world.Start(100);
+    }
+
+    private static void OnUpdate()
+    {
+        if (IsKeyDown((int)GLFWKeys.D))
+            _camera.Position.X += 0.0005f;
+        if (IsKeyDown((int)GLFWKeys.A))
+            _camera.Position.X -= 0.0005f;
+        if (IsKeyDown((int)GLFWKeys.W))
+            _camera.Position.Y += 0.0005f;
+        if (IsKeyDown((int)GLFWKeys.S))
+            _camera.Position.Y -= 0.0005f;
+        if (IsKeyDown((int)GLFWKeys.E))
+            _camera.Position.Z += 0.0005f;
+        if (IsKeyDown((int)GLFWKeys.Q))
+            _camera.Position.Z -= 0.0005f;
+        if (IsKeyDown((int)GLFWKeys.Right))
+            _camera.Yaw -= 0.01f;
+        if (IsKeyDown((int)GLFWKeys.Left))
+            _camera.Yaw += 0.01f;
+        if (IsKeyDown((int)GLFWKeys.Up))
+            _camera.Pitch += 0.01f;
+        if (IsKeyDown((int)GLFWKeys.Down))
+            _camera.Pitch -= 0.01f;
+        if(IsKeyDown((int)GLFWKeys.Escape))
+            Close();
+        _camera.Apply();
+    }
+
+    private static void OnDraw()
+    {
+        if (world.Redrawing)
+        {
+            TimeMeasurementService.Start("UpdateRenderSurface");
+            world.Area.UpdateRenderSurface();
+            TimeMeasurementService.Stop();
+        }
+        _meshRender.Run();
+        world.Redrawing = false;
+
+    }
 }

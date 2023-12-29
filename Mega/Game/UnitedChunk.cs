@@ -18,8 +18,10 @@ namespace Mega.Game
         }
         public Block GetBlock(Vector3i position)
         {
+            if (position.Z < 0 || position.Z == Chunk.Size.Z)
+                return null;
             var path = position.ToWorldPath();
-            if ((path.InChunk.Y > Chunk.Size.Y))
+            if (path.InChunk.Y > Chunk.Size.Y)
                 return null;
             if (!Chunks.TryGetValue(path.Chunk, out var chunk))
                 return null;

@@ -22,33 +22,31 @@ namespace Mega.Game
                 //return buf;
                 return redrawing;
             }
-            set
-            {
-                redrawing = value;
-            }
+            set { redrawing = value; }
         }
 
         bool isRuninig;
         Task updateThread;
         public const double G = 10d;
-        Window _view;
         int i;
         public Player Player;
         public UnitedChunk Area;
         public readonly int RenderDistance;
         int updateRate;
-        public World(Player player, Window view, int renderDistance)
+
+        public World(Player player, int renderDistance)
         {
             Player = player;
-            this._view = view;
             Area = new UnitedChunk();
             player.world = this;
         }
+
         public void SetChunk(Chunk chunk)
         {
             chunk.Root = Area;
             Area.AddChunk(chunk);
         }
+
         public void Start(int updateRate)
         {
             if (isRuninig)
@@ -80,43 +78,10 @@ namespace Mega.Game
             isRuninig = false;
         }
 
-        public void GenerateMesh(out Dictionary<int, List<uint>> indeces, out float[] verteces)
-        {
+        public void GetTotalMesh()
+        { 
             var sides = Area.Chunks.Values.Select(i => i.Surface).SumList();
-
-            verteces = new float[sides.Length * 4 * 8];
-            var bufferSize = 2048 * 4 * 8;
-            Span<float> buffer = stackalloc float[bufferSize];
-            float[] arrayed;
-            indeces = new Dictionary<int, List<uint>>();
-            Span<float> raw = stackalloc float[4 * 8];
-            Stopwatch loop = Stopwatch.StartNew();
-            Span<uint> perSideOrder = stackalloc uint[6];
-            for (int i = 0; i < sides.Length; i++)
-            {
-                int inBuffer = i % 2048;
-                var side = sides[i];
-                side.GetRawPolygon(raw);
-                raw.CopyTo(buffer.Slice(inBuffer * 4 * 8, 4 * 8));
-
-                if (!indeces.ContainsKey(/*side.TextureID*/0))
-                    indeces.Add(/*side.TextureID*/0, new List<uint>(6));
-                var indOffset = (uint)(i * 4);
-                perSideOrder[0] = indOffset;
-                perSideOrder[1] = 1 + indOffset;
-                perSideOrder[2] = 3 + indOffset;
-                perSideOrder[3] = 1 + indOffset;
-                perSideOrder[4] = 2 + indOffset;
-                perSideOrder[5] = 3 + indOffset;
-
-                indeces[/*side.TextureID*/0].AddRange(perSideOrder);
-                if (inBuffer != 0 || i == 0)
-                    continue;
-                arrayed = buffer.ToArray();
-                arrayed.CopyTo(verteces, bufferSize * (i * 4 * 8 / bufferSize - 1));
-            }
-            loop.Stop();
-            Console.WriteLine($"Loop time: {loop.Elapsed}");
+            OmegaEngine.SetMeshShaderData(sides, (uint)sides.Length);
         }
 
         public void Update(float time)
@@ -125,18 +90,19 @@ namespace Mega.Game
                 Debug.Trap();
             UpdateSelector();
             UpdatePlayerPosition(time);
-
         }
+
         void UpdatePlayerPosition(float t)
         {
-
             if (!Player.IsActed)
             {
                 Player.IsActed = true;
                 Player.PlaceBlock();
             }
+
             DemoWriter.TakePhoto(this);
             DemoWriter.ApplyPhoto(this);
+
             //calculating movement in x-z plane
             try
             {
@@ -153,13 +119,13 @@ namespace Mega.Game
                     move2d += -Player.Cam.Right.Xz * clearMove.Y;
 
 
-
                     var playerPosition = Player.Position;
 
                     //is player standing?
                     var playerBlock = (Vector3i)playerPosition;
                     var nearBlocks = GetHorisontalBlocks(playerBlock - Vector3i.UnitY);
-                    var colliderList = nearBlocks.Select(i => i.GetCollider()).ToList().Where(i => i is not null).ToList();
+                    var colliderList = nearBlocks.Select(i => i.GetCollider()).ToList().Where(i => i is not null)
+                        .ToList();
                     var united = Collider.CreateUnitedCollider(colliderList);
                     var playerCollider = Player.GetCollider();
                     float vertical = (float)(Player.VerticalSpeed * t);
@@ -170,6 +136,7 @@ namespace Mega.Game
 
                     //creating global player's move
                     var move = new Vector3(move2d.X, vertical, move2d.Y);
+
                     //reading adjistment colliders
 
                     nearBlocks.AddRange(GetHorisontalBlocks(playerBlock));
@@ -181,6 +148,7 @@ namespace Mega.Game
                     Vector3 resultalMove = Vector3.Zero;
 
                     Debug.LogToFile($"Startup move {move}");
+
                     //colliding
                     if (colliderList.Count != 0)
                         do
@@ -190,31 +158,30 @@ namespace Mega.Game
                             Player.MoveTo(move);
                             Debug.LogToFile($"Move: {move} Resultal: {resultalMove}", 1);
                             move = resultalMove;
-
                         } while (resultalMove != Vector3.Zero);
                     else
                     {
                         Player.MoveTo(move);
                     }
+
                     Player.VerticalSpeed = (Player.Position.Y - playerPosition.Y) / t;
                 }
                 else
                 {
-
                     var localFront = (Player.Cam.Front / 2 * Player.Moving.X - Player.Cam.Right / 2 * Player.Moving.Y);
                     Player.MoveTo(localFront);
-
                 }
+
                 Player.UpdateCamPosition();
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
             }
+
             DemoWriter.NextFrame();
-
-
         }
+
         public List<Block> GetHorisontalBlocks(Vector3i center)
         {
             var diagA = new Vector3i(1, 0, 1);
@@ -235,6 +202,7 @@ namespace Mega.Game
             result.RemoveAll(i => i is null);
             return result;
         }
+
         void UpdateSelector()
         {
             if (Player == null) return;
@@ -252,9 +220,11 @@ namespace Mega.Game
                 Player.Cursor = block.block - block.side;
                 break;
             }
+
             if (archive != Player.SelectedBlock)
                 Console.WriteLine($"New Block selected {Player.SelectedBlock}");
         }
+
         public void SetBlock(Block block)
         {
             Area.SetBlock(block);

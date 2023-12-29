@@ -31,52 +31,10 @@ namespace Mega.Video.Shading
         {
             SetTextureData(img.Data, img.Width, img.Height);
         }
-        public UIShader() : base("Shaders/ui.vert", "Shaders/ui.frag")
+       
+        public override void Run()
         {
-        }
-        public UIShader(string frag) : base("Shaders/ui.vert", frag)
-        {
-        }
-        public override void Load()
-        {
-            base.Load();
-
-
-
-            var vertexLocation = GetAttribLocation("aPosition");
-            GL.EnableVertexAttribArray(vertexLocation);
-            GL.VertexAttribPointer(vertexLocation, 3, VertexAttribPointerType.Float, false, 5 * sizeof(float), 0);
-
-            var texCoordLocation = GetAttribLocation("aTexCoord");
-            GL.EnableVertexAttribArray(texCoordLocation);
-            GL.VertexAttribPointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
-            GL.BufferData(BufferTarget.ArrayBuffer, _vertices.Length * sizeof(float), _vertices, BufferUsageHint.DynamicDraw);
-            GL.BufferData(BufferTarget.ElementArrayBuffer, _indices.Length * sizeof(float), _indices, BufferUsageHint.DynamicDraw);
-            tx = Texture.LoadFromFile("Shaders\\crist.png");
-        }
-        public void Load(Image img)
-        {
-            base.Load();
-
-
-
-            var vertexLocation = GetAttribLocation("aPosition");
-            GL.EnableVertexAttribArray(vertexLocation);
-            GL.VertexAttribPointer(vertexLocation, 3, VertexAttribPointerType.Float, false, 5 * sizeof(float), 0);
-
-            var texCoordLocation = GetAttribLocation("aTexCoord");
-            GL.EnableVertexAttribArray(texCoordLocation);
-            GL.VertexAttribPointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
-            GL.BufferData(BufferTarget.ArrayBuffer, _vertices.Length * sizeof(float), _vertices, BufferUsageHint.DynamicDraw);
-            GL.BufferData(BufferTarget.ElementArrayBuffer, _indices.Length * sizeof(float), _indices, BufferUsageHint.DynamicDraw);
-            // tx = /*Texture.LoadFromFile("Shaders\\crist.png")*/new Texture(img);
-        }
-        public override void Run(World world)
-        {
-            BindBuffers();
-
             tx.Use(TextureUnit.Texture0);
-            SetInt("texture0", 0);
             GL.DrawElements(PrimitiveType.Triangles, _indices.Length, DrawElementsType.UnsignedInt, 0);
         }
     }

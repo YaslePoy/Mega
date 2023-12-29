@@ -9,40 +9,18 @@ namespace Mega.Video.Shading
     {
         private float[] _vertices;
         private uint[] _indices;
-        public Matrix4 View { set { SetMatrix4("view", value); } }
-        public Matrix4 Projection { set { base.SetMatrix4("projection", value); } }
-        public CursorShader() : base("Shaders/cursor.vert", "Shaders/cursor.frag")
-        {
-        }
 
-        public override void Load()
+        
+        public override void Run()
         {
-            base.Load();
-            var vertexLocation = GetAttribLocation("aPosition");
-            GL.EnableVertexAttribArray(vertexLocation);
-            GL.VertexAttribPointer(vertexLocation, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
-
-            //var texCoordLocation = GetAttribLocation("aTexCoord");
-            //GL.EnableVertexAttribArray(texCoordLocation);
-            //GL.VertexAttribPointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
-            _indices = new uint[0];
-            _vertices = new float[0];
-        }
-        public override void Run(World world)
-        {
-            BindBuffers();
-            //if (world.Redrawing)
-            //{
-            if (world.Player.SelectedBlock.HasValue)
+            if (OmegaEngine.world.Player.SelectedBlock.HasValue)
             {
-                var sel = world.Area.GetBlock(world.Player.SelectedBlock.Value);
+                var sel = OmegaEngine.world.Area.GetBlock(OmegaEngine.world.Player.SelectedBlock.Value);
 
-                UpdateEdges(sel, world);
+                UpdateEdges(sel, OmegaEngine.world);
                 GL.BufferData(BufferTarget.ArrayBuffer, _vertices.Length * sizeof(float), _vertices, BufferUsageHint.DynamicDraw);
                 GL.BufferData(BufferTarget.ElementArrayBuffer, _indices.Length * sizeof(float), _indices, BufferUsageHint.DynamicDraw);
 
-                Projection = world.Player.Cam.GetProjectionMatrix();
-                View = world.Player.Cam.GetViewMatrix();
                 for (int i = 0; i < 6; i++)
                 {
                     GL.DrawElements(PrimitiveType.LineLoop, 4, DrawElementsType.UnsignedInt, 4 * i * sizeof(uint));

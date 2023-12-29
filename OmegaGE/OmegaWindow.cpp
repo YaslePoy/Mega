@@ -47,7 +47,6 @@ OmegaWindow::OmegaWindow(uint32_t width, uint32_t height)
 
 void OmegaWindow::Open()
 {
-    cout << "1";
     glfwInit();
 
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
@@ -56,70 +55,50 @@ void OmegaWindow::Open()
     glfwSetWindowUserPointer(window, this);
     glfwSetFramebufferSizeCallback(window, framebufferResizeCallback);
     glfwSetKeyCallback(window, keyboard_handler);
-    cout << "2";
 
     createInstance();
-    cout << "3";
 
     setupDebugMessenger();
-    cout << "4";
 
     createSurface();
-    cout << "5";
 
     pickPhysicalDevice();
-    cout << "6";
 
     createLogicalDevice();
-    cout << "7";
 
     createSwapChain();
-    cout << "8";
 
     createImageViews();
-    cout << "9";
 
     createRenderPass();
-    cout << "10";
+
 
     createDescriptorSetLayout();
-    cout << "11";
+
 
     createGraphicsPipeline();
-    cout << "12";
-
-    // createAltGraphicsPipeline();
 
     createCommandPool();
-    cout << "13";
 
     createColorResources();
-    cout << "14";
+
 
     createDepthResources();
-    cout << "15";
 
     createFramebuffers();
-    cout << "16";
 
 
     createTextureImage();
-    cout << "17";
 
     createTextureImageView();
-    cout << "18";
 
     createTextureSampler();
-    cout << "19";
 
     createVertexBuffer();
-    cout << "20";
 
     createIndexBuffer();
-    cout << "21";
 
     createUniformBuffers();
-    cout << "22";
 
     createDescriptorPool();
 
@@ -1263,9 +1242,7 @@ void OmegaWindow::copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t wid
 
 void OmegaWindow::createVertexBuffer()
 {
-    std::cout << "Started creation vb" << std::endl;
     VkDeviceSize bufferSize = sizeof(mainMesh.vertices[0]) * mainMesh.vertices_count;
-    std::cout << "VSize: " << bufferSize << std::endl;
 
     if (bufferSize == 0)
         bufferSize = 1;
@@ -1277,7 +1254,6 @@ void OmegaWindow::createVertexBuffer()
 void OmegaWindow::createIndexBuffer()
 {
     VkDeviceSize bufferSize = sizeof(mainMesh.indices[0]) * mainMesh.indices_count;
-    std::cout << "ISize: " << bufferSize << std::endl;
 
     if (bufferSize == 0)
         bufferSize = 1;
@@ -1414,7 +1390,6 @@ void OmegaWindow::createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMe
     VkResult allocation = vkAllocateMemory(device, &allocInfo, nullptr, &bufferMemory);
     if (allocation != VK_SUCCESS)
     {
-        std::cout << size << std::endl;
         throw std::runtime_error("failed to allocate buffer memory!");
     }
 
