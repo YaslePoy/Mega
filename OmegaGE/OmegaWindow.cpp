@@ -45,17 +45,29 @@ OmegaWindow::OmegaWindow(uint32_t width, uint32_t height)
     this->width = width;
 }
 
+void OmegaWindow::creteStaticUniforms()
+{
+    main_model = rotate(glm::mat4(1.0f), 0.0f, glm::vec3(0.0f, 0.0f, 1.0f));
+    main_proj = glm::perspective(glm::radians(45.0f), swapChainExtent.width / (float)swapChainExtent.height, 0.1f,
+                                1500.0f);
+}
+
 void OmegaWindow::Open()
 {
     glfwInit();
 
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+    glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
+    const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 
     window = glfwCreateWindow(width, height, "Omega engine", nullptr, nullptr);
+    
     glfwSetWindowUserPointer(window, this);
     glfwSetFramebufferSizeCallback(window, framebufferResizeCallback);
     glfwSetKeyCallback(window, keyboard_handler);
 
+    
+    
     createInstance();
 
     setupDebugMessenger();
@@ -107,7 +119,8 @@ void OmegaWindow::Open()
     createCommandBuffers();
 
     createSyncObjects();
-    
+
+    creteStaticUniforms();
 }
 
 void OmegaWindow::framebufferResizeCallback(GLFWwindow* window, int width, int height)
@@ -963,7 +976,7 @@ void OmegaWindow::createTextureImage()
     memcpy(data, pixels, static_cast<size_t>(imageSize));
     vkUnmapMemory(device, stagingBufferMemory);
 
-    createImage(texWidth, texHeight, mipLevels, VK_SAMPLE_COUNT_8_BIT, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, textureImage, textureImageMemory);
+    createImage(texWidth, texHeight, mipLevels, VK_SAMPLE_COUNT_1_BIT, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, textureImage, textureImageMemory);
 
     transitionImageLayout(textureImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, mipLevels);
     copyBufferToImage(stagingBuffer, textureImage, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight));
@@ -1566,11 +1579,9 @@ void OmegaWindow::createSyncObjects()
 void OmegaWindow::updateUniformBuffer(uint32_t currentImage)
 {
     UniformBufferObject ubo{};
-    ubo.model = rotate(glm::mat4(1.0f), 0.0f, glm::vec3(0.0f, 0.0f, 1.0f));
+    ubo.model = main_model;
     ubo.view = lookAt(view.from, view.to, view.up);
-    
-    ubo.proj = glm::perspective(glm::radians(45.0f), swapChainExtent.width / (float)swapChainExtent.height, 0.1f,
-                                1500.0f);
+    ubo.proj = main_proj;
     ubo.proj[1][1] *= -1;
 
     memcpy(uniformBuffersMapped[currentImage], &ubo, sizeof(ubo));

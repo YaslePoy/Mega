@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Diagnostics;
+using System.Runtime.InteropServices;
 using Mega.Game;
 using Mega.Game.Blocks;
 using Mega.Generation;
@@ -66,20 +67,36 @@ public static class OmegaEngine
     private static Camera _camera;
     private static Player pl;
     public static World world;
-    
-    
+
+
     private static TextureDrawShader _meshRender;
 
     public static void Launch()
     {
+        // int coutner = 0;
         OnLoad();
+        // var fpsometer = Stopwatch.StartNew();
         while (GetWindowCloseState() == 0)
         {
             UpdateKeyboardState();
             PollWindowEvents();
+            if (IsKeyDown((int)GLFWKeys.Escape))
+            {
+                Close();
+                break;
+            }
             OnUpdate();
             OnDraw();
             Draw();
+            // coutner++;
+            // if (coutner == 1000)
+            // {
+            //     fpsometer.Stop();
+            //     coutner = 0;
+            //     var fps = 1000 / fpsometer.Elapsed.TotalSeconds;
+            //     Console.WriteLine($"Framerate: {Math.Round(fps, 3), 5} FPS");
+            //     fpsometer.Restart();
+            // }
         }
     }
 
@@ -93,39 +110,42 @@ public static class OmegaEngine
 
         _camera = new Camera(new Vector3(0, 0, 50));
         _camera.Apply();
-        
-        InitWindow(1000, 700);
+
+        InitWindow(1920, 1080);
         Start();
-         //Mega load
-         
-         pl = new Player(_camera);
-         world = new World(pl, 1);
 
-         _meshRender = new TextureDrawShader();
-         
-         var worldSize = 128 * 1;
-         var Autimation = new HeightAutomation(worldSize);
-         Console.WriteLine(worldSize);
-         Autimation.Scale = 16;
+        //Mega load
+        pl = new Player(_camera);
+        world = new World(pl, 1);
 
-         Autimation.SetRandom(30);
-         TimeMeasurementService.Start("Base generation");
-         Autimation.Next();
-         TimeMeasurementService.Start("To image");
-         Autimation.ToImage();
-         TimeMeasurementService.Start("Hill");
-         //Autimation.CreateHill();
-         TimeMeasurementService.Start("Saving");
-         Autimation.SaveTo(ref world.Area);
-         
-         TimeMeasurementService.Start("UpdateBorder");
-         world.Area.UpdateBorder();
+        _meshRender = new TextureDrawShader();
 
-         TimeMeasurementService.Start("UpdateRenderSurface");
-         world.Area.UpdateRenderSurface();
-         TimeMeasurementService.Stop();
+        var worldSize = 128 * 8;
+        var Autimation = new HeightAutomation(worldSize);
+        Console.WriteLine(worldSize);
+        Autimation.Scale = 16;
 
-         world.Start(100);
+        Autimation.SetRandom(30);
+        TimeMeasurementService.Start("Base generation");
+        Autimation.Next();
+        TimeMeasurementService.Start("To image");
+        Autimation.ToImage();
+        TimeMeasurementService.Start("Hill");
+
+        TimeMeasurementService.Start("Saving");
+        Autimation.SaveTo(ref world.Area);
+
+        
+
+        
+        TimeMeasurementService.Start("UpdateBorder");
+        world.Area.UpdateBorder();
+
+        TimeMeasurementService.Start("UpdateRenderSurface");
+        world.Area.UpdateRenderSurface();
+        TimeMeasurementService.Stop();
+
+        world.Start(100);
     }
 
     private static void OnUpdate()
@@ -150,10 +170,10 @@ public static class OmegaEngine
         //     _camera.Pitch += 0.01f;
         // if (IsKeyDown((int)GLFWKeys.Down))
         //     _camera.Pitch -= 0.01f;d
-        
+
         const float sensitivity = 0.2f;
 
-        
+
         var moveVec = new Vector2();
         if (IsKeyDown((int)GLFWKeys.W))
             moveVec.X = 1;
@@ -168,14 +188,17 @@ public static class OmegaEngine
         {
             DemoWriter.SaveDemo();
         }
+
         if (IsKeyPressed((int)GLFWKeys.Num1))
         {
             DemoWriter.Write = !DemoWriter.Write;
         }
+
         if (IsKeyPressed((int)GLFWKeys.Num2))
         {
             DemoWriter.Read = !DemoWriter.Read;
         }
+
         if (IsKeyPressed((int)GLFWKeys.Num3))
         {
             DemoWriter.LoadDemo();
@@ -198,11 +221,9 @@ public static class OmegaEngine
             _camera.Yaw += 1 * sensitivity / 2;
         else if (IsKeyDown((int)GLFWKeys.Right))
             _camera.Yaw -= 1 * sensitivity / 2;
-        
+
         pl.Moving = moveVec;
-        
-        if(IsKeyDown((int)GLFWKeys.Escape))
-            Close();
+
         _camera.Apply();
     }
 
@@ -214,8 +235,8 @@ public static class OmegaEngine
             world.Area.UpdateRenderSurface();
             TimeMeasurementService.Stop();
         }
+
         _meshRender.Run();
         world.Redrawing = false;
-
     }
 }

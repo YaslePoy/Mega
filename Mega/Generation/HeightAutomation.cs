@@ -95,7 +95,7 @@ namespace Mega.Generation
                 if (rand.Next(0, 2) == 0)
                     world.SetBlock(new StoneBlock(new Vector3i(real.Item1, real.Item2, i)));
                 else
-
+            
                     world.SetBlock(new BirchBlock(new Vector3i(real.Item1, real.Item2, i)));
             }
 

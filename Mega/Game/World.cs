@@ -81,6 +81,7 @@ namespace Mega.Game
         public void GetTotalMesh()
         { 
             var sides = Area.Chunks.Values.Select(i => i.Surface).SumList();
+            Console.WriteLine($"Sides collected: {sides.Length}");
             OmegaEngine.SetMeshShaderData(sides, (uint)sides.Length);
         }
 

@@ -17,6 +17,7 @@ namespace Mega.Video.Shading
                 Stopwatch sw = Stopwatch.StartNew();
                 OmegaEngine.world.GetTotalMesh();
                 sw.Stop();
+                Console.WriteLine($"Mesh update {sw.Elapsed}");
             }
             frames++;
         }

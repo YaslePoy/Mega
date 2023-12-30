@@ -111,6 +111,7 @@ public:
     uint32_t width, height;
     char* name;
     OmegaWindow(uint32_t width, uint32_t height);
+    void creteStaticUniforms();
     void Open();
     void Close() const;
     void UpdateMainTexture();
@@ -154,7 +155,10 @@ private:
     VkPipelineLayout pipelineLayout;
     VkPipeline graphicsPipeline;
     // VkPipeline graphicsPipelineAlt;
-
+    
+    alignas(16) glm::mat4 main_model;
+    alignas(16) glm::mat4 main_proj;    
+    
     VkCommandPool commandPool;
 
     VkImage depthImage;
