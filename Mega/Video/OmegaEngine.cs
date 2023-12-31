@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Runtime.Intrinsics;
 using Mega.Game;
 using Mega.Game.Blocks;
 using Mega.Generation;
@@ -73,9 +74,9 @@ public static class OmegaEngine
 
     public static void Launch()
     {
-        // int coutner = 0;
+        int coutner = 0;
         OnLoad();
-        // var fpsometer = Stopwatch.StartNew();
+        var fpsometer = Stopwatch.StartNew();
         while (GetWindowCloseState() == 0)
         {
             UpdateKeyboardState();
@@ -85,24 +86,25 @@ public static class OmegaEngine
                 Close();
                 break;
             }
+
             OnUpdate();
             OnDraw();
             Draw();
-            // coutner++;
-            // if (coutner == 1000)
-            // {
-            //     fpsometer.Stop();
-            //     coutner = 0;
-            //     var fps = 1000 / fpsometer.Elapsed.TotalSeconds;
-            //     Console.WriteLine($"Framerate: {Math.Round(fps, 3), 5} FPS");
-            //     fpsometer.Restart();
-            // }
+            coutner++;
+            if (coutner == 1000)
+            {
+                fpsometer.Stop();
+                coutner = 0;
+                var fps = 1000 / fpsometer.Elapsed.TotalSeconds;
+                Console.WriteLine($"Framerate: {Math.Round(fps, 3),5} FPS");
+                fpsometer.Restart();
+            }
         }
     }
 
     private static void OnLoad()
     {
-        //Base load
+        //Base load 
         TextureHelper.Load();
         Atlas.Main.Assemble();
         var mainTex = Atlas.Main.Image;
@@ -120,7 +122,7 @@ public static class OmegaEngine
 
         _meshRender = new TextureDrawShader();
 
-        var worldSize = 128 * 8;
+        var worldSize = 128 * 1;
         var Autimation = new HeightAutomation(worldSize);
         Console.WriteLine(worldSize);
         Autimation.Scale = 16;
@@ -135,9 +137,7 @@ public static class OmegaEngine
         TimeMeasurementService.Start("Saving");
         Autimation.SaveTo(ref world.Area);
 
-        
 
-        
         TimeMeasurementService.Start("UpdateBorder");
         world.Area.UpdateBorder();
 

@@ -78,12 +78,13 @@ namespace Mega.Video
                     var size = splited[4].Split('*', StringSplitOptions.RemoveEmptyEntries);
                     var config = new Vector2i(int.Parse(size[0]), int.Parse(size[1]));
                     Maps.Add($"{packId}:{key}", Maps[map]);
-                    _textures.Add(new Texture($"{string.Join('/', packPath.Split('/', StringSplitOptions.RemoveEmptyEntries)[..^1])}/{img}",
+                    _textures.Add(new Texture(
+                        $"{string.Join('/', packPath.Split('/', StringSplitOptions.RemoveEmptyEntries)[..^1])}/{img}",
                         Maps[map], $"{packId}:{key}") { Size = config });
                 }
             }
         }
-        
+
 
         public static Vector2[] GetTextureCoords(int id, int side)
         {
@@ -103,13 +104,23 @@ namespace Mega.Video
         public UVMap Transform(Vector2i location, Vector2i size, Vector2i total)
         {
             Vector2 temp;
+            var zeroAdding = Vector2.One / (total * Texture.UnitSize) / 16;
+
+            Vector2 modify(Vector2 vec)
+            {
+                vec += zeroAdding;
+                vec.X = MathF.Abs(vec.X);
+                vec.Y = MathF.Abs(vec.Y);
+                return vec;
+            }
+
             Vector2[][] data = new Vector2[Sides.Length][];
             for (int i = 0; i < Sides.Length; i++)
             {
-                data[i] = new Vector2[Sides[i].Length]; 
+                data[i] = new Vector2[Sides[i].Length];
                 for (int j = 0; j < Sides[i].Length; j++)
                 {
-                    temp = (Sides[i][j] * size + location) / total;
+                    temp = (modify(Sides[i][j]) * size + location) / total;
                     data[i][j] = temp;
                 }
             }
@@ -123,7 +134,13 @@ namespace Mega.Video
         static Vector2 parseVec(string vec)
         {
             var sp = vec.Split('*', StringSplitOptions.RemoveEmptyEntries);
-            return new Vector2(float.Parse(sp[0]), float.Parse(sp[1]));
+            return new Vector2(SmartParce(sp[0]), SmartParce(sp[1]));
+        }
+
+        static float SmartParce(string fl)
+        {
+            var val = float.Parse(fl);
+            return val;
         }
 
         public static Vector2[] parseArray(string array)

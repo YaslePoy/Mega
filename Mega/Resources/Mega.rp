@@ -1,5 +1,5 @@
 ﻿uvTemplate all
-0*0 1*0 1*1 0*1
+0*0 -1*0 -1*-1 0*-1
 link 0
 link 0
 link 0
@@ -8,9 +8,9 @@ link 0
 uvTemplateEnd
 
 uvTemplate verticalHorizontal
-1*1 1*0 0,5*0 0,5*1
+-1*-1 -1*0 0,5*0 0,5*-1
 link 0
-0*0 0,5*0 0,5*1 0*1
+0*0 -0,5*0 -0,5*-1 0*-1
 link 0
 link 0
 link 2

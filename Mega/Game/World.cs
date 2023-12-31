@@ -78,10 +78,14 @@ namespace Mega.Game
             isRuninig = false;
         }
 
-        public void GetTotalMesh()
+        public void UpdateTotalMesh()
         { 
             var sides = Area.Chunks.Values.Select(i => i.Surface).SumList();
-            Console.WriteLine($"Sides collected: {sides.Length}");
+            // for (int j = 0; j < sides.Length; j++)
+            // {
+            //     sides[j].Apply();
+            // }
+            Parallel.For(0, sides.Length, i => { sides[i].Apply(); });
             OmegaEngine.SetMeshShaderData(sides, (uint)sides.Length);
         }
 

@@ -7,8 +7,9 @@ struct Vertex
 {
     Vector2 uv;
     Vector3 pos;
-    VertexRaw ToRaw(Vector3 nor, Vector3 move)
+
+    VertexRaw ToRaw(Vector3 nor)
     {
-        return {{pos.X + move.X, pos.Y + move.Y, pos.Z + move.Z}, {nor.X, nor.Y, nor.Z}, {uv.X, uv.Y}};
+        return {{pos.X, pos.Y, pos.Z}, {nor.X, nor.Y, nor.Z}, {uv.X, uv.Y}};
     }
 };
