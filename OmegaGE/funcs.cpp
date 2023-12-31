@@ -79,9 +79,10 @@ void UpdateMainRenderTexture(stbi_uc* data, int x, int y)
     viewport.UpdateMainTexture();
 }
 
-void SetViewSettings(Vector3 from, Vector3 to, Vector3 up)
+void SetViewSettings(Vector3 from, Vector3 to, Vector3 up, Vector3 sun)
 {
     viewport.view.from = {from.X, from.Y, from.Z};
     viewport.view.to = {to.X, to.Y, to.Z};
     viewport.view.up = {up.X, up.Y, up.Z};
+    viewport.view.sun = {sun.X, sun.Y, sun.Z};
 }

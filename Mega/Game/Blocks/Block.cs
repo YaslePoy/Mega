@@ -31,7 +31,7 @@ namespace Mega.Game.Blocks
         public readonly string Code;
         public Vector3i Position;
 
-        public Block(Vector3i pos, int id, string code)
+        public Block(Vector3i pos, int id, string code, string pack="Mega")
         {
             Id = id;
             Position = pos;
@@ -43,7 +43,7 @@ namespace Mega.Game.Blocks
             Adjacent[3] = Utils.FastAdd(Neibs[3], fastPosition);
             Adjacent[4] = Utils.FastAdd(Neibs[4], fastPosition);
             Adjacent[5] = Utils.FastAdd(Neibs[5], fastPosition);
-            Code = Assembly.GetCallingAssembly().GetName().Name + ":" + code;
+            Code = $"{pack}:{code}";
         }
 
         public abstract List<RenderSurface> GetDrawingMesh(UnitedChunk area);

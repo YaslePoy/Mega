@@ -6,5 +6,5 @@
 struct ViewSettings
 {
 public:
-    glm::vec3 from, to, up;
+    glm::vec3 from, to, up, sun;
 };

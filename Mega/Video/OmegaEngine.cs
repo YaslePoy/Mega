@@ -1,12 +1,9 @@
 ﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
-using System.Runtime.Intrinsics;
 using Mega.Game;
-using Mega.Game.Blocks;
 using Mega.Generation;
 using Mega.Video.Shading;
 using OpenTK.Mathematics;
-using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace Mega.Video;
 
@@ -40,7 +37,7 @@ public static class OmegaEngine
     public static extern void SetMainRenderTexture([In] [Out] byte[] data, int width, int height);
 
     [DllImport(Library)]
-    public static extern void SetViewSettings(Vector3 from, Vector3 to, Vector3 up);
+    public static extern void SetViewSettings(Vector3 from, Vector3 to, Vector3 up, Vector3 sun);
 
     [DllImport(Library)]
     public static extern void UpdateMainRenderTexture([In] [Out] byte[] data, int width, int height);
@@ -118,8 +115,8 @@ public static class OmegaEngine
 
         //Mega load
         pl = new Player(_camera);
-        world = new World(pl, 1);
-
+        world = new World(pl);
+        
         _meshRender = new TextureDrawShader();
 
         var worldSize = 128 * 1;

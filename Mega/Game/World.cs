@@ -3,13 +3,16 @@ using System.Threading.Channels;
 using Mega.Game.Blocks;
 using Mega.Game.Blocks;
 using Mega.Video;
-using OpenTK.Mathematics;
+using Vec3 = OpenTK.Mathematics.Vector3;
+using Vec3i = OpenTK.Mathematics.Vector3i;
+using Vec2 = OpenTK.Mathematics.Vector2;
+using Vec2i = OpenTK.Mathematics.Vector2i;
 
 namespace Mega.Game
 {
     public class World
     {
-        public static Vector3 Sun = new Vector3(1, -1, 0.5f).Normalized();
+        public static Vec3 Sun = new Vec3(1, 0.5f, -1).Normalized();
         private bool redrawing = true;
 
         public bool Redrawing
@@ -34,7 +37,7 @@ namespace Mega.Game
         public readonly int RenderDistance;
         int updateRate;
 
-        public World(Player player, int renderDistance)
+        public World(Player player)
         {
             Player = player;
             Area = new UnitedChunk();
@@ -79,13 +82,14 @@ namespace Mega.Game
         }
 
         public void UpdateTotalMesh()
-        { 
-            var sides = Area.Chunks.Values.Select(i => i.Surface).SumList();
+        {
+            var sides = Area.Chunks.Values.Select(index => index.Surface).SumList();
+
             // for (int j = 0; j < sides.Length; j++)
             // {
             //     sides[j].Apply();
             // }
-            Parallel.For(0, sides.Length, i => { sides[i].Apply(); });
+            Parallel.For(0, sides.Length, index => { sides[index].Apply(); });
             OmegaEngine.SetMeshShaderData(sides, (uint)sides.Length);
         }
 
@@ -115,8 +119,8 @@ namespace Mega.Game
                 {
                     var localG = G * t;
                     Player.VerticalSpeed -= (float)localG;
-                    var clearMove = Player.Moving * (float)(t * Player.WalkSpeed) * (Player.Fast ? 2 : 1);
-                    var move2d = new Vector2();
+                    var clearMove = Player.Moving * (t * Player.WalkSpeed) * (Player.Fast ? 2 : 1);
+                    var move2d = new Vec2();
                     var localFront = Player.Cam.Front;
                     localFront.Z = 0;
                     localFront.Normalize();
@@ -127,8 +131,8 @@ namespace Mega.Game
                     var playerPosition = Player.Position;
 
                     //is player standing?
-                    var playerBlock = (Vector3i)playerPosition;
-                    var nearBlocks = GetHorisontalBlocks(playerBlock - Vector3i.UnitZ);
+                    var playerBlock = (Vec3i)playerPosition;
+                    var nearBlocks = GetHorisontalBlocks(playerBlock - Vec3i.UnitZ);
                     var colliderList = nearBlocks.Select(i => i.GetCollider()).ToList().Where(i => i is not null)
                         .ToList();
                     var united = Collider.CreateUnitedCollider(colliderList);
@@ -140,17 +144,17 @@ namespace Mega.Game
                     }
 
                     //creating global player's move
-                    var move = new Vector3(move2d.X, move2d.Y, vertical);
+                    var move = new Vec3(move2d.X, move2d.Y, vertical);
 
                     //reading adjistment colliders
 
                     nearBlocks.AddRange(GetHorisontalBlocks(playerBlock));
-                    nearBlocks.AddRange(GetHorisontalBlocks(playerBlock + Vector3i.UnitZ));
-                    nearBlocks.AddRange(GetHorisontalBlocks(playerBlock + 2 * Vector3i.UnitZ));
+                    nearBlocks.AddRange(GetHorisontalBlocks(playerBlock + Vec3i.UnitZ));
+                    nearBlocks.AddRange(GetHorisontalBlocks(playerBlock + 2 * Vec3i.UnitZ));
                     colliderList = nearBlocks.Select(i => i.GetCollider()).ToList().Where(i => i is not null).ToList();
                     united = Collider.CreateUnitedCollider(colliderList);
 
-                    Vector3 resultalMove = Vector3.Zero;
+                    Vec3 resultalMove = Vec3.Zero;
 
                     Debug.LogToFile($"Startup move {move}");
 
@@ -163,7 +167,7 @@ namespace Mega.Game
                             Player.MoveTo(move);
                             Debug.LogToFile($"Move: {move} Resultal: {resultalMove}", 1);
                             move = resultalMove;
-                        } while (resultalMove != Vector3.Zero);
+                        } while (resultalMove != Vec3.Zero);
                     else
                     {
                         Player.MoveTo(move);
@@ -187,18 +191,18 @@ namespace Mega.Game
             DemoWriter.NextFrame();
         }
 
-        public List<Block> GetHorisontalBlocks(Vector3i center)
+        public List<Block> GetHorisontalBlocks(Vec3i center)
         {
-            var diagA = new Vector3i(1, 0, 1);
+            var diagA = new Vec3i(1, 0, 1);
 
-            var diagB = new Vector3i(1, 0, -1);
+            var diagB = new Vec3i(1, 0, -1);
             var result = new List<Block>
             {
                 Area.GetBlock(center),
-                Area.GetBlock(center + Vector3i.UnitX),
-                Area.GetBlock(center + Vector3i.UnitZ),
-                Area.GetBlock(center - Vector3i.UnitX),
-                Area.GetBlock(center - Vector3i.UnitZ),
+                Area.GetBlock(center + Vec3i.UnitX),
+                Area.GetBlock(center + Vec3i.UnitZ),
+                Area.GetBlock(center - Vec3i.UnitX),
+                Area.GetBlock(center - Vec3i.UnitZ),
                 Area.GetBlock(center + diagA),
                 Area.GetBlock(center - diagA),
                 Area.GetBlock(center + diagB),
@@ -241,9 +245,9 @@ namespace Mega.Game
     public struct WorldPath
     {
         public ChunkLocation InChunk;
-        public Vector2i Chunk;
+        public Vec2i Chunk;
 
-        public WorldPath(Vector3i inChunk, Vector2i chunk)
+        public WorldPath(Vec3i inChunk, Vec2i chunk)
         {
             InChunk = inChunk;
             Chunk = chunk;

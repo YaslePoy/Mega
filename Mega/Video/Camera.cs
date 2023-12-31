@@ -1,4 +1,5 @@
-﻿using OpenTK.Mathematics;
+﻿using Mega.Game;
+using OpenTK.Mathematics;
 
 namespace Mega.Video
 {
@@ -108,7 +109,7 @@ namespace Mega.Video
 
         public void Apply()
         {
-            OmegaEngine.SetViewSettings(Position, Position + _front, _up);
+            OmegaEngine.SetViewSettings(Position, Position + _front, _up, World.Sun);
         }
     }
 }

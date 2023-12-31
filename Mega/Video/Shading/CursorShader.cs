@@ -1,6 +1,5 @@
 ﻿using Mega.Game;
 using Mega.Game.Blocks;
-using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 
 namespace Mega.Video.Shading
@@ -18,13 +17,7 @@ namespace Mega.Video.Shading
                 var sel = OmegaEngine.world.Area.GetBlock(OmegaEngine.world.Player.SelectedBlock.Value);
 
                 UpdateEdges(sel, OmegaEngine.world);
-                GL.BufferData(BufferTarget.ArrayBuffer, _vertices.Length * sizeof(float), _vertices, BufferUsageHint.DynamicDraw);
-                GL.BufferData(BufferTarget.ElementArrayBuffer, _indices.Length * sizeof(float), _indices, BufferUsageHint.DynamicDraw);
-
-                for (int i = 0; i < 6; i++)
-                {
-                    GL.DrawElements(PrimitiveType.LineLoop, 4, DrawElementsType.UnsignedInt, 4 * i * sizeof(uint));
-                }
+                
             }
         }
         void UpdateEdges(Block block, World w)

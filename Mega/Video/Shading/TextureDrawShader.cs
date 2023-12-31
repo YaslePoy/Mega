@@ -1,5 +1,4 @@
 ﻿using Mega.Game;
-using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using System.Diagnostics;
 

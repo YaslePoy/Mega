@@ -1,5 +1,4 @@
 ﻿using Mega.Game;
-using OpenTK.Graphics.OpenGL;
 
 namespace Mega.Video.Shading
 {
@@ -25,7 +24,6 @@ namespace Mega.Video.Shading
             tx.pixels = data;
             tx.width = width;
             tx.height = height;
-            tx.Update();
         }
         public void SetTextureData(Image img)
         {
@@ -34,8 +32,6 @@ namespace Mega.Video.Shading
        
         public override void Run()
         {
-            tx.Use(TextureUnit.Texture0);
-            GL.DrawElements(PrimitiveType.Triangles, _indices.Length, DrawElementsType.UnsignedInt, 0);
         }
     }
 }

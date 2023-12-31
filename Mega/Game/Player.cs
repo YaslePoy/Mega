@@ -8,7 +8,7 @@ namespace Mega.Game
     {
         public const float Growth = 1.75f;
         readonly Vector3 growthAdd = new Vector3(0, Growth, 0);
-        public const float WalkSpeed = 4f;
+        public const float WalkSpeed = 4F;
         public World world;
         public Vector3i? SelectedBlock;
         public Vector3i? Cursor;

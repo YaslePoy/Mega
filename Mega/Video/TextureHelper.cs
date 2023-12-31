@@ -104,7 +104,7 @@ namespace Mega.Video
         public UVMap Transform(Vector2i location, Vector2i size, Vector2i total)
         {
             Vector2 temp;
-            var zeroAdding = Vector2.One / (total * Texture.UnitSize) / 16;
+            var zeroAdding = Vector2.One / (total * Texture.UnitSize) / 8;
 
             Vector2 modify(Vector2 vec)
             {
