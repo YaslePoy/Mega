@@ -1,22 +1,14 @@
-#version 460 core
+#version 450
 
-layout(location = 0) in vec3 aPosition;
+layout(location = 0) in vec3 inPosition;
+layout(location = 1) in vec3 inColor;
+layout(location = 2) in vec2 inTexCoord;
 
-// We add another input variable for the texture coordinates.
+layout(location = 0) out vec3 fragColor;
+layout(location = 1) out vec2 fragTexCoord;
+layout(location = 2) out vec3 sun;
 
-layout(location = 1) in vec2 aTexCoord;
-
-// ...However, they aren't needed for the vertex shader itself.
-// Instead, we create an output variable so we can send that data to the fragment shader.
-
-out vec2 texCoord;
-
-void main(void)
-{
-    // Then, we further the input texture coordinate to the output one.
-    // texCoord can now be used in the fragment shader.
-    
-    texCoord = aTexCoord;
-
-    gl_Position = vec4(aPosition, 1.0);
+void main() {
+    gl_Position = vec4(fragTexCoord, 0, 0);
+    fragColor = inColor;
 }

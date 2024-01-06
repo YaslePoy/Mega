@@ -11,6 +11,7 @@ struct VertexRaw
     glm::vec3 pos;
     glm::vec3 color;
     glm::vec2 texCoord;
+    glm::vec3 move;
 
     static VkVertexInputBindingDescription getBindingDescription()
     {
@@ -22,10 +23,9 @@ struct VertexRaw
         return bindingDescription;
     }    
 
-    static std::array<VkVertexInputAttributeDescription, 3> getAttributeDescriptions()
+    static std::array<VkVertexInputAttributeDescription, 4> getAttributeDescriptions()
     {
-        std::array<VkVertexInputAttributeDescription, 3> attributeDescriptions{};
-        glm::vec3 a;
+        std::array<VkVertexInputAttributeDescription, 4> attributeDescriptions{};
         
         attributeDescriptions[0].binding = 0;
         attributeDescriptions[0].location = 0;
@@ -42,11 +42,16 @@ struct VertexRaw
         attributeDescriptions[2].format = VK_FORMAT_R32G32_SFLOAT;
         attributeDescriptions[2].offset = offsetof(VertexRaw, texCoord);
 
+        attributeDescriptions[3].binding = 0;
+        attributeDescriptions[3].location = 3;
+        attributeDescriptions[3].format = VK_FORMAT_R32G32B32_SFLOAT;
+        attributeDescriptions[3].offset = offsetof(VertexRaw, move);
+        
         return attributeDescriptions;
     }
     void Show()
     {
-        cout << pos.x << " " << pos.y << " " << pos.z << " " << texCoord.x << " " << texCoord.y << std::endl;
+        cout << pos.x << " " << pos.y << " " << pos.z << " " << texCoord.x << " " << texCoord.y << '\n';
     }
     bool operator==(const VertexRaw& other) const {
         return pos == other.pos && color == other.color && texCoord == other.texCoord;

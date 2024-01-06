@@ -84,12 +84,6 @@ namespace Mega.Game
         public void UpdateTotalMesh()
         {
             var sides = Area.Chunks.Values.Select(index => index.Surface).SumList();
-
-            // for (int j = 0; j < sides.Length; j++)
-            // {
-            //     sides[j].Apply();
-            // }
-            Parallel.For(0, sides.Length, index => { sides[index].Apply(); });
             OmegaEngine.SetMeshShaderData(sides, (uint)sides.Length);
         }
 

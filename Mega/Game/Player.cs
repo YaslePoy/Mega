@@ -6,8 +6,8 @@ namespace Mega.Game
 {
     public class Player
     {
-        public const float Growth = 1.75f;
-        readonly Vector3 growthAdd = new Vector3(0, Growth, 0);
+        public const float Growth = 1.75F;
+        readonly Vector3 growthAdd = new(0, 0, Growth);
         public const float WalkSpeed = 4F;
         public World world;
         public Vector3i? SelectedBlock;
@@ -44,7 +44,7 @@ namespace Mega.Game
         {
             Cam = camera;
             Position = camera.Position;
-            Collider = new RectangularCollider(Position, new Vector3(0.5f, 1.75f, 0.5f), -Vector3.UnitY);
+            Collider = new RectangularCollider(Position, new Vector3(0.5f, 0.5f, 1.75f), -Vector3.UnitZ);
 
         }
         public void PlaceBlock()
@@ -58,17 +58,13 @@ namespace Mega.Game
         {
             if (Collider.Position == Position)
                 return Collider;
-            else
-            {
-                Collider.Position = Position;
-                return Collider;
-            }
+            Collider.Position = Position;
+            return Collider;
         }
 
         public void MoveTo(Vector3 move)
         {
             Position += move;
-
         }
     }
 }

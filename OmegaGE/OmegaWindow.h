@@ -149,32 +149,54 @@ private:
     VkImage colorImage;
     VkDeviceMemory colorImageMemory;
     VkImageView colorImageView;
-    
+
     VkRenderPass renderPass;
     VkDescriptorSetLayout descriptorSetLayout;
-    VkPipelineLayout pipelineLayout;
-    VkPipeline graphicsPipeline;
-    // VkPipeline graphicsPipelineAlt;
+
+    //main pipeline
+    VkPipelineLayout mainPipelineLayout;
+    VkPipeline mainPipeline;
+
+    //main pipeline buffers
+    VkBuffer mainVertexBuffer;
+    VkDeviceMemory mainVertexBufferMemory;
+    VkBuffer mainIndexBuffer;
+    VkDeviceMemory mainIndexBufferMemory;
+
+    //main pipeline buffers
+    VkBuffer uiVertexBuffer;
+    VkDeviceMemory uiVertexBufferMemory;
+    
+    //ui pipeline
+    VkPipelineLayout uiPipelineLayout;
+    VkPipeline uiPipeline;
+
+    //ui description
+    VkDescriptorSetLayout uiDescriptorSetLayout;
+    VkDescriptorPool uiDescriptorPool;
+    std::vector<VkDescriptorSet> uiDescriptorSets;
+
+    //ui image
+    VkImage uiTextureImage;
+    VkDeviceMemory uiTextureImageMemory;
+    VkImageView uiTextureImageView;
+    VkSampler uiTextureSampler;
     
     alignas(16) glm::mat4 main_model;
-    alignas(16) glm::mat4 main_proj;    
-    
+    alignas(16) glm::mat4 main_proj;
+
     VkCommandPool commandPool;
 
     VkImage depthImage;
     VkDeviceMemory depthImageMemory;
     VkImageView depthImageView;
-    
+
     uint32_t mipLevels = 3;
     VkImage textureImage;
     VkDeviceMemory textureImageMemory;
     VkImageView textureImageView;
     VkSampler textureSampler;
 
-    VkBuffer vertexBuffer;
-    VkDeviceMemory vertexBufferMemory;
-    VkBuffer indexBuffer;
-    VkDeviceMemory indexBufferMemory;
 
     std::vector<VkBuffer> uniformBuffers;
     std::vector<VkDeviceMemory> uniformBuffersMemory;
@@ -206,7 +228,9 @@ private:
     void createImageViews();
     void createRenderPass();
     void createDescriptorSetLayout();
-    void createGraphicsPipeline();
+    void createMainPipeline();
+    void createUIPipeline();
+
     // void createAltGraphicsPipeline();
     void createFramebuffers();
     void createCommandPool();
@@ -219,8 +243,11 @@ private:
     void createTextureImageView();
     void createTextureSampler();
     VkImageView createImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags, uint32_t mipLevels);
-    void createImage(uint32_t width, uint32_t height, uint32_t mipLevels, VkSampleCountFlagBits numSamples, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory);
-    void transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, uint32_t mipLevels);
+    void createImage(uint32_t width, uint32_t height, uint32_t mipLevels, VkSampleCountFlagBits numSamples,
+                     VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties,
+                     VkImage& image, VkDeviceMemory& imageMemory);
+    void transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout,
+                               uint32_t mipLevels);
     void copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
     void updateUniformBuffer(uint32_t currentImage);
     void createSyncObjects();
@@ -250,8 +277,10 @@ private:
     static void keyboard_handler(GLFWwindow* window, int key, int scancode, int action, int mods);
     void createColorResources();
     void generateMipmaps(VkImage image, VkFormat imageFormat, int32_t texWidth, int32_t texHeight,
-                                  uint32_t mipLevels);
+                         uint32_t mipLevels);
 
+    void setUITexture(unsigned char* img_data, int x, int y);
+    void recreateUIDescriptors();
 };
 
 inline OmegaWindow viewport{1024, 1024};

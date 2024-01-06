@@ -17,10 +17,10 @@ struct RenderSurface
     {
         int localOffset = offset * 4;
         const int startIndex = localOffset;
-        vertices[localOffset++] = v1.ToRaw(normal);
-        vertices[localOffset++] = v2.ToRaw(normal);
-        vertices[localOffset++] = v3.ToRaw(normal);
-        vertices[localOffset] = v4.ToRaw(normal);
+        vertices[localOffset++] = v1.ToRaw(normal, move);
+        vertices[localOffset++] = v2.ToRaw(normal, move);
+        vertices[localOffset++] = v3.ToRaw(normal, move);
+        vertices[localOffset] = v4.ToRaw(normal, move);
 
         localOffset = offset * 6;
         indices[localOffset++] = startIndex + 0;

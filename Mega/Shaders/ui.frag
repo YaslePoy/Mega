@@ -1,22 +1,10 @@
-#version 460
+#version 450
 
-out vec4 outputColor;
+layout(location = 0) in vec3 fragColor;
+layout(location = 1) in vec2 fragTexCoord;
 
-in vec2 texCoord;
+layout(location = 0) out vec4 outColor;
 
-// A sampler2d is the representation of a texture in a shader.
-// Each sampler is bound to a texture unit (texture units are described in Texture.cs on the Use function).
-// By default, the unit is 0, so no code-related setup is actually needed.
-// Multiple samplers will be demonstrated in section 1.5.
-uniform sampler2D texture0;
-
-void main()
-{
-    // To use a texture, you call the texture() function.
-    // It takes two parameters: the sampler to use, and a vec2, used as texture coordinates.
-    vec4 col = texture(texture0, texCoord);
-    if(col.w != 0)
-        outputColor = col;
-    else discard;
-
+void main() {
+    outColor = vec4(1, 0, 1, 1);
 }
